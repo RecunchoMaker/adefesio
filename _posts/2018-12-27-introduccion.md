@@ -2,9 +2,6 @@
 layout: post
 title:  "Preparando el entorno con platform.io"
 ---
-
-# Preparando el entorno - platform.io
-
 Para la programación de arduino vamos a utilizar [platform.io](https://platformio.org). Aunque
 dispone de entornos integrados de desarrollo (IDE) que no hemos probado, nosotros vamos a utilizar únicamente
 el **PlatformIO Core**. Con esta herramienta, disponemos de un conjunto de comandos en la
@@ -15,7 +12,7 @@ que incluya varios ficheros.
 
 La instalación se realiza desde el gestor de paquetes de python (pip)
 
-```bash
+```console
 pip install -U platformio
 ```
 
@@ -23,7 +20,7 @@ Una vez instalado, creamos una carpeta para nuestros ficheros, hacemos cd a la c
 inicializamos el proyecto platformio para el procesador que utilizemos, en este caso, un 
 arduino nano.
 
-```bash
+```console
 /tmp$ mkdir adefesio
 /tmp$ cd adefesio
 /tmp/adefesio$ pio boards | grep nano
@@ -67,7 +64,7 @@ Con el comando **pio init --board <board>** platformio crea una estructura de di
 que pondremos nuestro código fuente y librerías. Como prueba inicial, creamos un main.cpp en la carpeta
 **src**
 
-```bash
+```cpp
 #include <Arduino.h>
 
 void setup() {
@@ -84,7 +81,7 @@ Una vez creado el fichero, desde la carpeta raiz del proyecto, podemos compilar 
 va bien, contectamos el arduino y subiremos el firmware con 'pio run --target upload', y comprobamos
 que efectivamente está ejecutando el loop escribiendo en el puerto serie.
 
-```bash
+```console
 /tmp/adefesio$ pio run
 Processing nanoatmega328 (platform: atmelavr; board: nanoatmega328; framework: arduino)
 ---------------------------------------------------------------------------------------
@@ -115,6 +112,6 @@ Hola mundo
 Para evitar tener que especificar la dirección del puerto serie, anadimos la siguiente línea al fichero
 platformio.ini
 
-```bash
+```console
 monitor_speed = 115200
 ```
