@@ -58,4 +58,4 @@ o no. Además hay conectores frontales para los futuros sensores y una conexión
 bluetooth que iremos viendo.
 
 <img src="{{ site.baseurl }}/images/adefesio-bottom-1.jpg" alt="adefesio parte inferior"/>
-<img src="{{ site.baseurl }}/images/adefesio-top-2.jpg" alt="adefesio parte superior"/>
+<img src="{{ site.baseurl }}/images/adefesio-top-1.jpg" alt="adefesio parte superior"/>
