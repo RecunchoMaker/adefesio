@@ -287,3 +287,23 @@ footer {
 // ... Otherwise it really bloats up the top of the CSS file and makes it difficult to find the start
 @import "highlights";
 @import "svg-icons";
+
+// from https://github.com/pages-themes/cayman/blob/master/_sass/jekyll-theme-cayman.scss
+table {
+    display: block;
+    width: 100%;
+    overflow: auto;
+    word-break: normal;
+    word-break: keep-all; // For Firefox to horizontally scroll wider tables.
+    -webkit-overflow-scrolling: touch;
+
+    th {
+      font-weight: bold;
+    }
+
+    th,
+    td {
+      padding: 0.5rem 1rem;
+      border: 1px solid $table-border-color;
+    }
+}

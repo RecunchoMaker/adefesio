@@ -73,7 +73,8 @@ estamos alimentando los motores con los 5v del USB del ordenador y el motor corr
 simplemente con la rueda)
 
 ## Links:
-[Controlar dos motores DC con Arduino y driver TB6612FNG](https://www.luisllamas.es/arduino-motor-dc-tb6612fng/)
-[Comprar TB6612FNG](https://tienda.bricogeek.com/controladores-motores/999-controlador-de-motores-tb6612fng.html)
+* [Controlar dos motores DC con Arduino y driver TB6612FNG](https://www.luisllamas.es/arduino-motor-dc-tb6612fng/)
+
+* [Comprar TB6612FNG](https://tienda.bricogeek.com/controladores-motores/999-controlador-de-motores-tb6612fng.html)
 
 _commit_: 986422e520c65bc79119adf60770a9d7ef00067d
