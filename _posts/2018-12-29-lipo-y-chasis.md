@@ -57,5 +57,5 @@ switchs en la placa que por ahora están sin conectar e iremos viendo si los uti
 o no. Además hay conectores frontales para los futuros sensores y una conexión para
 bluetooth que iremos viendo.
 
-[<img src="{{ site.baseurl }}/images/adefesio-bottom.jpg" alt="adefesio parte inferior"/>]
-[<img src="{{ site.baseurl }}/images/adefesio-top.jpg" alt="adefesio parte superior"/>]
+<img src="{{ site.baseurl }}/images/adefesio-bottom.jpg" alt="adefesio parte inferior"/>
+<img src="{{ site.baseurl }}/images/adefesio-top.jpg" alt="adefesio parte superior"/>
