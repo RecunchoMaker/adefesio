@@ -1,8 +1,8 @@
 ---
 layout: post
-title:  "Lipo y chasis"
+title:  "LiPo y chasis"
 ---
-# LiPo
+## LiPo
 
 Vamos a alimentar nuestro robot con una batería LiPo de dos celdas, unos
 7.4v. Aunque los motores son de 6v, limitaremos el PWM máximo para no
@@ -19,7 +19,7 @@ para nuestro pequeño robot experimental parece aceptable. El conector
 JST resulta ser algo incómodo de usar, algo a tener en cuentra para futuras
 versiones.
 
-# Chasis
+## Chasis
 
 Para empezar a ver a nuestro robot moviéndose, necesitamos poner lo que tenemos
 hasta ahora en algún tipo de chasis. Vamos a utilizar una baquelita de 7x9cm,
@@ -44,7 +44,7 @@ un nuevo agujero en el frontal en el que atornillar un pequeño tornillo m3 que 
 motor contra el plástico. También es un mal diseño, pero tenemos ganas de empezar
 con la programación así que va a quedar así por ahora.
 
-# Conexiones
+## Conexiones
 
 Las conexiones son triviales: el puente H al arduino y los motores tal como se
 explica en el post anterior, el negativo de la batería a tierra, y el positivo
