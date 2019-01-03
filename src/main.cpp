@@ -2,6 +2,14 @@
 #include <motores.h>
 #include <bateria.h>
 #include <encoders.h>
+#include <timer1.h>
+
+volatile uint16_t contador = 0;
+uint32_t microsegundos = 0;
+
+ISR (TIMER1_COMPA_vect) {
+    contador++;
+}
 
 void setup() {
     Serial.begin(115200);
@@ -9,17 +17,21 @@ void setup() {
     motores_init();
     encoders_init();
     bateria_muestra_nivel();
+    timer1_init(0.001, 1);
+    sei();
+    microsegundos = micros();
 }
 
+
 void loop() {
-    delay(5000);
-    encoders_reset_posicion();
-    Serial.println("Avanzando durante 5 segundos");
-    motores_set_pwm(100, 100);
-    delay(5000);
-    motores_set_pwm(0,0);
-    Serial.print(encoders_get_posicion_left());
-    Serial.print(" ");
-    Serial.print(encoders_get_posicion_right());
-    Serial.println(" ");
+    if (contador == 1023) {
+        Serial.println("1023!");
+    }
+    cli();
+    if (contador > 1000) {
+        Serial.println(micros() - microsegundos);
+        contador = 0;
+        microsegundos = micros();
+    }
+    sei();
 }
