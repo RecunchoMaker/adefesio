@@ -14,6 +14,10 @@ int16_t encoders_get_posicion_left(void);
 int16_t encoders_get_posicion_right(void);
 void encoders_ISR_left(void);
 void encoders_ISR_right(void);
+float encoders_get_velocidad_left(void);
+float encoders_get_velocidad_right(void);
+void encoders_print();
+uint32_t encoders_get_ticks_entre_saltos_left();
 
 #endif /* ifndef _ENCODERS_H
 
