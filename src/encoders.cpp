@@ -27,7 +27,7 @@ void encoders_init(void) {
     // inicialir interrupciones
     attachInterrupt(
             digitalPinToInterrupt(ENCODER_LEFT_C1),
-            encoders_ISR_left, CHANGE);
+            encoders_ISR_left, RISING);
     attachInterrupt(
             digitalPinToInterrupt(ENCODER_RIGHT_C1),
             encoders_ISR_right, FALLING);
@@ -47,12 +47,6 @@ int16_t encoders_get_posicion_right(void) {
 }
 
 void encoders_ISR_left(void) {
-    /*
-    if (tcnt1_left[0] == 0)
-        tcnt1_left[0] = TCNT1;
-    else
-        tcnt1_left[1] = TCNT1;
-        */
     tcnt1_left[0] = tcnt1_left[1];
     tcnt1_left[1] = TCNT1;
 
@@ -112,25 +106,24 @@ uint32_t encoders_get_ticks_entre_saltos_left() {
         ticks_sin_actualizar_left = 0;
         last_encoder_ticks = encoder_ticks;
 
-        return encoder_ticks ;
     } else if (encoder_posicion_left == 1) {
 
         // caso 2
         caso = 2;
         encoder_ticks = OCR1A * (ticks_sin_actualizar_left+1) +
             tcnt1_left[1] - tcnt1_left[0];
-        ticks_sin_actualizar_left = 1;
+        ticks_sin_actualizar_left = 0;
         last_encoder_ticks = encoder_ticks;
-        return  encoder_ticks;
     }
     else {
 
         // caso 3
         caso = 3;
         ticks_sin_actualizar_left++;
-        last_encoder_ticks = ticks_sin_actualizar_left * OCR1A;
-        return ticks_sin_actualizar_left * OCR1A;
+        encoder_ticks = ticks_sin_actualizar_left * OCR1A;
+        last_encoder_ticks = encoder_ticks;
     }
+    return encoder_ticks;
 }
 
         

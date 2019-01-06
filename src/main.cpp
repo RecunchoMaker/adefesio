@@ -8,9 +8,20 @@ volatile uint32_t ticks = 0;
 
 volatile uint16_t max_tcnt1 = 0;
 
+volatile uint8_t log_buffer_idx = 0;
+volatile uint16_t log_buffer[256];
+
 ISR (TIMER1_COMPA_vect) {
 
     ticks = encoders_get_ticks_entre_saltos_left();
+
+    /*
+    log_buffer[log_buffer_idx++] = ticks;
+    if (log_buffer_idx == 255) 
+        for (log_buffer_idx = 0; log_buffer_idx < 255; log_buffer_idx++)
+            Serial.println(log_buffer[log_buffer_idx]);
+    */
+
     encoders_reset_posicion();
 
     /* control de maximo TCNT1
@@ -37,7 +48,7 @@ uint8_t pwm = 100;
 void loop() {
     delay(100);
 
-    for (pwm = 160; pwm <= 200; pwm+=1) {
+    for (pwm = 50; pwm <= 250; pwm+=1) {
         Serial.print("pwm = ");
         Serial.println(pwm);
         motores_set_pwm(pwm,pwm);
@@ -52,6 +63,6 @@ void loop() {
         }
     }
     motores_set_pwm(0,0);
-    delay(600000);
+    while(1);
 
 }
