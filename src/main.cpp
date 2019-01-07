@@ -48,7 +48,7 @@ uint8_t pwm = 100;
 void loop() {
     delay(100);
 
-    for (pwm = 50; pwm <= 250; pwm+=1) {
+    for (pwm = 50; pwm <= 240; pwm+=10) {
         Serial.print("pwm = ");
         Serial.println(pwm);
         motores_set_pwm(pwm,pwm);

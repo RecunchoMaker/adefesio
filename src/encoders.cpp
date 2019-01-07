@@ -120,7 +120,10 @@ uint32_t encoders_get_ticks_entre_saltos_left() {
         // caso 3
         caso = 3;
         ticks_sin_actualizar_left++;
-        encoder_ticks = ticks_sin_actualizar_left * OCR1A;
+        encoder_ticks = ticks_sin_actualizar_left * OCR1A + (OCR1A - tcnt1_left[0]);
+        if (encoder_ticks < last_encoder_ticks) {
+            encoder_ticks = last_encoder_ticks;
+        }
         last_encoder_ticks = encoder_ticks;
     }
     return encoder_ticks;
