@@ -4,33 +4,20 @@
 #include <encoders.h>
 #include <timer1.h>
 
-volatile uint32_t ticks = 0;
+volatile int16_t pasos_left = 0;
+volatile int16_t pasos_right = 0;
 
-volatile uint16_t max_tcnt1 = 0;
-
-volatile uint8_t log_buffer_idx = 0;
-volatile uint16_t log_buffer[256];
+volatile int16_t last_pasos_left = 0;
+volatile int16_t last_pasos_right = 0;
 
 ISR (TIMER1_COMPA_vect) {
 
-    ticks = encoders_get_ticks_entre_saltos_left();
-
-    /*
-    log_buffer[log_buffer_idx++] = ticks;
-    if (log_buffer_idx == 255) 
-        for (log_buffer_idx = 0; log_buffer_idx < 255; log_buffer_idx++)
-            Serial.println(log_buffer[log_buffer_idx]);
-    */
-
+    encoders_calcula_ticks_left();
+    encoders_calcula_ticks_right();
+    pasos_left += encoders_get_posicion_left();
+    pasos_right += encoders_get_posicion_right();
     encoders_reset_posicion();
-
-    /* control de maximo TCNT1
-    if (TCNT1 > max_tcnt1) {
-        max_tcnt1 = TCNT1;
-        Serial.print("max :");
-        Serial.println(max_tcnt1);
-    }
-    */
+    motores_actualizar_pwm();
 }
 
 void setup() {
@@ -44,22 +31,39 @@ void setup() {
     sei();
 }
 
-uint8_t pwm = 100;
+int32_t ticks = 0;
 void loop() {
     delay(100);
 
-    for (pwm = 50; pwm <= 240; pwm+=10) {
-        Serial.print("pwm = ");
-        Serial.println(pwm);
-        motores_set_pwm(pwm,pwm);
-        
-        for (int i = 0; i< 5; i++) {
+    for (ticks = 20000; ticks <= 50000; ticks+=1000) {
+        motores_set_ticks(ticks, ticks);
+      
+        for (int i = 0; i< 2; i++) {
             
             cli();
-            encoders_print();
+            Serial.print("deseados: ");
+            Serial.print(motores_get_ticks_right());
+            Serial.print("   obtenidos: ");
+            Serial.print(encoders_get_ticks_right());
+            Serial.print("   pwm: (");
+            Serial.print(motores_get_pwm_left());
+            Serial.print(", ");
+            Serial.print(motores_get_pwm_right());
+            Serial.print(")  pasos_left = ");
+            Serial.print(pasos_left - last_pasos_left);
+            Serial.print("   pasos_right = ");
+            Serial.print(pasos_right - last_pasos_right);
+            Serial.print("   desviacion entre ruedas = ");
+            Serial.print(pasos_right - last_pasos_right - pasos_left + last_pasos_left);
+            Serial.print(" ");
+
+            Serial.println();
+            last_pasos_right = pasos_right;
+            last_pasos_left = pasos_left;
             sei();
 
-            delay(200);
+
+            delay(500);
         }
     }
     motores_set_pwm(0,0);
