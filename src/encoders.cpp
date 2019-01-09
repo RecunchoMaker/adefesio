@@ -1,4 +1,5 @@
 #include <encoders.h>
+#include <motores.h>
 
 volatile int16_t encoder_posicion_left = 0;
 volatile int16_t encoder_posicion_right = 0;
@@ -134,3 +135,22 @@ int32_t encoders_get_ticks_left() {
 int32_t encoders_get_ticks_right() {
     return ticks_right;
 }
+
+#ifdef ENCODERS_LOG_ESTADO
+void encoders_log_estado_cabecera() {
+    Serial.println("deseados obtenidos pwm_left pwm_right");
+}
+
+void encoders_log_estado() {
+    LOG(motores_get_ticks_right());
+    LOG(encoders_get_ticks_right());
+    LOG(motores_get_pwm_left());
+    LOGN(motores_get_pwm_right());
+    //LOG(pasos_left - last_pasos_left);
+    //LOGN(pasos_right - last_pasos_right);
+            //Serial.print("   desviacion entre ruedas = ");
+            //Serial.print(pasos_right - last_pasos_right - pasos_left + last_pasos_left);
+            //Serial.print(" ");
+
+}
+#endif

@@ -8,6 +8,9 @@
 #define ENCODER_RIGHT_C1 3
 #define ENCODER_RIGHT_C2 8
 
+#define LOG(x) Serial.print(x); Serial.print(" ");
+#define LOGN(x) Serial.println(x)
+
 void encoders_init(void);
 void encoders_reset_posicion(void);
 int16_t encoders_get_posicion_left(void);
@@ -20,6 +23,11 @@ void encoders_calcula_ticks_left();
 void encoders_calcula_ticks_right();
 int32_t encoders_get_ticks_left();
 int32_t encoders_get_ticks_right();
+
+#ifdef ENCODERS_LOG_ESTADO
+void encoders_log_estado_cabecera();
+void encoders_log_estado();
+#endif
 
 #endif /* ifndef _ENCODERS_H
 

@@ -35,29 +35,19 @@ int32_t ticks = 0;
 void loop() {
     delay(100);
 
+#ifdef ENCODERS_LOG_ESTADO
+    encoders_log_estado_cabecera();
+#endif
+
     for (ticks = 20000; ticks <= 50000; ticks+=1000) {
         motores_set_ticks(ticks, ticks);
       
         for (int i = 0; i< 2; i++) {
             
             cli();
-            Serial.print("deseados: ");
-            Serial.print(motores_get_ticks_right());
-            Serial.print("   obtenidos: ");
-            Serial.print(encoders_get_ticks_right());
-            Serial.print("   pwm: (");
-            Serial.print(motores_get_pwm_left());
-            Serial.print(", ");
-            Serial.print(motores_get_pwm_right());
-            Serial.print(")  pasos_left = ");
-            Serial.print(pasos_left - last_pasos_left);
-            Serial.print("   pasos_right = ");
-            Serial.print(pasos_right - last_pasos_right);
-            Serial.print("   desviacion entre ruedas = ");
-            Serial.print(pasos_right - last_pasos_right - pasos_left + last_pasos_left);
-            Serial.print(" ");
-
-            Serial.println();
+#ifdef ENCODERS_LOG_ESTADO
+            encoders_log_estado();
+#endif
             last_pasos_right = pasos_right;
             last_pasos_left = pasos_left;
             sei();
