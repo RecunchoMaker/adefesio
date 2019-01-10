@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <motores.h>
 
+//#define KP 0.00035
 #define KP 0.00035
 #define KD 0.000
 

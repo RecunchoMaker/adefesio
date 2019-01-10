@@ -4,6 +4,9 @@
 volatile int16_t encoder_posicion_left = 0;
 volatile int16_t encoder_posicion_right = 0;
 
+volatile int32_t encoder_posicion_left_total = 0;
+volatile int32_t encoder_posicion_right_total = 0;
+
 volatile uint8_t ticks_sin_actualizar_left = 0;
 volatile uint8_t ticks_sin_actualizar_right = 0;
 
@@ -53,19 +56,29 @@ void encoders_ISR_left(void) {
     if (digitalRead(ENCODER_LEFT_C2) == digitalRead(ENCODER_LEFT_C1))
     {
         encoder_posicion_left--;
+        encoder_posicion_left_total--;
     }
     
     else
     {
         encoder_posicion_left++;
+        encoder_posicion_left_total++;
     }
 }
 
 void encoders_ISR_right(void) {
+    tcnt1_right[0] = tcnt1_right[1];
+    tcnt1_right[1] = TCNT1;
+
     if (digitalRead(ENCODER_RIGHT_C2) == digitalRead(ENCODER_RIGHT_C1))
+    {
         encoder_posicion_right++;
-    else
+        encoder_posicion_right_total++;
+    }
+    else {
         encoder_posicion_right--;
+        encoder_posicion_right_total--;
+    }
 }
 
 void encoders_calcula_ticks_left() {
@@ -138,19 +151,17 @@ int32_t encoders_get_ticks_right() {
 
 #ifdef ENCODERS_LOG_ESTADO
 void encoders_log_estado_cabecera() {
-    Serial.println("deseados obtenidos pwm_left pwm_right");
+    Serial.println("deseados obtenidos pwmLeft pwmRight posLeft posRight ticksSinAct");
 }
 
 void encoders_log_estado() {
     LOG(motores_get_ticks_right());
     LOG(encoders_get_ticks_right());
     LOG(motores_get_pwm_left());
-    LOGN(motores_get_pwm_right());
-    //LOG(pasos_left - last_pasos_left);
-    //LOGN(pasos_right - last_pasos_right);
-            //Serial.print("   desviacion entre ruedas = ");
-            //Serial.print(pasos_right - last_pasos_right - pasos_left + last_pasos_left);
-            //Serial.print(" ");
+    LOG(motores_get_pwm_right());
+    LOG(encoder_posicion_left_total);
+    LOG(encoder_posicion_right_total);
+    LOGN(ticks_sin_actualizar_right);
 
 }
 #endif

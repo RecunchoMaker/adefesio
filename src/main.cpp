@@ -7,9 +7,6 @@
 volatile int16_t pasos_left = 0;
 volatile int16_t pasos_right = 0;
 
-volatile int16_t last_pasos_left = 0;
-volatile int16_t last_pasos_right = 0;
-
 ISR (TIMER1_COMPA_vect) {
 
     encoders_calcula_ticks_left();
@@ -27,7 +24,8 @@ void setup() {
     encoders_init();
     bateria_muestra_nivel();
 
-    timer1_init(0.001, 1);
+    timer1_init(0.0040, 1);
+    // timer1_init(0.001, 1);
     sei();
 }
 
@@ -39,17 +37,15 @@ void loop() {
     encoders_log_estado_cabecera();
 #endif
 
-    for (ticks = 20000; ticks <= 50000; ticks+=1000) {
+    for (ticks = 20000; ticks <= 45000; ticks+=500) {
         motores_set_ticks(ticks, ticks);
       
-        for (int i = 0; i< 2; i++) {
+        for (int i = 0; i< 1; i++) {
             
             cli();
 #ifdef ENCODERS_LOG_ESTADO
             encoders_log_estado();
 #endif
-            last_pasos_right = pasos_right;
-            last_pasos_left = pasos_left;
             sei();
 
 
@@ -57,6 +53,8 @@ void loop() {
         }
     }
     motores_set_pwm(0,0);
+    Serial.flush();
+    Serial.end();
     while(1);
 
 }
