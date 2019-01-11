@@ -1,5 +1,6 @@
 #include <encoders.h>
 #include <motores.h>
+#include <settings.h>
 
 volatile int16_t encoder_posicion_left = 0;
 volatile int16_t encoder_posicion_right = 0;
@@ -18,6 +19,9 @@ volatile int32_t last_ticks_left;
 
 volatile int32_t ticks_right;
 volatile int32_t last_ticks_right;
+
+volatile float radio = 999999;
+volatile float velocidad_angular = 0;
 
 void encoders_init(void) {
 
@@ -141,6 +145,43 @@ void encoders_calcula_ticks_right() {
     }
 }
 
+void encoders_calcula_velocidad_angular() {
+    
+    if (ticks_left == ticks_right) {
+        radio = 99999;
+        velocidad_angular = 0;
+        //Serial.print("%");
+        return 0;
+    }
+    if ((ticks_left == 0) or (ticks_right == 0)) {
+        radio = 99999;
+        velocidad_angular = 0;
+        return 0;
+    }
+
+    if (ticks_left < ticks_right) {
+
+        float dif = OCR1A / ticks_left - OCR1A / ticks_right;
+        if (dif == 0) return 0;
+
+        radio = (1.0*OCR1A/ticks_left + 1.0*OCR1A/ticks_right) * DISTANCIA_ENTRE_EJES /
+                     (dif);
+        if (radio < 0) Serial.print("R");
+        velocidad_angular = (OCR1A * 1.0 /ticks_left) /
+            (2 * PI * (radio - DISTANCIA_ENTRE_EJES));
+    }
+    else {
+        float dif = (1.0 * OCR1A / ticks_right) - (1.0 * OCR1A / ticks_left);
+        if (dif == 0) return 0;
+
+        radio = (1.0 * OCR1A/ticks_left + 1*0 * OCR1A/ticks_right) * DISTANCIA_ENTRE_EJES /
+                     (dif);
+        velocidad_angular = -(OCR1A * 1.0 /ticks_right) /
+            (2 * PI * (radio - DISTANCIA_ENTRE_EJES));
+    }
+}
+
+
 int32_t encoders_get_ticks_left() {
     return ticks_left;
 }
@@ -149,9 +190,17 @@ int32_t encoders_get_ticks_right() {
     return ticks_right;
 }
 
+float encoders_get_radio() {
+    return radio;
+}
+
+float encoders_get_velocidad_angular() {
+    return velocidad_angular;
+}
+
 #ifdef ENCODERS_LOG_ESTADO
 void encoders_log_estado_cabecera() {
-    Serial.println("deseados obtenidos pwmLeft pwmRight posLeft posRight ticksSinAct");
+    Serial.println("deseados obtenidos pwmLeft pwmRight posLeft posRight ticksSinAct radio velocidadAngular");
 }
 
 void encoders_log_estado() {
@@ -161,7 +210,9 @@ void encoders_log_estado() {
     LOG(motores_get_pwm_right());
     LOG(encoder_posicion_left_total);
     LOG(encoder_posicion_right_total);
-    LOGN(ticks_sin_actualizar_right);
+    LOG(ticks_sin_actualizar_right);
+    LOG(radio);
+    LOGN(velocidad_angular);
 
 }
 #endif

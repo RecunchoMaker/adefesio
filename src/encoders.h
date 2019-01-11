@@ -21,8 +21,10 @@ float encoders_get_velocidad_left(void);
 float encoders_get_velocidad_right(void);
 void encoders_calcula_ticks_left();
 void encoders_calcula_ticks_right();
+void encoders_calcula_velocidad_angular();
 int32_t encoders_get_ticks_left();
 int32_t encoders_get_ticks_right();
+float encoders_get_velocidad_angular();
 
 #ifdef ENCODERS_LOG_ESTADO
 void encoders_log_estado_cabecera();

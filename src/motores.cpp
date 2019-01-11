@@ -1,20 +1,19 @@
 #include <Arduino.h>
 #include <motores.h>
 
-//#define KP 0.00035
-#define KP 0.00035
-#define KD 0.000
+#define KP_LINEAL 0.00029
+#define KP_ANGULAR -0.250
 
-int16_t pwm_left;
-int16_t pwm_right;
+volatile int16_t pwm_left;
+volatile int16_t pwm_right;
 
-int32_t ticks_deseados_left;
-int32_t ticks_deseados_right;
+volatile int32_t ticks_deseados_left;
+volatile int32_t ticks_deseados_right;
 
-int32_t error_left = 0;
-int32_t error_right = 0;
-int16_t error_acumulado_left = 0;
-int16_t error_acumulado_right = 0;
+volatile int32_t error_lineal_left = 0;
+volatile int32_t error_lineal_right = 0;
+
+volatile float error_angular_anterior = 0;
 
 void motores_init(void) {
 
@@ -26,6 +25,7 @@ void motores_init(void) {
     pinMode(MOTOR_RIGHT_PWM, OUTPUT);
 
     motores_set_pwm(0,0);
+    motores_set_ticks(999999,999999);
 }
 
 void motores_set_pwm(int16_t left, int16_t right) {
@@ -84,10 +84,20 @@ int32_t motores_get_ticks_right() {
 
 void motores_actualizar_pwm() {
 
-    error_left = ticks_deseados_left - encoders_get_ticks_left();
-    error_right = ticks_deseados_right - encoders_get_ticks_right();
+    error_lineal_left = ticks_deseados_left - encoders_get_ticks_left();
+    error_lineal_right = ticks_deseados_right - encoders_get_ticks_right();
 
-    motores_set_pwm(pwm_left - error_left * KP, pwm_right - error_right * KP);
+    // TODO: Velocidad angular deseada, siempre 0
+    float error_angular = encoders_get_velocidad_angular() * KP_ANGULAR;
+
+    motores_set_pwm(
+            (pwm_left - error_lineal_left * KP_LINEAL) +
+            error_angular - error_angular_anterior
+            ,
+            (pwm_right - error_lineal_right * KP_LINEAL) -
+            error_angular + error_angular_anterior
+            );
+    error_angular_anterior = error_angular;
 }
 
     
