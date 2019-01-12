@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <settings.h>
 #include <motores.h>
 #include <bateria.h>
 #include <encoders.h>
@@ -8,7 +9,7 @@ ISR (TIMER1_COMPA_vect) {
 
     encoders_calcula_ticks_left();
     encoders_calcula_ticks_right();
-    encoders_calcula_velocidad_angular();
+    //encoders_calcula_velocidad_angular();
     encoders_reset_posicion();
     motores_actualizar_pwm();
 }
@@ -20,8 +21,7 @@ void setup() {
     encoders_init();
     bateria_muestra_nivel();
 
-    //timer1_init(0.0040, 1);
-    timer1_init(0.001, 1);
+    timer1_init(FRECUENCIA_TIMER, 1);
 #ifdef ENCODERS_LOG_ESTADO
     encoders_log_estado_cabecera();
 #endif
@@ -30,24 +30,39 @@ void setup() {
 }
 
 int32_t ticks = 0;
+uint8_t pwm = 100;
+float diff = 0;
+
 void loop() {
 
-    for (ticks = 20000; ticks <= 45000; ticks+=200) {
-        motores_set_ticks(ticks, ticks);
-      
-        for (int i = 0; i< 1; i++) {
-            
-            cli();
-#ifdef ENCODERS_LOG_ESTADO
-            encoders_log_estado();
-#endif
-            sei();
 
-            delay(100);
-        }
+    /*
+     * prueba avanzar un metro
+    while (encoders_get_posicion_total_right() * LONGITUD_PASO_ENCODER < 1.0) {
+        if (encoders_get_posicion_right() * LONGITUD_PASO_ENCODER > 0.90) 
+            pwm-=3;
+        diff = encoders_get_posicion_left() - encoders_get_posicion_right();
+        motores_set_pwm(pwm, pwm + diff);
+        delay(100);
+        Serial.print(encoders_get_posicion_right() * LONGITUD_PASO_ENCODER);
+#ifdef ENCODERS_LOG_ESTADO
+        encoders_log_estado();
+#endif
     }
-    cli();
-    motores_set_pwm(0,0);
+     */
+
+    /*
+     * prueba set velocidad
+     */
+
+    motores_set_velocidad(0.30, 0);
+    while (encoders_get_posicion_total_right() * LONGITUD_PASO_ENCODER < 1.3) {
+        encoders_log_estado();
+        delay(100);
+    }
+
+
+    motores_set_velocidad(0.0, 0);
 
     Serial.flush();
     Serial.end();

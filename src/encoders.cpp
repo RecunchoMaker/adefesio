@@ -5,8 +5,8 @@
 volatile int16_t encoder_posicion_left = 0;
 volatile int16_t encoder_posicion_right = 0;
 
-volatile int32_t encoder_posicion_left_total = 0;
-volatile int32_t encoder_posicion_right_total = 0;
+volatile int32_t encoder_posicion_total_left = 0;
+volatile int32_t encoder_posicion_total_right = 0;
 
 volatile uint8_t ticks_sin_actualizar_left = 0;
 volatile uint8_t ticks_sin_actualizar_right = 0;
@@ -53,6 +53,14 @@ int16_t encoders_get_posicion_right(void) {
     return encoder_posicion_right;
 }
 
+int32_t encoders_get_posicion_total_left(void) {
+    return encoder_posicion_total_left;
+}
+
+int32_t encoders_get_posicion_total_right(void) {
+    return encoder_posicion_total_right;
+}
+
 void encoders_ISR_left(void) {
     tcnt1_left[0] = tcnt1_left[1];
     tcnt1_left[1] = TCNT1;
@@ -60,13 +68,13 @@ void encoders_ISR_left(void) {
     if (digitalRead(ENCODER_LEFT_C2) == digitalRead(ENCODER_LEFT_C1))
     {
         encoder_posicion_left--;
-        encoder_posicion_left_total--;
+        encoder_posicion_total_left--;
     }
     
     else
     {
         encoder_posicion_left++;
-        encoder_posicion_left_total++;
+        encoder_posicion_total_left++;
     }
 }
 
@@ -77,11 +85,11 @@ void encoders_ISR_right(void) {
     if (digitalRead(ENCODER_RIGHT_C2) == digitalRead(ENCODER_RIGHT_C1))
     {
         encoder_posicion_right++;
-        encoder_posicion_right_total++;
+        encoder_posicion_total_right++;
     }
     else {
         encoder_posicion_right--;
-        encoder_posicion_right_total--;
+        encoder_posicion_total_right--;
     }
 }
 
@@ -208,8 +216,8 @@ void encoders_log_estado() {
     LOG(encoders_get_ticks_right());
     LOG(motores_get_pwm_left());
     LOG(motores_get_pwm_right());
-    LOG(encoder_posicion_left_total);
-    LOG(encoder_posicion_right_total);
+    LOG(encoder_posicion_total_left);
+    LOG(encoder_posicion_total_right);
     LOG(ticks_sin_actualizar_right);
     LOG(radio);
     LOGN(velocidad_angular);

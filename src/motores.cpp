@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <settings.h>
 #include <motores.h>
 
 #define KP_LINEAL 0.00029
@@ -7,8 +8,8 @@
 volatile int16_t pwm_left;
 volatile int16_t pwm_right;
 
-volatile int32_t ticks_deseados_left;
-volatile int32_t ticks_deseados_right;
+volatile uint32_t ticks_deseados_left;
+volatile uint32_t ticks_deseados_right;
 
 volatile int32_t error_lineal_left = 0;
 volatile int32_t error_lineal_right = 0;
@@ -74,31 +75,39 @@ void motores_set_ticks(int32_t left, int32_t right) {
     ticks_deseados_right = right;
 }
 
-int32_t motores_get_ticks_left() {
+uint32_t motores_get_ticks_left() {
     return ticks_deseados_left;
 }
 
-int32_t motores_get_ticks_right() {
+uint32_t motores_get_ticks_right() {
     return ticks_deseados_right;
 }
 
 void motores_actualizar_pwm() {
 
-    error_lineal_left = ticks_deseados_left - encoders_get_ticks_left();
-    error_lineal_right = ticks_deseados_right - encoders_get_ticks_right();
+    if (ticks_deseados_left == 0) {
+        pwm_left = 0;
+    } else {
+        error_lineal_left = ticks_deseados_left - encoders_get_ticks_left();
+        pwm_left -= error_lineal_left * KP_LINEAL;
+    }
 
-    // TODO: Velocidad angular deseada, siempre 0
-    float error_angular = encoders_get_velocidad_angular() * KP_ANGULAR;
+    if (ticks_deseados_right == 0) {
+        pwm_right = 0;
+    } else {
+        error_lineal_right = ticks_deseados_right - encoders_get_ticks_right();
+        pwm_right -= error_lineal_right * KP_LINEAL;
+    }
 
-    motores_set_pwm(
-            (pwm_left - error_lineal_left * KP_LINEAL) +
-            error_angular - error_angular_anterior
-            ,
-            (pwm_right - error_lineal_right * KP_LINEAL) -
-            error_angular + error_angular_anterior
-            );
-    error_angular_anterior = error_angular;
+    motores_set_pwm(pwm_left, pwm_right);
 }
 
+void motores_set_velocidad(float velocidad_lineal, float velocidad_angular) {
+
+    ticks_deseados_left = 
+        (LONGITUD_PASO_ENCODER / velocidad_lineal) /
+        INTERVALO_TCNT1;
+    ticks_deseados_right = ticks_deseados_left;
+}
     
 

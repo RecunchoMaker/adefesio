@@ -19,9 +19,10 @@ void motores_set_pwm(int16_t left, int16_t right);
 int16_t motores_get_pwm_left();
 int16_t motores_get_pwm_right();
 void motores_set_ticks(int32_t left, int32_t right);
-int32_t motores_get_ticks_left();
-int32_t motores_get_ticks_right();
+uint32_t motores_get_ticks_left();
+uint32_t motores_get_ticks_right();
 void motores_actualizar_pwm();
+void motores_set_velocidad(float lineal, float angular);
 
 #endif /* ifndef MOTORES_H
 
