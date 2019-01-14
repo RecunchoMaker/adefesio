@@ -13,6 +13,7 @@
 
 void encoders_init(void);
 void encoders_reset_posicion(void);
+void encoders_reset_posicion_total(void);
 int16_t encoders_get_posicion_left(void);
 int16_t encoders_get_posicion_right(void);
 int32_t encoders_get_posicion_total_left(void);

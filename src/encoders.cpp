@@ -45,6 +45,11 @@ void encoders_reset_posicion(void) {
     encoder_posicion_right = 0;
 }
    
+void encoders_reset_posicion_total(void) {
+    encoder_posicion_total_left = 0;
+    encoder_posicion_total_right = 0;
+}
+   
 int16_t encoders_get_posicion_left(void) {
     return encoder_posicion_left;
 }
@@ -116,7 +121,7 @@ void encoders_calcula_ticks_left() {
 
         // caso 3
         ticks_sin_actualizar_left++;
-        ticks_left = ticks_sin_actualizar_left * OCR1A + (OCR1A - tcnt1_left[0]);
+         ticks_left = ticks_sin_actualizar_left * OCR1A + (OCR1A - tcnt1_left[0]);
         if (ticks_left < last_ticks_left) {
             ticks_left = last_ticks_left;
         }
@@ -221,6 +226,5 @@ void encoders_log_estado() {
     LOG(ticks_sin_actualizar_right);
     LOG(radio);
     LOGN(velocidad_angular);
-
 }
 #endif

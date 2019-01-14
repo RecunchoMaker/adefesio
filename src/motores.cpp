@@ -2,7 +2,8 @@
 #include <settings.h>
 #include <motores.h>
 
-#define KP_LINEAL 0.00029
+#define KP_LINEAL 0.00059
+#define KI_LINEAL 0.0000009
 #define KP_ANGULAR -0.250
 
 volatile int16_t pwm_left;
@@ -11,10 +12,15 @@ volatile int16_t pwm_right;
 volatile uint32_t ticks_deseados_left;
 volatile uint32_t ticks_deseados_right;
 
+volatile float velocidad_lineal_objetivo = 0;
+volatile float velocidad_lineal_actual = 0;
+
 volatile int32_t error_lineal_left = 0;
 volatile int32_t error_lineal_right = 0;
 
 volatile float error_angular_anterior = 0;
+
+volatile float error_acumulado_right = 0;
 
 void motores_init(void) {
 
@@ -62,6 +68,10 @@ void motores_set_pwm(int16_t left, int16_t right) {
 
 }
 
+float motores_get_velocidad_actual() {
+    return velocidad_lineal_actual;
+}
+
 int16_t motores_get_pwm_left() {
     return pwm_left;
 }
@@ -95,19 +105,41 @@ void motores_actualizar_pwm() {
     if (ticks_deseados_right == 0) {
         pwm_right = 0;
     } else {
+
         error_lineal_right = ticks_deseados_right - encoders_get_ticks_right();
         pwm_right -= error_lineal_right * KP_LINEAL;
+        //pwm_right -= error_lineal_right * KP_LINEAL + error_acumulado_right * KI_LINEAL;
+        //error_acumulado_right += error_lineal_right;
     }
 
     motores_set_pwm(pwm_left, pwm_right);
 }
 
-void motores_set_velocidad(float velocidad_lineal, float velocidad_angular) {
+void motores_actualizar_velocidad() {
 
+    if (velocidad_lineal_actual != velocidad_lineal_objetivo)
+
+        if (velocidad_lineal_actual < velocidad_lineal_objetivo) {
+            if (velocidad_lineal_actual < 0.1)
+                velocidad_lineal_actual = 0.1;
+            else {
+                velocidad_lineal_actual = velocidad_lineal_actual + (MAX_ACELERACION * PERIODO_TIMER);
+            }
+        } else  {
+            velocidad_lineal_actual = velocidad_lineal_actual - (.0001);
+        }
     ticks_deseados_left = 
-        (LONGITUD_PASO_ENCODER / velocidad_lineal) /
+        (LONGITUD_PASO_ENCODER / velocidad_lineal_actual) /
         INTERVALO_TCNT1;
     ticks_deseados_right = ticks_deseados_left;
+    motores_actualizar_pwm();
 }
-    
 
+void motores_set_velocidad(float velocidad_lineal, float velocidad_angular) {
+
+    if (velocidad_lineal > MAX_VELOCIDAD)
+        velocidad_lineal_objetivo = MAX_VELOCIDAD;
+    else
+        velocidad_lineal_objetivo = velocidad_lineal;
+
+}

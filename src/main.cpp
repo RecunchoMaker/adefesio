@@ -10,8 +10,8 @@ ISR (TIMER1_COMPA_vect) {
     encoders_calcula_ticks_left();
     encoders_calcula_ticks_right();
     //encoders_calcula_velocidad_angular();
+    motores_actualizar_velocidad();
     encoders_reset_posicion();
-    motores_actualizar_pwm();
 }
 
 void setup() {
@@ -21,51 +21,47 @@ void setup() {
     encoders_init();
     bateria_muestra_nivel();
 
-    timer1_init(FRECUENCIA_TIMER, 1);
+    timer1_init(PERIODO_TIMER, 1);
 #ifdef ENCODERS_LOG_ESTADO
     encoders_log_estado_cabecera();
 #endif
 
     sei();
+    motores_set_velocidad(0, 0);
 }
 
-int32_t ticks = 0;
-uint8_t pwm = 100;
-float diff = 0;
+// 0.13 salteado
+//
+float speed = 0.30;
 
 void loop() {
-
-
-    /*
-     * prueba avanzar un metro
-    while (encoders_get_posicion_total_right() * LONGITUD_PASO_ENCODER < 1.0) {
-        if (encoders_get_posicion_right() * LONGITUD_PASO_ENCODER > 0.90) 
-            pwm-=3;
-        diff = encoders_get_posicion_left() - encoders_get_posicion_right();
-        motores_set_pwm(pwm, pwm + diff);
-        delay(100);
-        Serial.print(encoders_get_posicion_right() * LONGITUD_PASO_ENCODER);
-#ifdef ENCODERS_LOG_ESTADO
-        encoders_log_estado();
-#endif
-    }
-     */
 
     /*
      * prueba set velocidad
      */
 
-    motores_set_velocidad(0.30, 0);
-    while (encoders_get_posicion_total_right() * LONGITUD_PASO_ENCODER < 1.3) {
+    motores_set_velocidad(speed, speed);
+    while (encoders_get_posicion_total_right() * LONGITUD_PASO_ENCODER < 2.9) {
+        Serial.print(speed);
+        Serial.print(" vel:");
+        Serial.print(motores_get_velocidad_actual());
+        Serial.print("-");
+#ifdef ENCODERS_LOG_ESTADO
+        cli();
         encoders_log_estado();
+        sei();
+#endif
         delay(100);
     }
 
+    encoders_reset_posicion_total();
 
-    motores_set_velocidad(0.0, 0);
+    if (speed == 0.30)
+        speed = 0.12;
+    else
+        speed = 0.30;
 
-    Serial.flush();
-    Serial.end();
-    while(1);
+
+    // while(1);
 
 }
