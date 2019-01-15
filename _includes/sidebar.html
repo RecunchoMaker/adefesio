@@ -1,0 +1,17 @@
+<nav>
+  <h1>Hola.</h1>
+  <a href="{{ site.baseurl }}/">
+    {% if site.data.theme.social.gravatar %}
+    <img src="http://www.gravatar.com/avatar/{{ site.data.theme.social.gravatar }}?s=200" id="gravatar" alt="My photo"/>
+    {% else %}
+    <img src="{{ site.baseurl }}/logo.png" id="logo" alt="Blog logo"/>
+    {% endif %}
+  </a>
+  <h2>Esto es <strong>adefesio</strong></h2>
+  <div id="bio">
+    <p><strong>Adefesio</strong> intentará ser un robot resuelve-laberintos basado en Arduino.</p>
+  </div>
+  <div id="social">
+    {% include social.html %}
+  </div>
+</nav>
