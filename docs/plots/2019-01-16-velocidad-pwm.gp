@@ -23,7 +23,6 @@ replot '2019-01-16-velocidad-pwm.dat' using 3 linecolor "green"
 replot '2019-01-16-velocidad-pwm.dat' using 4 linecolor "olive"
 #replot '2019-01-16-velocidad-pwm.dat' using ($5/10) linecolor "grey"
 #replot '2019-01-16-velocidad-pwm.dat' using ($6/10) linecolor "orange"
-replot '2019-01-16-velocidad-pwm.dat' using ($3/$1) linecolor "olive" title "pwm / velocidad"
 
 # Espera a que se pulse una tecla
 pause mouse keypress

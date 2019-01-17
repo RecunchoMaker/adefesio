@@ -5,11 +5,15 @@
 #include <encoders.h>
 #include <timer1.h>
 
+volatile uint8_t max_tcnt1=0;
+
+volatile uint8_t min_tcnt1=255;
+
 ISR (TIMER1_COMPA_vect) {
 
     encoders_calcula_velocidad();
     //encoders_calcula_velocidad_angular();
-    //motores_actualizar_velocidad();
+    motores_actualizar_velocidad();
 }
 
 void setup() {
@@ -30,7 +34,7 @@ void setup() {
 
 // 0.13 salteado
 //
-float speed = 0.30;
+float speed = 0.10;
 int16_t pwm = 50;
 
 void loop() {
@@ -39,8 +43,8 @@ void loop() {
      * prueba set velocidad
      */
 
-    motores_set_pwm(pwm, pwm);
-    while (encoders_get_posicion_total_right() * LONGITUD_PASO_ENCODER < 1.0) {
+    motores_set_velocidad(speed, speed);
+    while (encoders_get_posicion_total_right() * LONGITUD_PASO_ENCODER < 20*speed) {
 #ifdef ENCODERS_LOG_ESTADO
         cli();
         encoders_log_estado();
@@ -48,12 +52,14 @@ void loop() {
         delay(100);
 #endif
     }
-    pwm += 10;
     encoders_reset_posicion_total();
 
-    if (pwm >= 200) {
+    speed += 0.10;
+
+    if (speed > 0.30) 
+    {
         motores_set_pwm(0,0);
+        cli();
         while(1);
     }
-
 }

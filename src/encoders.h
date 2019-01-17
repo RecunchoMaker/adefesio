@@ -23,6 +23,8 @@ void encoders_ISR_left(void);
 void encoders_ISR_right(void);
 float encoders_get_velocidad_left(void);
 float encoders_get_velocidad_right(void);
+float encoders_get_ultima_velocidad_left(void);
+float encoders_get_ultima_velocidad_right(void);
 void encoders_calcula_velocidad();
 
 #ifdef ENCODERS_LOG_ESTADO

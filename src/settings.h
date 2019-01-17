@@ -13,6 +13,8 @@
 #define MAX_VELOCIDAD 0.35
 #define MAX_ACELERACION 0.5
 
+#define VELOCIDAD_INDEFINIDA 0xFFFFFFFF
+
 #endif /* ifndef SETTINGS_H
 
  */
