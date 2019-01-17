@@ -95,6 +95,7 @@ uint32_t motores_get_ticks_right() {
 
 void motores_actualizar_pwm() {
 
+    /*
     if (ticks_deseados_left == 0) {
         pwm_left = 0;
     } else {
@@ -111,6 +112,7 @@ void motores_actualizar_pwm() {
         //pwm_right -= error_lineal_right * KP_LINEAL + error_acumulado_right * KI_LINEAL;
         //error_acumulado_right += error_lineal_right;
     }
+    */
 
     motores_set_pwm(pwm_left, pwm_right);
 }

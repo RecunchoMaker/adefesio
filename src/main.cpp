@@ -7,11 +7,9 @@
 
 ISR (TIMER1_COMPA_vect) {
 
-    encoders_calcula_ticks_left();
-    encoders_calcula_ticks_right();
+    encoders_calcula_velocidad();
     //encoders_calcula_velocidad_angular();
-    motores_actualizar_velocidad();
-    encoders_reset_posicion();
+    //motores_actualizar_velocidad();
 }
 
 void setup() {
@@ -33,6 +31,7 @@ void setup() {
 // 0.13 salteado
 //
 float speed = 0.30;
+int16_t pwm = 50;
 
 void loop() {
 
@@ -40,28 +39,21 @@ void loop() {
      * prueba set velocidad
      */
 
-    motores_set_velocidad(speed, speed);
-    while (encoders_get_posicion_total_right() * LONGITUD_PASO_ENCODER < 2.9) {
-        Serial.print(speed);
-        Serial.print(" vel:");
-        Serial.print(motores_get_velocidad_actual());
-        Serial.print("-");
+    motores_set_pwm(pwm, pwm);
+    while (encoders_get_posicion_total_right() * LONGITUD_PASO_ENCODER < 1.0) {
 #ifdef ENCODERS_LOG_ESTADO
         cli();
         encoders_log_estado();
         sei();
-#endif
         delay(100);
+#endif
     }
-
+    pwm += 10;
     encoders_reset_posicion_total();
 
-    if (speed == 0.30)
-        speed = 0.12;
-    else
-        speed = 0.30;
-
-
-    // while(1);
+    if (pwm >= 200) {
+        motores_set_pwm(0,0);
+        while(1);
+    }
 
 }

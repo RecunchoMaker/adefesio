@@ -9,6 +9,7 @@
 #define ENCODER_RIGHT_C2 8
 
 #define LOG(x) Serial.print(x); Serial.print(" ");
+#define LOGF(x,d) Serial.print(x,d); Serial.print(" ");
 #define LOGN(x) Serial.println(x)
 
 void encoders_init(void);
@@ -22,12 +23,7 @@ void encoders_ISR_left(void);
 void encoders_ISR_right(void);
 float encoders_get_velocidad_left(void);
 float encoders_get_velocidad_right(void);
-void encoders_calcula_ticks_left();
-void encoders_calcula_ticks_right();
-void encoders_calcula_velocidad_angular();
-int32_t encoders_get_ticks_left();
-int32_t encoders_get_ticks_right();
-float encoders_get_velocidad_angular();
+void encoders_calcula_velocidad();
 
 #ifdef ENCODERS_LOG_ESTADO
 void encoders_log_estado_cabecera();
