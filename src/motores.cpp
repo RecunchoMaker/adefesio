@@ -3,8 +3,8 @@
 #include <motores.h>
 
 #define KA (200 / 0.28)
-#define KP_LINEAL -0
-#define KI_LINEAL -0.000
+#define KP_LINEAL -200.0
+#define KI_LINEAL -0.5
 
 volatile int16_t pwm_left;
 volatile int16_t pwm_right;
@@ -93,7 +93,7 @@ void motores_actualizar_velocidad() {
 
     pwm_right = KA * velocidad_lineal_objetivo;
     pwm_right += KP_LINEAL * error_lineal_right;
-    pwm_right += KI_LINEAL * error_acumulado_left;
+    pwm_right += KI_LINEAL * error_acumulado_right;
 
     motores_set_pwm(pwm_left, pwm_right);
 

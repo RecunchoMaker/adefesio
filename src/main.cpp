@@ -32,19 +32,13 @@ void setup() {
     motores_set_velocidad(0, 0);
 }
 
-// 0.13 salteado
-//
-float speed = 0.10;
+float speed = 0.07;
 int16_t pwm = 50;
 
 void loop() {
 
-    /*
-     * prueba set velocidad
-     */
-
-    motores_set_velocidad(speed, speed);
-    while (encoders_get_posicion_total_right() * LONGITUD_PASO_ENCODER < 20*speed) {
+    motores_set_velocidad(speed, 3.14159);
+    while (encoders_get_posicion_total_right() * LONGITUD_PASO_ENCODER < 5*speed) {
 #ifdef ENCODERS_LOG_ESTADO
         cli();
         encoders_log_estado();
@@ -54,9 +48,9 @@ void loop() {
     }
     encoders_reset_posicion_total();
 
-    speed += 0.10;
+    speed += 0.05;
 
-    if (speed > 0.30) 
+    if (speed > 0.25) 
     {
         motores_set_pwm(0,0);
         cli();

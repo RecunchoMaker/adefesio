@@ -19,11 +19,12 @@ bool bateria_agotada() {
 
 void bateria_muestra_nivel() {
     float bv = bateria_voltaje();
-    Serial.print("Bateria: ");
     if (bv < BATERIA_VOLTAJE_USB) {
-        Serial.println("USB");
+        // No imprimir
+        // Serial.println("USB");
     }
     else {
+        Serial.print("Bateria: ");
         Serial.print(bv, 2);
         Serial.println("v");
         bateria_watchdog();

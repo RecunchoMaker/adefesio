@@ -2,6 +2,7 @@
 #include <motores.h>
 #include <settings.h>
 
+#define KALMAN_GAIN 0.02
 
 volatile int16_t encoder_posicion_left = 0;
 volatile int16_t encoder_posicion_right = 0;
@@ -104,52 +105,34 @@ void encoders_calcula_velocidad() {
 
     if (encoder_posicion_left == 0) {
         ticks_sin_actualizar_left++;
-        velocidad_left = VELOCIDAD_INDEFINIDA;
+        velocidad_left = ultima_velocidad_left;
     }
     else {
 
         velocidad_left = LONGITUD_PASO_ENCODER * encoder_posicion_left * OCR1A/
             (PERIODO_TIMER * ( (int32_t) OCR1A * (ticks_sin_actualizar_left + 1) + ultimo_tcnt1_left - tcnt1_anterior_left));
-        /*
-        velocidad_left = LONGITUD_PASO_ENCODER * encoder_posicion_left /
-            (PERIODO_TIMER * ( (int32_t) OCR1A * (ticks_sin_actualizar_left + 1) + ultimo_tcnt1_left - tcnt1_anterior_left) / OCR1A );
-        */
 
-        if (velocidad_left < 0.4)
-        {
-            ticks_sin_actualizar_left = 0;
-            michi = tcnt1_anterior_left;
-            tcnt1_anterior_left = ultimo_tcnt1_left;
-            ultima_velocidad_left = velocidad_left;
-            encoder_posicion_left = 0;
-        } else {
-            ticks_sin_actualizar_left++;
-            velocidad_left = VELOCIDAD_INDEFINIDA;
-        }
+        velocidad_left = KALMAN_GAIN * velocidad_left + (1-KALMAN_GAIN) * ultima_velocidad_left;
+        ticks_sin_actualizar_left = 0;
+        tcnt1_anterior_left = ultimo_tcnt1_left;
+        ultima_velocidad_left = velocidad_left;
+        encoder_posicion_left = 0;
 
     }
 
     if (encoder_posicion_right == 0) {
         ticks_sin_actualizar_right++;
-        velocidad_right = VELOCIDAD_INDEFINIDA;
+        velocidad_right = ultima_velocidad_right;
     }
     else {
         velocidad_right = LONGITUD_PASO_ENCODER * encoder_posicion_right * OCR1A /
             (PERIODO_TIMER * ( (int32_t) OCR1A * (ticks_sin_actualizar_right + 1) + ultimo_tcnt1_right - tcnt1_anterior_right));
-        /*
-        velocidad_right = LONGITUD_PASO_ENCODER * encoder_posicion_right /
-            (PERIODO_TIMER * ( (int32_t) OCR1A * (ticks_sin_actualizar_right + 1) + ultimo_tcnt1_right - tcnt1_anterior_right) / OCR1A );
-        */
-        if (velocidad_right < 0.4)
-        {
-            ticks_sin_actualizar_right = 0;
-            encoder_posicion_right = 0;
-            tcnt1_anterior_right = ultimo_tcnt1_right;
-            ultima_velocidad_right = velocidad_right;
-        } else {
-            ticks_sin_actualizar_right++;
-            velocidad_right = VELOCIDAD_INDEFINIDA;
-        }
+
+        velocidad_right = KALMAN_GAIN * velocidad_right + (1-KALMAN_GAIN) * ultima_velocidad_right;
+        ticks_sin_actualizar_right = 0;
+        encoder_posicion_right = 0;
+        tcnt1_anterior_right = ultimo_tcnt1_right;
+        ultima_velocidad_right = velocidad_right;
     }
 
 }
@@ -176,7 +159,7 @@ void encoders_log_estado_cabecera() {
 }
 
 void encoders_log_estado() {
-    LOGF(ultima_velocidad_left,5);
+    LOGF(velocidad_left,5);
     LOGF(ultima_velocidad_right,5);
     LOG(motores_get_pwm_left());
     LOG(motores_get_pwm_right());
