@@ -12,6 +12,8 @@ volatile int16_t pwm_right;
 volatile float velocidad_lineal_objetivo = 0;
 volatile float velocidad_lineal_actual = 0;
 
+volatile float velocidad_angular_objetivo = 0;
+
 volatile float error_lineal_left = 0;
 volatile float error_lineal_right = 0;
 
@@ -81,8 +83,10 @@ float motores_get_velocidad_lineal_objetivo() {
 
 void motores_actualizar_velocidad() {
 
-    error_lineal_left = encoders_get_ultima_velocidad_left() - velocidad_lineal_objetivo;
-    error_lineal_right = encoders_get_ultima_velocidad_right() - velocidad_lineal_objetivo;
+    error_lineal_left = encoders_get_ultima_velocidad_left() - 
+       (velocidad_lineal_objetivo + (velocidad_angular_objetivo * DISTANCIA_ENTRE_EJES / 2  ));
+    error_lineal_right = encoders_get_ultima_velocidad_right() -
+       (velocidad_lineal_objetivo - (velocidad_angular_objetivo * DISTANCIA_ENTRE_EJES / 2  ));
 
     error_acumulado_left += error_lineal_left;
     error_acumulado_right += error_lineal_right;
@@ -96,7 +100,6 @@ void motores_actualizar_velocidad() {
     pwm_right += KI_LINEAL * error_acumulado_right;
 
     motores_set_pwm(pwm_left, pwm_right);
-
 }
 
 void motores_set_velocidad(float velocidad_lineal, float velocidad_angular) {
@@ -105,5 +108,7 @@ void motores_set_velocidad(float velocidad_lineal, float velocidad_angular) {
         velocidad_lineal_objetivo = MAX_VELOCIDAD;
     else
         velocidad_lineal_objetivo = velocidad_lineal;
+
+    velocidad_angular_objetivo = velocidad_angular;
 
 }

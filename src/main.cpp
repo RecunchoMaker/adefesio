@@ -12,7 +12,6 @@ volatile uint8_t min_tcnt1=255;
 ISR (TIMER1_COMPA_vect) {
 
     encoders_calcula_velocidad();
-    //encoders_calcula_velocidad_angular();
     motores_actualizar_velocidad();
 }
 
@@ -32,13 +31,14 @@ void setup() {
     motores_set_velocidad(0, 0);
 }
 
-float speed = 0.07;
+float speed = 0.10;
 int16_t pwm = 50;
 
 void loop() {
 
-    motores_set_velocidad(speed, 3.14159);
-    while (encoders_get_posicion_total_right() * LONGITUD_PASO_ENCODER < 5*speed) {
+    motores_set_velocidad(speed, speed / 0.20);
+
+    while (encoders_get_posicion_total_left() * LONGITUD_PASO_ENCODER < 20 *speed) {
 #ifdef ENCODERS_LOG_ESTADO
         cli();
         encoders_log_estado();
@@ -50,7 +50,7 @@ void loop() {
 
     speed += 0.05;
 
-    if (speed > 0.25) 
+    if (speed > 0.20) 
     {
         motores_set_pwm(0,0);
         cli();
