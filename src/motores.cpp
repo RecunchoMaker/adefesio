@@ -3,22 +3,28 @@
 #include <motores.h>
 
 #define KA (200 / 0.28)
-#define KP_LINEAL -200.0
+#define KP_LINEAL -300.0
 #define KI_LINEAL -0.5
 
 volatile int16_t pwm_left;
 volatile int16_t pwm_right;
 
 volatile float velocidad_lineal_objetivo = 0;
-volatile float velocidad_lineal_actual = 0;
+volatile float velocidad_lineal_actual_left = 0;
+volatile float velocidad_lineal_actual_right = 0;
 
 volatile float velocidad_angular_objetivo = 0;
+volatile double angulo_actual = 0;
+volatile double angulo_actual_calculado = 0;
 
 volatile float error_lineal_left = 0;
 volatile float error_lineal_right = 0;
 
 volatile float error_acumulado_left = 0;
 volatile float error_acumulado_right = 0;
+
+volatile double aux_e1 = 0;
+volatile double aux_e2 = 0;
 
 void motores_init(void) {
 
@@ -65,8 +71,8 @@ void motores_set_pwm(int16_t left, int16_t right) {
 
 }
 
-float motores_get_velocidad_actual() {
-    return velocidad_lineal_actual;
+float motores_get_velocidad_actual_left() {
+    return velocidad_lineal_actual_left;
 }
 
 int16_t motores_get_pwm_left() {
@@ -81,7 +87,7 @@ float motores_get_velocidad_lineal_objetivo() {
     return velocidad_lineal_objetivo;
 }
 
-void motores_actualizar_velocidad() {
+void motores_actualiza_velocidad() {
 
     error_lineal_left = encoders_get_ultima_velocidad_left() - 
        (velocidad_lineal_objetivo + (velocidad_angular_objetivo * DISTANCIA_ENTRE_EJES / 2  ));
@@ -91,11 +97,11 @@ void motores_actualizar_velocidad() {
     error_acumulado_left += error_lineal_left;
     error_acumulado_right += error_lineal_right;
 
-    pwm_left = KA * velocidad_lineal_objetivo;
-    pwm_left += KP_LINEAL * error_lineal_left;
+    pwm_left = KA * (velocidad_lineal_objetivo + (velocidad_angular_objetivo * DISTANCIA_ENTRE_EJES / 2));
+    pwm_left += KP_LINEAL * error_lineal_left; 
     pwm_left += KI_LINEAL * error_acumulado_left;
 
-    pwm_right = KA * velocidad_lineal_objetivo;
+    pwm_right = KA * (velocidad_lineal_objetivo - (velocidad_angular_objetivo * DISTANCIA_ENTRE_EJES / 2));
     pwm_right += KP_LINEAL * error_lineal_right;
     pwm_right += KI_LINEAL * error_acumulado_right;
 
@@ -110,5 +116,22 @@ void motores_set_velocidad(float velocidad_lineal, float velocidad_angular) {
         velocidad_lineal_objetivo = velocidad_lineal;
 
     velocidad_angular_objetivo = velocidad_angular;
+}
 
+float motores_get_angulo_actual() {
+    return angulo_actual;
+}
+
+float motores_get_angulo_actual_calculado() {
+    return angulo_actual_calculado;
+}
+
+void motores_actualiza_angulo() {
+
+    angulo_actual_calculado += velocidad_angular_objetivo * PERIODO_TIMER;
+
+    aux_e1 = encoders_get_ultima_velocidad_left() * PERIODO_TIMER;
+    aux_e2 = encoders_get_ultima_velocidad_right() * PERIODO_TIMER;
+
+    angulo_actual += (aux_e1 - aux_e2) / DISTANCIA_ENTRE_EJES;
 }

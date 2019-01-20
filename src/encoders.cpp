@@ -134,7 +134,6 @@ void encoders_calcula_velocidad() {
         tcnt1_anterior_right = ultimo_tcnt1_right;
         ultima_velocidad_right = velocidad_right;
     }
-
 }
 
 float encoders_get_velocidad_left() {
@@ -155,7 +154,7 @@ float encoders_get_ultima_velocidad_right() {
 
 #ifdef ENCODERS_LOG_ESTADO
 void encoders_log_estado_cabecera() {
-    Serial.println("velocidadLeft velocidadRight pwmLeft pwmRight posLeft posRight velocidadObjetivo ticksSinAct");
+    Serial.println("velocidadLeft velocidadRight pwmLeft pwmRight posLeft posRight velocidadObjetivo anguloActual anguloCalculado ticksSinAct");
 }
 
 void encoders_log_estado() {
@@ -165,16 +164,9 @@ void encoders_log_estado() {
     LOG(motores_get_pwm_right());
     LOG(encoder_posicion_total_left);
     LOG(encoder_posicion_total_right);
-
-    /*
-    LOGF(LONGITUD_PASO_ENCODER,9);
-    LOGF(PERIODO_TIMER, 9);
-    LOG(OCR1A);
-    LOG(ticks_sin_actualizar_left + 1);
-    LOG(ultimo_tcnt1_left);
-    LOG(michi);
-    */
     LOGF(motores_get_velocidad_lineal_objetivo(),5);
+    LOGF(motores_get_angulo_actual() * 360 / (2*PI),5);
+    LOGF(motores_get_angulo_actual_calculado() * 360 / (2*PI),5);
     LOGN(ticks_sin_actualizar_right);
 }
 #endif

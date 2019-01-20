@@ -21,10 +21,15 @@ int16_t motores_get_pwm_right();
 void motores_set_ticks(int32_t left, int32_t right);
 uint32_t motores_get_ticks_left();
 uint32_t motores_get_ticks_right();
-float motores_get_velocidad_actual();
+float motores_get_velocidad_actual_left();
 float motores_get_velocidad_lineal_objetivo();
-void motores_actualizar_velocidad();
+float motores_get_velocidad_angular_objetivo();
+void motores_actualiza_velocidad();
 void motores_set_velocidad(float lineal, float angular);
+float motores_get_velocidad_angular_objetivo();
+void motores_actualiza_angulo();
+float motores_get_angulo_actual();
+float motores_get_angulo_actual_calculado();
 
 #endif /* ifndef MOTORES_H
 
