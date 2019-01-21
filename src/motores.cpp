@@ -90,18 +90,18 @@ float motores_get_velocidad_lineal_objetivo() {
 void motores_actualiza_velocidad() {
 
     error_lineal_left = encoders_get_ultima_velocidad_left() - 
-       (velocidad_lineal_objetivo + (velocidad_angular_objetivo * DISTANCIA_ENTRE_EJES / 2  ));
+       (velocidad_lineal_objetivo + (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2  ));
     error_lineal_right = encoders_get_ultima_velocidad_right() -
-       (velocidad_lineal_objetivo - (velocidad_angular_objetivo * DISTANCIA_ENTRE_EJES / 2  ));
+       (velocidad_lineal_objetivo - (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2  ));
 
     error_acumulado_left += error_lineal_left;
     error_acumulado_right += error_lineal_right;
 
-    pwm_left = KA * (velocidad_lineal_objetivo + (velocidad_angular_objetivo * DISTANCIA_ENTRE_EJES / 2));
+    pwm_left = KA * (velocidad_lineal_objetivo + (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2));
     pwm_left += KP_LINEAL * error_lineal_left; 
     pwm_left += KI_LINEAL * error_acumulado_left;
 
-    pwm_right = KA * (velocidad_lineal_objetivo - (velocidad_angular_objetivo * DISTANCIA_ENTRE_EJES / 2));
+    pwm_right = KA * (velocidad_lineal_objetivo - (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2));
     pwm_right += KP_LINEAL * error_lineal_right;
     pwm_right += KI_LINEAL * error_acumulado_right;
 
@@ -118,20 +118,40 @@ void motores_set_velocidad(float velocidad_lineal, float velocidad_angular) {
     velocidad_angular_objetivo = velocidad_angular;
 }
 
-float motores_get_angulo_actual() {
+double motores_get_angulo_actual() {
     return angulo_actual;
 }
 
-float motores_get_angulo_actual_calculado() {
+void motores_set_angulo_actual(double angulo) {
+    angulo_actual = angulo;
+}
+
+double motores_get_angulo_actual_calculado() {
     return angulo_actual_calculado;
 }
 
 void motores_actualiza_angulo() {
 
+    /*
+     * Forma 1 de calcular el angulo, presuponiendo que actualiza_velicidad()
+     * funciona perfectamente
+     *
     angulo_actual_calculado += velocidad_angular_objetivo * PERIODO_TIMER;
+    */
 
+    /*
+     * Forma 2 de calcular el angulo
+     *
     aux_e1 = encoders_get_ultima_velocidad_left() * PERIODO_TIMER;
     aux_e2 = encoders_get_ultima_velocidad_right() * PERIODO_TIMER;
+        angulo_actual_calculado += (aux_e1 - aux_e2) / DISTANCIA_ENTRE_RUEDAS;
+    */
 
-    angulo_actual += (aux_e1 - aux_e2) / DISTANCIA_ENTRE_EJES;
+    if (encoders_get_posicion_left() != encoders_get_posicion_right) {
+        angulo_actual+= (LONGITUD_PASO_ENCODER * encoders_get_posicion_left() -
+                         LONGITUD_PASO_ENCODER * encoders_get_posicion_right())
+                         / 
+                         DISTANCIA_ENTRE_RUEDAS;
+    }
+
 }

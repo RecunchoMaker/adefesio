@@ -28,8 +28,9 @@ void motores_actualiza_velocidad();
 void motores_set_velocidad(float lineal, float angular);
 float motores_get_velocidad_angular_objetivo();
 void motores_actualiza_angulo();
-float motores_get_angulo_actual();
-float motores_get_angulo_actual_calculado();
+double motores_get_angulo_actual();
+double motores_get_angulo_actual_calculado();
+void motores_set_angulo_actual(double angulo);
 
 #endif /* ifndef MOTORES_H
 

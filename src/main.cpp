@@ -14,6 +14,7 @@ ISR (TIMER1_COMPA_vect) {
     encoders_calcula_velocidad();
     motores_actualiza_velocidad();
     motores_actualiza_angulo();
+    encoders_reset_posicion();
 }
 
 void setup() {
@@ -40,9 +41,9 @@ void loop() {
     // while (encoders_get_posicion_total_left() * LONGITUD_PASO_ENCODER < 20 *speed) {
     while (motores_get_angulo_actual() < PI) {
         if (motores_get_angulo_actual() > PI-0.3)
-            motores_set_velocidad(0, PI/3.0);
+            motores_set_velocidad(0, PI/4.0);
         else if (motores_get_angulo_actual() > 0.1)
-            motores_set_velocidad(0.0, PI/3.0);
+            motores_set_velocidad(0.0, PI/3.5);
 #ifdef ENCODERS_LOG_ESTADO
         cli();
         encoders_log_estado();

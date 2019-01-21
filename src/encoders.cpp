@@ -116,7 +116,7 @@ void encoders_calcula_velocidad() {
         ticks_sin_actualizar_left = 0;
         tcnt1_anterior_left = ultimo_tcnt1_left;
         ultima_velocidad_left = velocidad_left;
-        encoder_posicion_left = 0;
+        // encoder_posicion_left = 0;
 
     }
 
@@ -130,9 +130,9 @@ void encoders_calcula_velocidad() {
 
         velocidad_right = KALMAN_GAIN * velocidad_right + (1-KALMAN_GAIN) * ultima_velocidad_right;
         ticks_sin_actualizar_right = 0;
-        encoder_posicion_right = 0;
         tcnt1_anterior_right = ultimo_tcnt1_right;
         ultima_velocidad_right = velocidad_right;
+        // encoder_posicion_right = 0;
     }
 }
 
