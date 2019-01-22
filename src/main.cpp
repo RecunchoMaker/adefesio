@@ -1,9 +1,11 @@
 #include <Arduino.h>
 #include <settings.h>
+#include <robot.h>
 #include <motores.h>
 #include <bateria.h>
 #include <encoders.h>
 #include <timer1.h>
+#include <log.h>
 
 volatile uint8_t max_tcnt1=0;
 
@@ -14,7 +16,9 @@ ISR (TIMER1_COMPA_vect) {
     encoders_calcula_velocidad();
     motores_actualiza_velocidad();
     motores_actualiza_angulo();
+    robot_actualiza_posicion();
     encoders_reset_posicion();
+
 }
 
 void setup() {
@@ -28,30 +32,46 @@ void setup() {
 #ifdef ENCODERS_LOG_ESTADO
     encoders_log_estado_cabecera();
 #endif
+#ifdef ROBOT_LOG_ESTADO
+    robot_log_estado_cabecera();
+#endif
 
     sei();
     motores_set_velocidad(0, 0);
+    robot_set_posicion(0,0);
+    robot_set_orientacion(ESTE);
 }
+
+uint8_t ori = OESTE;
+float pos = 0.40;
 
 void loop() {
 
-    // motores_set_velocidad(speed, speed / 0.20);
-
-    motores_set_velocidad(0.0, PI/4.0);
-    // while (encoders_get_posicion_total_left() * LONGITUD_PASO_ENCODER < 20 *speed) {
-    while (motores_get_angulo_actual() < PI) {
-        if (motores_get_angulo_actual() > PI-0.3)
-            motores_set_velocidad(0, PI/4.0);
-        else if (motores_get_angulo_actual() > 0.1)
-            motores_set_velocidad(0.0, PI/3.5);
+    robot_ir_a(pos, 0, RECTO);
+    while (ori == OESTE and robot_get_posicion_x() <= 0.40 or ori == ESTE and robot_get_posicion_x() >=0 ) {
+#ifdef ROBOT_LOG_ESTADO
+        robot_log_estado();
+        delay(100);
+#endif
 #ifdef ENCODERS_LOG_ESTADO
-        cli();
         encoders_log_estado();
-        sei();
         delay(100);
 #endif
     }
-    cli();
-    motores_set_pwm(0,0);
-    while(1);
+    pos = (pos == 0.40?0.0:0.40);
+
+    robot_gira(-1);
+    while (robot_get_orientacion() != ori) {
+#ifdef ROBOT_LOG_ESTADO
+        robot_log_estado();
+        delay(100);
+#endif
+#ifdef ENCODERS_LOG_ESTADO
+        encoders_log_estado();
+        delay(100);
+#endif
+    }
+
+    ori = (ori == OESTE?ESTE:OESTE);
+
 }

@@ -4,7 +4,7 @@
 
 #define KA (200 / 0.28)
 #define KP_LINEAL -300.0
-#define KI_LINEAL -0.5
+#define KI_LINEAL -1.0
 
 volatile int16_t pwm_left;
 volatile int16_t pwm_right;
@@ -87,25 +87,35 @@ float motores_get_velocidad_lineal_objetivo() {
     return velocidad_lineal_objetivo;
 }
 
+float motores_get_velocidad_angular_objetivo() {
+    return velocidad_angular_objetivo;
+}
+
 void motores_actualiza_velocidad() {
 
-    error_lineal_left = encoders_get_ultima_velocidad_left() - 
-       (velocidad_lineal_objetivo + (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2  ));
-    error_lineal_right = encoders_get_ultima_velocidad_right() -
-       (velocidad_lineal_objetivo - (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2  ));
+    if (velocidad_angular_objetivo != 0 or velocidad_lineal_objetivo != 0) {
 
-    error_acumulado_left += error_lineal_left;
-    error_acumulado_right += error_lineal_right;
+        error_lineal_left = encoders_get_ultima_velocidad_left() - 
+           (velocidad_lineal_objetivo + (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2  ));
+        error_lineal_right = encoders_get_ultima_velocidad_right() -
+           (velocidad_lineal_objetivo - (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2  ));
 
-    pwm_left = KA * (velocidad_lineal_objetivo + (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2));
-    pwm_left += KP_LINEAL * error_lineal_left; 
-    pwm_left += KI_LINEAL * error_acumulado_left;
+        error_acumulado_left += error_lineal_left;
+        error_acumulado_right += error_lineal_right;
 
-    pwm_right = KA * (velocidad_lineal_objetivo - (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2));
-    pwm_right += KP_LINEAL * error_lineal_right;
-    pwm_right += KI_LINEAL * error_acumulado_right;
+        pwm_left = KA * (velocidad_lineal_objetivo + (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2));
+        pwm_left += KP_LINEAL * error_lineal_left; 
+        pwm_left += KI_LINEAL * error_acumulado_left;
 
-    motores_set_pwm(pwm_left, pwm_right);
+        pwm_right = KA * (velocidad_lineal_objetivo - (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2));
+        pwm_right += KP_LINEAL * error_lineal_right;
+        pwm_right += KI_LINEAL * error_acumulado_right;
+
+        motores_set_pwm(pwm_left, pwm_right);
+    }
+    else {
+        motores_set_pwm(0, 0);
+    }
 }
 
 void motores_set_velocidad(float velocidad_lineal, float velocidad_angular) {
@@ -116,6 +126,7 @@ void motores_set_velocidad(float velocidad_lineal, float velocidad_angular) {
         velocidad_lineal_objetivo = velocidad_lineal;
 
     velocidad_angular_objetivo = velocidad_angular;
+
 }
 
 double motores_get_angulo_actual() {
@@ -152,6 +163,8 @@ void motores_actualiza_angulo() {
                          LONGITUD_PASO_ENCODER * encoders_get_posicion_right())
                          / 
                          DISTANCIA_ENTRE_RUEDAS;
+        if (angulo_actual < 0) angulo_actual+=2*PI;
+        else if (angulo_actual>2*PI) angulo_actual -= 2*PI;
     }
 
 }

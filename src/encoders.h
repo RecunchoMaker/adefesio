@@ -8,10 +8,6 @@
 #define ENCODER_RIGHT_C1 3
 #define ENCODER_RIGHT_C2 8
 
-#define LOG(x) Serial.print(x); Serial.print(" ");
-#define LOGF(x,d) Serial.print(x,d); Serial.print(" ");
-#define LOGN(x) Serial.println(x)
-
 void encoders_init(void);
 void encoders_reset_posicion(void);
 void encoders_reset_posicion_total(void);
@@ -25,6 +21,8 @@ float encoders_get_velocidad_left(void);
 float encoders_get_velocidad_right(void);
 float encoders_get_ultima_velocidad_left(void);
 float encoders_get_ultima_velocidad_right(void);
+uint8_t encoders_get_ticks_sin_actualizar_left(void);
+uint8_t encoders_get_ticks_sin_actualizar_right(void);
 void encoders_calcula_velocidad();
 
 #ifdef ENCODERS_LOG_ESTADO

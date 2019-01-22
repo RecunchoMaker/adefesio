@@ -52,7 +52,15 @@ void encoders_reset_posicion_total(void) {
     encoder_posicion_total_left = 0;
     encoder_posicion_total_right = 0;
 }
-   
+
+uint8_t encoders_get_ticks_sin_actualizar_left(void) {
+    return ticks_sin_actualizar_left;
+}
+
+uint8_t encoders_get_ticks_sin_actualizar_right(void) {
+    return ticks_sin_actualizar_right;
+}
+
 int16_t encoders_get_posicion_left(void) {
     return encoder_posicion_left;
 }
@@ -152,21 +160,3 @@ float encoders_get_ultima_velocidad_right() {
     return ultima_velocidad_right;
 }
 
-#ifdef ENCODERS_LOG_ESTADO
-void encoders_log_estado_cabecera() {
-    Serial.println("velocidadLeft velocidadRight pwmLeft pwmRight posLeft posRight velocidadObjetivo anguloActual anguloCalculado ticksSinAct");
-}
-
-void encoders_log_estado() {
-    LOGF(velocidad_left,5);
-    LOGF(ultima_velocidad_right,5);
-    LOG(motores_get_pwm_left());
-    LOG(motores_get_pwm_right());
-    LOG(encoder_posicion_total_left);
-    LOG(encoder_posicion_total_right);
-    LOGF(motores_get_velocidad_lineal_objetivo(),5);
-    LOGF(motores_get_angulo_actual() * 360 / (2*PI),5);
-    LOGF(motores_get_angulo_actual_calculado() * 360 / (2*PI),5);
-    LOGN(ticks_sin_actualizar_right);
-}
-#endif
