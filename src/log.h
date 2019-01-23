@@ -29,19 +29,21 @@ void encoders_log_estado() {
 #endif
 
 #ifdef ROBOT_LOG_ESTADO
-#include <robot.h>
 
-void robot_log_estado_cabecera() {
-    Serial.println("x y orientacion angulo");
-}
-
-void robot_log_estado() {
-    LOGF(robot_get_posicion_x(), 5);
-    LOGF(robot_get_posicion_y(), 5);
-    LOG(robot_get_orientacion());
-    LOGFN(motores_get_angulo_actual() * 360 / (2*PI),2);
-}
+void robot_log_estado_cabecera();
+void robot_log_estado();
 #endif
+
+
+#ifdef MOTORES_LOG_PID
+
+void log_insert( float _ultima_velocidad, float _velocidad_lineal_objetivo, float _error_lineal_left,
+       float _error_acumulado_left, float _aux1, float _aux2, float _aux3, 
+       uint16_t _pwm, uint8_t _ticks);
+void log_print();
+void log_start();
+
+#endif /* MOTORES_LOG_PID */
 
 #endif /* ifndef LOG_H
 

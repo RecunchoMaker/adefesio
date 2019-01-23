@@ -1,10 +1,11 @@
 #include <Arduino.h>
+#include <log.h>
 #include <settings.h>
 #include <motores.h>
 
 #define KA (200 / 0.28)
-#define KP_LINEAL -300.0
-#define KI_LINEAL -1.0
+#define KP_LINEAL -600.0
+#define KI_LINEAL -0.0
 
 volatile int16_t pwm_left;
 volatile int16_t pwm_right;
@@ -110,6 +111,23 @@ void motores_actualiza_velocidad() {
         pwm_right = KA * (velocidad_lineal_objetivo - (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2));
         pwm_right += KP_LINEAL * error_lineal_right;
         pwm_right += KI_LINEAL * error_acumulado_right;
+
+#ifdef MOTORES_LOG_PID
+        if (encoders_get_posicion_total_left() % 5 == 0) {
+        log_insert(
+                encoders_get_ultima_velocidad_left(),
+                velocidad_lineal_objetivo,
+                error_lineal_left,
+                error_acumulado_left,
+                KA * (velocidad_lineal_objetivo + (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2)),
+                KP_LINEAL * error_lineal_left,
+                KI_LINEAL * error_acumulado_left,
+                pwm_left,
+                encoders_get_ticks_sin_actualizar_left()
+                );
+        }
+#endif
+
 
         motores_set_pwm(pwm_left, pwm_right);
     }

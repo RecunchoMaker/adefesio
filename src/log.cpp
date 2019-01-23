@@ -1,0 +1,85 @@
+#include <Arduino.h>
+#include <log.h>
+
+#ifdef ROBOT_LOG_ESTADO
+#include <robot.h>
+#include <motores.h>
+
+void robot_log_estado_cabecera() {
+    Serial.println("x y orientacion angulo");
+}
+
+void robot_log_estado() {
+    LOGF(robot_get_posicion_x(), 5);
+    LOGF(robot_get_posicion_y(), 5);
+    LOG(robot_get_orientacion());
+    LOGFN(motores_get_angulo_actual() * 360 / (2*PI),2);
+}
+#endif
+
+#ifdef MOTORES_LOG_PID
+#include <encoders.h>
+
+#define MAX_LOG_MEM 40
+volatile uint8_t index = MAX_LOG_MEM;
+volatile float a_ultima_velocidad[MAX_LOG_MEM];
+volatile float a_velocidad_lineal_objetivo[MAX_LOG_MEM];
+volatile float a_error_lineal_left[MAX_LOG_MEM];
+volatile float a_error_acumulado_left[MAX_LOG_MEM];
+volatile float a_aux1[MAX_LOG_MEM];
+volatile float a_aux2[MAX_LOG_MEM];
+volatile float a_aux3[MAX_LOG_MEM];
+volatile uint8_t a_ticks[MAX_LOG_MEM];
+volatile uint16_t a_pwm[MAX_LOG_MEM];
+
+void log_insert(
+        float _ultima_velocidad,
+        float _velocidad_lineal_objetivo,
+        float _error_lineal_left,
+        float _error_acumulado_left,
+        float _aux1,
+        float _aux2,
+        float _aux3,
+        uint16_t _pwm,
+        uint8_t _ticks
+        )
+{
+    if (index < MAX_LOG_MEM) {
+
+        a_ultima_velocidad[index] = _ultima_velocidad;
+        a_velocidad_lineal_objetivo[index] = _velocidad_lineal_objetivo;
+        a_error_lineal_left[index] = _error_lineal_left;
+        a_error_acumulado_left[index] = _error_acumulado_left;
+        a_aux1[index] = _aux1;
+        a_aux2[index] = _aux2;
+        a_aux3[index] = _aux3;
+        a_ticks[index] = _ticks;
+        a_pwm[index] = _pwm;
+        index++;
+    }
+}
+
+void log_print() {
+    if (index == MAX_LOG_MEM) {
+        Serial.println("ultimaVel velObjetivo errorLeft errorAcumulado ka kp ki pwm ticks");
+        for (uint8_t i = 0; i < MAX_LOG_MEM; i++) {
+           LOGF(a_ultima_velocidad[i],5);
+           LOGF(a_velocidad_lineal_objetivo[i],5);
+           LOGF(a_error_lineal_left[i],5);
+           LOGF(a_error_acumulado_left[i],5);
+           LOGF(a_aux1[i],5);
+           LOGF(a_aux2[i],5);
+           LOGF(a_aux3[i],5);
+           LOG(a_pwm[i]);
+           LOGN(a_ticks[i]);
+        }
+        index++; // para parar de logear
+    }
+}
+
+void log_start() {
+    index = 0;
+}
+
+#endif /* MOTORES_LOG_PID */
+        

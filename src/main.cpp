@@ -43,12 +43,13 @@ void setup() {
 }
 
 uint8_t ori = OESTE;
-float pos = 0.40;
+float pos = 1.00;
 
 void loop() {
 
     robot_ir_a(pos, 0, RECTO);
-    while (ori == OESTE and robot_get_posicion_x() <= 0.40 or ori == ESTE and robot_get_posicion_x() >=0 ) {
+    log_start();
+    while (ori == OESTE and robot_get_posicion_x() <= 1.00 or ori == ESTE and robot_get_posicion_x() >=0 ) {
 #ifdef ROBOT_LOG_ESTADO
         robot_log_estado();
         delay(100);
@@ -57,8 +58,12 @@ void loop() {
         encoders_log_estado();
         delay(100);
 #endif
+#ifdef MOTORES_LOG_PID
+       log_print();
+#endif
     }
-    pos = (pos == 0.40?0.0:0.40);
+
+    pos = (pos == 1.00?0.0:1.00);
 
     robot_gira(-1);
     while (robot_get_orientacion() != ori) {
