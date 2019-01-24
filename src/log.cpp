@@ -21,7 +21,7 @@ void robot_log_estado() {
 #include <encoders.h>
 
 #define MAX_LOG_MEM 40
-volatile uint8_t index = MAX_LOG_MEM;
+volatile uint8_t index = MAX_LOG_MEM + 1;
 volatile float a_ultima_velocidad[MAX_LOG_MEM];
 volatile float a_velocidad_lineal_objetivo[MAX_LOG_MEM];
 volatile float a_error_lineal_left[MAX_LOG_MEM];
@@ -61,7 +61,7 @@ void log_insert(
 
 void log_print() {
     if (index == MAX_LOG_MEM) {
-        Serial.println("ultimaVel velObjetivo errorLeft errorAcumulado ka kp ki pwm ticks");
+        Serial.println("ultimaVel velObjetivo errorLeft errorAcumulado kp kd ki pwm ticks");
         for (uint8_t i = 0; i < MAX_LOG_MEM; i++) {
            LOGF(a_ultima_velocidad[i],5);
            LOGF(a_velocidad_lineal_objetivo[i],5);
@@ -70,6 +70,7 @@ void log_print() {
            LOGF(a_aux1[i],5);
            LOGF(a_aux2[i],5);
            LOGF(a_aux3[i],5);
+           if (a_pwm[i] > 255) a_pwm[i] = 255;
            LOG(a_pwm[i]);
            LOGN(a_ticks[i]);
         }

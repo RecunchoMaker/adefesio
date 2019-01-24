@@ -16,6 +16,8 @@
 
 void motores_init(void);
 void motores_set_pwm(int16_t left, int16_t right);
+void motores_set_pwm_left(int16_t right);
+void motores_set_pwm_right(int16_t left);
 int16_t motores_get_pwm_left();
 int16_t motores_get_pwm_right();
 void motores_set_ticks(int32_t left, int32_t right);

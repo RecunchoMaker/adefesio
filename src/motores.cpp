@@ -3,9 +3,10 @@
 #include <settings.h>
 #include <motores.h>
 
-#define KA (200 / 0.28)
-#define KP_LINEAL -600.0
-#define KI_LINEAL -0.0
+//#define KA (200 / 0.28)
+#define KP_LINEAL -900.0
+#define KD_LINEAL -7.14
+#define KI_LINEAL -0
 
 volatile int16_t pwm_left;
 volatile int16_t pwm_right;
@@ -40,7 +41,11 @@ void motores_init(void) {
 }
 
 void motores_set_pwm(int16_t left, int16_t right) {
+    motores_set_pwm_left(left);
+    motores_set_pwm_right(right);
+}
 
+void motores_set_pwm_right(int16_t right) {
     if (right > 0) {
         if (right > MAX_PWM) right = MAX_PWM;
         digitalWrite(MOTOR_RIGHT_IN1, HIGH);
@@ -52,9 +57,11 @@ void motores_set_pwm(int16_t left, int16_t right) {
         digitalWrite(MOTOR_RIGHT_IN1, LOW);
         digitalWrite(MOTOR_RIGHT_IN2, HIGH);
         analogWrite(MOTOR_RIGHT_PWM, -right);
-        pwm_right = -right;
+        pwm_right = right;
     }
+}
 
+void motores_set_pwm_left(int16_t left) {
     if (left > 0) {
         if (left > MAX_PWM) left = MAX_PWM;
         digitalWrite(MOTOR_LEFT_IN1, HIGH);
@@ -66,10 +73,8 @@ void motores_set_pwm(int16_t left, int16_t right) {
         digitalWrite(MOTOR_LEFT_IN1, LOW);
         digitalWrite(MOTOR_LEFT_IN2, HIGH);
         analogWrite(MOTOR_LEFT_PWM, -left);
-        pwm_left = -left;
+        pwm_left = left;
     }
-
-
 }
 
 float motores_get_velocidad_actual_left() {
@@ -101,26 +106,34 @@ void motores_actualiza_velocidad() {
         error_lineal_right = encoders_get_ultima_velocidad_right() -
            (velocidad_lineal_objetivo - (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2  ));
 
+        /* no acumulamos todos los errores, sino que guardamos el último de ellos (mas abajo)
         error_acumulado_left += error_lineal_left;
         error_acumulado_right += error_lineal_right;
+        */
 
-        pwm_left = KA * (velocidad_lineal_objetivo + (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2));
+        /* no utilizamos KA
+        // pwm_left = KA * (velocidad_lineal_objetivo + (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2));
+        */
         pwm_left += KP_LINEAL * error_lineal_left; 
+        pwm_left += KD_LINEAL * ((error_lineal_left - error_acumulado_left) / PERIODO_TIMER);
         pwm_left += KI_LINEAL * error_acumulado_left;
 
-        pwm_right = KA * (velocidad_lineal_objetivo - (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2));
+        // pwm_right = KA * (velocidad_lineal_objetivo - (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2));
         pwm_right += KP_LINEAL * error_lineal_right;
+        pwm_right += KD_LINEAL * ((error_lineal_right - error_acumulado_right) / PERIODO_TIMER);
         pwm_right += KI_LINEAL * error_acumulado_right;
 
 #ifdef MOTORES_LOG_PID
-        if (encoders_get_posicion_total_left() % 5 == 0) {
+        //if (1) {
+        if (encoders_get_posicion_total_left() % 2 == 0) {
         log_insert(
                 encoders_get_ultima_velocidad_left(),
-                velocidad_lineal_objetivo,
+            velocidad_lineal_objetivo + (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2  ),
+           //     velocidad_lineal_objetivo,
                 error_lineal_left,
                 error_acumulado_left,
-                KA * (velocidad_lineal_objetivo + (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2)),
                 KP_LINEAL * error_lineal_left,
+                KD_LINEAL * ((error_lineal_right - error_acumulado_right) / PERIODO_TIMER),
                 KI_LINEAL * error_acumulado_left,
                 pwm_left,
                 encoders_get_ticks_sin_actualizar_left()
@@ -128,6 +141,8 @@ void motores_actualiza_velocidad() {
         }
 #endif
 
+        error_acumulado_left = error_lineal_left;
+        error_acumulado_right = error_lineal_right;
 
         motores_set_pwm(pwm_left, pwm_right);
     }

@@ -43,13 +43,26 @@ void setup() {
 }
 
 uint8_t ori = OESTE;
-float pos = 1.00;
+float pos = 0.40;
 
 void loop() {
 
-    robot_ir_a(pos, 0, RECTO);
+    /* Pruebas de aceleracion y deceleracion 
+    motores_set_velocidad(0.2, 0);
+    delay(1000);
     log_start();
-    while (ori == OESTE and robot_get_posicion_x() <= 1.00 or ori == ESTE and robot_get_posicion_x() >=0 ) {
+    motores_set_velocidad(0.1, 0);
+    while (robot_get_posicion_x() <= 0.5) {
+        log_print();
+    }
+    robot_parar();
+
+    while(1);
+    */
+
+    robot_ir_a(pos, 0, RECTO);
+    // log_start();
+    while (ori == OESTE and robot_get_posicion_x() <= 0.40 or ori == ESTE and robot_get_posicion_x() >=0 ) {
 #ifdef ROBOT_LOG_ESTADO
         robot_log_estado();
         delay(100);
@@ -63,8 +76,9 @@ void loop() {
 #endif
     }
 
-    pos = (pos == 1.00?0.0:1.00);
+    pos = (pos == 0.40?0.0:0.40);
 
+    log_start();
     robot_gira(-1);
     while (robot_get_orientacion() != ori) {
 #ifdef ROBOT_LOG_ESTADO

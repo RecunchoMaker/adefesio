@@ -58,8 +58,6 @@ void robot_ir_a(float x, float y, float radio) {
                 posicion_y_inicial = posicion_y;
                 encoders_reset_posicion_total();
                 motores_set_velocidad(MAX_VELOCIDAD_LINEAL, 0);
-                Serial.print(posicion_x_inicial);
-
             }
         }
 

@@ -2,7 +2,7 @@
 #include <motores.h>
 #include <settings.h>
 
-#define KALMAN_GAIN 0.02
+#define KALMAN_GAIN 1
 
 volatile int16_t encoder_posicion_left = 0;
 volatile int16_t encoder_posicion_right = 0;
