@@ -29,8 +29,8 @@ volatile float a_error_acumulado_left[MAX_LOG_MEM];
 volatile float a_aux1[MAX_LOG_MEM];
 volatile float a_aux2[MAX_LOG_MEM];
 volatile float a_aux3[MAX_LOG_MEM];
+volatile float a_potencia[MAX_LOG_MEM];
 volatile uint8_t a_ticks[MAX_LOG_MEM];
-volatile uint16_t a_pwm[MAX_LOG_MEM];
 
 void log_insert(
         float _ultima_velocidad,
@@ -40,7 +40,7 @@ void log_insert(
         float _aux1,
         float _aux2,
         float _aux3,
-        uint16_t _pwm,
+        float _potencia,
         uint8_t _ticks
         )
 {
@@ -54,24 +54,27 @@ void log_insert(
         a_aux2[index] = _aux2;
         a_aux3[index] = _aux3;
         a_ticks[index] = _ticks;
-        a_pwm[index] = _pwm;
+        a_potencia[index] = _potencia;
         index++;
     }
 }
 
 void log_print() {
     if (index == MAX_LOG_MEM) {
-        Serial.println("ultimaVel velObjetivo errorLeft errorAcumulado kp kd ki pwm ticks");
+        Serial.println("ultimaVel velObjetivo errorLeft errorAcumulado kp kd ki potencia ticks");
         for (uint8_t i = 0; i < MAX_LOG_MEM; i++) {
            LOGF(a_ultima_velocidad[i],5);
            LOGF(a_velocidad_lineal_objetivo[i],5);
            LOGF(a_error_lineal_left[i],5);
            LOGF(a_error_acumulado_left[i],5);
+           if (a_aux1[i]>1) a_aux1[i] = 1.5;
            LOGF(a_aux1[i],5);
+           if (a_aux1[2]>1) a_aux1[i] = 1.5;
            LOGF(a_aux2[i],5);
+           if (a_aux1[3]>1) a_aux1[i] = 1.5;
            LOGF(a_aux3[i],5);
-           if (a_pwm[i] > 255) a_pwm[i] = 255;
-           LOG(a_pwm[i]);
+           if (a_potencia[i] > 1) a_potencia[i] = 1;
+           LOGF(a_potencia[i],5);
            LOGN(a_ticks[i]);
         }
         index++; // para parar de logear

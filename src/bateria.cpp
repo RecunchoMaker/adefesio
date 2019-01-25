@@ -6,19 +6,19 @@ void bateria_init(void) {
     bateria_watchdog();
 }
 
-float bateria_voltaje() {
+float bateria_get_voltaje() {
     return 10.0 * analogRead(BATERIA_VOLTAJE_PIN) / 1024.0;
 }
 
 bool bateria_agotada() {
-    float bv = bateria_voltaje();
+    float bv = bateria_get_voltaje();
     if (bv < BATERIA_VOLTAJE_USB)
         return false;
-    return bateria_voltaje() <= BATERIA_VOLTAJE_UMBRAL;
+    return bateria_get_voltaje() <= BATERIA_VOLTAJE_UMBRAL;
 }
 
 void bateria_muestra_nivel() {
-    float bv = bateria_voltaje();
+    float bv = bateria_get_voltaje();
     if (bv < BATERIA_VOLTAJE_USB) {
         // No imprimir
         // Serial.println("USB");

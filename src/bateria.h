@@ -9,7 +9,7 @@
 #define BATERIA_LED_PIN 13
 
 void bateria_init(void);
-float bateria_voltaje(void);
+float bateria_get_voltaje(void);
 bool bateria_agotada(void);
 void bateria_muestra_nivel(void);
 void bateria_watchdog(void);

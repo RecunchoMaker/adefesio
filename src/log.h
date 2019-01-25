@@ -39,7 +39,7 @@ void robot_log_estado();
 
 void log_insert( float _ultima_velocidad, float _velocidad_lineal_objetivo, float _error_lineal_left,
        float _error_acumulado_left, float _aux1, float _aux2, float _aux3, 
-       uint16_t _pwm, uint8_t _ticks);
+       float _potencia, uint8_t _ticks);
 void log_print();
 void log_start();
 

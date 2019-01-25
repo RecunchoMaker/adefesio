@@ -14,10 +14,11 @@
 
 #define MAX_PWM 200
 
-void motores_init(void);
-void motores_set_pwm(int16_t left, int16_t right);
+void motores_init(float voltaje);
+void motores_set_maximo_pwm(int16_t pwm);
 void motores_set_pwm_left(int16_t right);
 void motores_set_pwm_right(int16_t left);
+void motores_set_potencia(float left, float right);
 int16_t motores_get_pwm_left();
 int16_t motores_get_pwm_right();
 void motores_set_ticks(int32_t left, int32_t right);

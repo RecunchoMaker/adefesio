@@ -24,7 +24,7 @@ ISR (TIMER1_COMPA_vect) {
 void setup() {
     Serial.begin(115200);
     bateria_init();
-    motores_init();
+    motores_init(bateria_get_voltaje());
     encoders_init();
     bateria_muestra_nivel();
 
@@ -47,6 +47,12 @@ float pos = 0.40;
 
 void loop() {
 
+    // Espera una tecla
+    while (Serial.available()) Serial.read();
+    while (!Serial.available());
+    while (Serial.available()) Serial.read();
+
+
     /* Pruebas de aceleracion y deceleracion 
     motores_set_velocidad(0.2, 0);
     delay(1000);
@@ -61,7 +67,7 @@ void loop() {
     */
 
     robot_ir_a(pos, 0, RECTO);
-    // log_start();
+    log_start();
     while (ori == OESTE and robot_get_posicion_x() <= 0.40 or ori == ESTE and robot_get_posicion_x() >=0 ) {
 #ifdef ROBOT_LOG_ESTADO
         robot_log_estado();
@@ -76,9 +82,11 @@ void loop() {
 #endif
     }
 
+    /*
+
     pos = (pos == 0.40?0.0:0.40);
 
-    log_start();
+    //log_start();
     robot_gira(-1);
     while (robot_get_orientacion() != ori) {
 #ifdef ROBOT_LOG_ESTADO
@@ -91,6 +99,10 @@ void loop() {
 #endif
     }
 
+
     ori = (ori == OESTE?ESTE:OESTE);
 
+    */
+
+    motores_set_potencia(0,0);
 }
