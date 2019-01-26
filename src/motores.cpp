@@ -4,9 +4,10 @@
 #include <motores.h>
 
 //#define KA (200 / 0.28)
-#define KP_LINEAL -0.4
-#define KD_LINEAL -0.01
-#define KI_LINEAL -0
+
+volatile float kp_lineal = 0.4;
+volatile float kd_lineal = 0.1;
+volatile float ki_lineal = 0.0;
 
 volatile float potencia_left;
 volatile float potencia_right;
@@ -46,6 +47,22 @@ void motores_init(float voltaje) {
 
     motores_set_potencia(0,0);
 }
+
+void motores_set_kp_lineal(float kp) {
+    kp_lineal = kp;
+}
+
+void motores_set_ki_lineal(float ki) {
+    ki_lineal = ki;
+}
+
+void motores_set_kd_lineal(float kd) {
+    kd_lineal = kd;
+}
+
+float motores_get_kp_lineal() { return kp_lineal; }
+float motores_get_ki_lineal() { return ki_lineal; }
+float motores_get_kd_lineal() { return kd_lineal; }
 
 void motores_set_potencia(float left, float right) {
     motores_set_pwm_left((int16_t) (left * maximo_pwm));
@@ -129,14 +146,14 @@ void motores_actualiza_velocidad() {
         /* no utilizamos KA
         // pwm_left = KA * (velocidad_lineal_objetivo + (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2));
         */
-        potencia_left += KP_LINEAL * error_lineal_left; 
-        potencia_left += KD_LINEAL * ((error_lineal_left - error_acumulado_left) / PERIODO_TIMER);
-        potencia_left += KI_LINEAL * error_acumulado_left;
+        potencia_left += kp_lineal * error_lineal_left; 
+        potencia_left += kd_lineal * ((error_lineal_left - error_acumulado_left) / PERIODO_TIMER);
+        potencia_left += ki_lineal * error_acumulado_left;
 
         // pwm_right = KA * (velocidad_lineal_objetivo - (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2));
-        potencia_right += KP_LINEAL * error_lineal_right;
-        potencia_right += KD_LINEAL * ((error_lineal_right - error_acumulado_right) / PERIODO_TIMER);
-        potencia_right += KI_LINEAL * error_acumulado_right;
+        potencia_right += kp_lineal * error_lineal_right;
+        potencia_right += kd_lineal * ((error_lineal_right - error_acumulado_right) / PERIODO_TIMER);
+        potencia_right += ki_lineal * error_acumulado_right;
 
 #ifdef MOTORES_LOG_PID
         if (1) {
@@ -147,9 +164,9 @@ void motores_actualiza_velocidad() {
            //     velocidad_lineal_objetivo,
                 error_lineal_left,
                 error_acumulado_left,
-                KP_LINEAL * error_lineal_left,
-                KD_LINEAL * ((error_lineal_right - error_acumulado_right) / PERIODO_TIMER),
-                KI_LINEAL * error_acumulado_left,
+                kp_lineal * error_lineal_left,
+                kd_lineal * ((error_lineal_right - error_acumulado_right) / PERIODO_TIMER),
+                ki_lineal * error_acumulado_left,
                 //pwm_left,
                 potencia_left,
                 encoders_get_ticks_sin_actualizar_left()

@@ -6,6 +6,7 @@
 #include <encoders.h>
 #include <timer1.h>
 #include <log.h>
+#include <comando.h>
 
 volatile uint8_t max_tcnt1=0;
 
@@ -26,6 +27,7 @@ void setup() {
     bateria_init();
     motores_init(bateria_get_voltaje());
     encoders_init();
+    comando_init();
     bateria_muestra_nivel();
 
     timer1_init(PERIODO_TIMER, 1);
@@ -47,11 +49,11 @@ float pos = 0.40;
 
 void loop() {
 
-    // Espera una tecla
-    while (Serial.available()) Serial.read();
-    while (!Serial.available());
-    while (Serial.available()) Serial.read();
-
+    comando_prompt();
+    while (!comando_go()) {
+        comando_lee_serial();
+    }
+    Serial.println("GO!");
 
     /* Pruebas de aceleracion y deceleracion 
     motores_set_velocidad(0.2, 0);
@@ -67,7 +69,9 @@ void loop() {
     */
 
     robot_ir_a(pos, 0, RECTO);
+#ifdef MOTORES_LOG_PID
     log_start();
+#endif
     while (ori == OESTE and robot_get_posicion_x() <= 0.40 or ori == ESTE and robot_get_posicion_x() >=0 ) {
 #ifdef ROBOT_LOG_ESTADO
         robot_log_estado();
@@ -103,6 +107,6 @@ void loop() {
     ori = (ori == OESTE?ESTE:OESTE);
 
     */
-
     motores_set_potencia(0,0);
+    motores_set_velocidad(0,0);
 }

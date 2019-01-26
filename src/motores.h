@@ -15,6 +15,14 @@
 #define MAX_PWM 200
 
 void motores_init(float voltaje);
+
+void motores_set_kp_lineal(float kp);
+void motores_set_ki_lineal(float ki);
+void motores_set_kd_lineal(float kd);
+float motores_get_kp_lineal();
+float motores_get_ki_lineal();
+float motores_get_kd_lineal();
+
 void motores_set_maximo_pwm(int16_t pwm);
 void motores_set_pwm_left(int16_t right);
 void motores_set_pwm_right(int16_t left);

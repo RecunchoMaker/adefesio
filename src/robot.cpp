@@ -107,7 +107,3 @@ void robot_actualiza_posicion() {
 void robot_parar() {
     motores_set_velocidad(0.0, 0);
 }
-
-
-
-
