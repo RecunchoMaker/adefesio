@@ -23,6 +23,11 @@ float motores_get_kp_lineal();
 float motores_get_ki_lineal();
 float motores_get_kd_lineal();
 
+void motores_set_maxima_velocidad_lineal(float velocidad);
+float motores_get_maxima_velocidad_lineal();
+void motores_set_maxima_aceleracion_lineal(float aceleracion);
+float motores_get_maxima_aceleracion_lineal();
+
 void motores_set_maximo_pwm(int16_t pwm);
 void motores_set_pwm_left(int16_t right);
 void motores_set_pwm_right(int16_t left);

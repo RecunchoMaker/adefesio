@@ -10,7 +10,7 @@
 
 static char buffer[COMANDO_MAX_TAMANO];
 
-static char buffer_idx;
+static uint8_t buffer_idx;
 char caracter;
 int8_t aux_i;
 bool go = false;
@@ -78,6 +78,16 @@ void _procesa_comando(char *token, char *parametro) {
         motores_set_ki_lineal(atof(parametro));
         Serial.print("ki=");
         Serial.println(motores_get_ki_lineal());
+    }
+    else if (!strcmp(token, "vm")) {
+        motores_set_maxima_velocidad_lineal(atof(parametro));
+        Serial.print("v.max=");
+        Serial.println(motores_get_maxima_velocidad_lineal());
+    }
+    else if (!strcmp(token, "am")) {
+        motores_set_maxima_aceleracion_lineal(atof(parametro));
+        Serial.print("a.max=");
+        Serial.println(motores_get_maxima_aceleracion_lineal());
     }
 }
 

@@ -3,6 +3,10 @@
 #include <settings.h>
 
 #define KALMAN_GAIN 1
+#define DIRECCION_ADELANTE 0
+#define DIRECCION_ATRAS 1
+#define MIN_TCNT1 200
+
 
 volatile int16_t encoder_posicion_left = 0;
 volatile int16_t encoder_posicion_right = 0;
@@ -25,6 +29,9 @@ volatile double velocidad_right = 0;
 
 volatile double ultima_velocidad_left = 0;
 volatile double ultima_velocidad_right = 0;
+
+volatile uint8_t direccion_left = DIRECCION_ADELANTE;
+volatile uint8_t direccion_right = DIRECCION_ATRAS;
 
 void encoders_init(void) {
 
@@ -80,8 +87,10 @@ int32_t encoders_get_posicion_total_right(void) {
 void encoders_ISR_left(void) {
 
     ultimo_tcnt1_left = TCNT1;
+    if (ultimo_tcnt1_left < MIN_TCNT1)
+        ultimo_tcnt1_left = OCR1A;
 
-    if (digitalRead(ENCODER_LEFT_C2) == digitalRead(ENCODER_LEFT_C1))
+    if (direccion_left)
     {
         encoder_posicion_left--;
         encoder_posicion_total_left--;
@@ -97,8 +106,10 @@ void encoders_ISR_left(void) {
 void encoders_ISR_right(void) {
 
     ultimo_tcnt1_right = TCNT1;
+    if (ultimo_tcnt1_right < MIN_TCNT1)
+        ultimo_tcnt1_right = OCR1A;
 
-    if (digitalRead(ENCODER_RIGHT_C2) == digitalRead(ENCODER_RIGHT_C1))
+    if (direccion_right)
     {
         encoder_posicion_right++;
         encoder_posicion_total_right++;
@@ -113,35 +124,40 @@ void encoders_calcula_velocidad() {
 
     if (encoder_posicion_left == 0) {
         ticks_sin_actualizar_left++;
-        velocidad_left = ultima_velocidad_left;
+        velocidad_left = ticks_sin_actualizar_left < 10 ? ultima_velocidad_left : 0;
     }
     else {
 
         velocidad_left = LONGITUD_PASO_ENCODER * encoder_posicion_left * OCR1A/
             (PERIODO_TIMER * ( (int32_t) OCR1A * (ticks_sin_actualizar_left + 1) + ultimo_tcnt1_left - tcnt1_anterior_left));
 
-        velocidad_left = KALMAN_GAIN * velocidad_left + (1-KALMAN_GAIN) * ultima_velocidad_left;
+        if (velocidad_left < 0 and direccion_left == DIRECCION_ADELANTE) {
+            ticks_sin_actualizar_left++;
+            velocidad_left = LONGITUD_PASO_ENCODER * encoder_posicion_left * OCR1A/
+                (PERIODO_TIMER * ( (int32_t) OCR1A * (ticks_sin_actualizar_left + 1) + ultimo_tcnt1_left - tcnt1_anterior_left));
+        }
+
+        // velocidad_left = KALMAN_GAIN * velocidad_left + (1-KALMAN_GAIN) * ultima_velocidad_left;
         ticks_sin_actualizar_left = 0;
         tcnt1_anterior_left = ultimo_tcnt1_left;
-        ultima_velocidad_left = velocidad_left;
-        // encoder_posicion_left = 0;
-
     }
+
+    ultima_velocidad_left = velocidad_left;
 
     if (encoder_posicion_right == 0) {
         ticks_sin_actualizar_right++;
-        velocidad_right = ultima_velocidad_right;
+        velocidad_right = ticks_sin_actualizar_right < 10 ? ultima_velocidad_right : 0;
     }
     else {
         velocidad_right = LONGITUD_PASO_ENCODER * encoder_posicion_right * OCR1A /
             (PERIODO_TIMER * ( (int32_t) OCR1A * (ticks_sin_actualizar_right + 1) + ultimo_tcnt1_right - tcnt1_anterior_right));
 
-        velocidad_right = KALMAN_GAIN * velocidad_right + (1-KALMAN_GAIN) * ultima_velocidad_right;
+        // velocidad_right = KALMAN_GAIN * velocidad_right + (1-KALMAN_GAIN) * ultima_velocidad_right;
         ticks_sin_actualizar_right = 0;
         tcnt1_anterior_right = ultimo_tcnt1_right;
-        ultima_velocidad_right = velocidad_right;
-        // encoder_posicion_right = 0;
     }
+
+    ultima_velocidad_right = velocidad_right;
 }
 
 float encoders_get_velocidad_left() {

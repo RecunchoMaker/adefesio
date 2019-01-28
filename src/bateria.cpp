@@ -34,7 +34,6 @@ void bateria_muestra_nivel() {
 void bateria_watchdog() {
     if (bateria_agotada()) {
         while (1) {
-            bateria_muestra_nivel();
             Serial.println("Bateria agotada!");
             digitalWrite(BATERIA_LED_PIN, HIGH);
             delay(300);

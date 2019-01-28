@@ -61,7 +61,7 @@ void log_insert(
 
 void log_print() {
     if (index == MAX_LOG_MEM) {
-        Serial.println("ultimaVel velObjetivo errorLeft errorAcumulado kp kd ki potencia ticks");
+        Serial.println("ultimaVel velObjetivo errorLeft errorAcumulado kp kd ki potencia encoderPos");
         for (uint8_t i = 0; i < MAX_LOG_MEM; i++) {
            LOGF(a_ultima_velocidad[i],5);
            LOGF(a_velocidad_lineal_objetivo[i],5);

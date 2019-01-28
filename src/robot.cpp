@@ -47,7 +47,7 @@ void robot_ir_a(float x, float y, float radio) {
                 posicion_x_inicial = posicion_x;
                 posicion_y_inicial = posicion_y;
                 encoders_reset_posicion_total();
-                motores_set_velocidad(MAX_VELOCIDAD_LINEAL, 0);
+                motores_set_velocidad(motores_get_maxima_velocidad_lineal(), 0);
         }
 
         if (posicion_y == y) {
@@ -57,7 +57,7 @@ void robot_ir_a(float x, float y, float radio) {
                 posicion_x_inicial = posicion_x;
                 posicion_y_inicial = posicion_y;
                 encoders_reset_posicion_total();
-                motores_set_velocidad(MAX_VELOCIDAD_LINEAL, 0);
+                motores_set_velocidad(motores_get_maxima_velocidad_lineal(),0);
             }
         }
 

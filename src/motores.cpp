@@ -2,22 +2,28 @@
 #include <log.h>
 #include <settings.h>
 #include <motores.h>
+#include <timer1.h>
 
-//#define KA (200 / 0.28)
+#define KA (2.0)
 
-volatile float kp_lineal = 0.4;
-volatile float kd_lineal = 0.1;
-volatile float ki_lineal = 0.0;
+volatile float kp_lineal = -0.6;
+volatile float kd_lineal = -0.0;
+volatile float ki_lineal = -0.0;
 
-volatile float potencia_left;
-volatile float potencia_right;
+volatile float maxima_velocidad_lineal = 0.5;
+volatile float maxima_aceleracion_lineal = 2.0;
+
+volatile float potencia_left = 0;
+volatile float potencia_right = 0;
 
 volatile int16_t pwm_left;
 volatile int16_t pwm_right;
 
 volatile float velocidad_lineal_objetivo = 0;
+volatile float velocidad_lineal_objetivo_temp = 0;
 volatile float velocidad_lineal_actual_left = 0;
 volatile float velocidad_lineal_actual_right = 0;
+volatile float velocidad_lineal_actual = 0;
 
 volatile float velocidad_angular_objetivo = 0;
 volatile double angulo_actual = 0;
@@ -65,6 +71,8 @@ float motores_get_ki_lineal() { return ki_lineal; }
 float motores_get_kd_lineal() { return kd_lineal; }
 
 void motores_set_potencia(float left, float right) {
+    if (left > 1) left = 1;
+    if (right > 1) right = 1;
     motores_set_pwm_left((int16_t) (left * maximo_pwm));
     motores_set_pwm_right((int16_t) (right * maximo_pwm));
     potencia_left = left;
@@ -133,10 +141,14 @@ void motores_actualiza_velocidad() {
 
     if (velocidad_angular_objetivo != 0 or velocidad_lineal_objetivo != 0) {
 
+        velocidad_lineal_objetivo_temp += (maxima_aceleracion_lineal * PERIODO_TIMER);
+        if (velocidad_lineal_objetivo_temp > velocidad_lineal_objetivo)
+            velocidad_lineal_objetivo_temp = velocidad_lineal_objetivo;
+
         error_lineal_left = encoders_get_ultima_velocidad_left() - 
-           (velocidad_lineal_objetivo + (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2  ));
+           (velocidad_lineal_objetivo_temp + (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2  ));
         error_lineal_right = encoders_get_ultima_velocidad_right() -
-           (velocidad_lineal_objetivo - (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2  ));
+           (velocidad_lineal_objetivo_temp - (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2  ));
 
         /* no acumulamos todos los errores, sino que guardamos el último de ellos (mas abajo)
         error_acumulado_left += error_lineal_left;
@@ -144,24 +156,25 @@ void motores_actualiza_velocidad() {
         */
 
         /* no utilizamos KA
-        // pwm_left = KA * (velocidad_lineal_objetivo + (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2));
+        potencia_left = KA * (velocidad_lineal_objetivo_temp + (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2));
         */
         potencia_left += kp_lineal * error_lineal_left; 
         potencia_left += kd_lineal * ((error_lineal_left - error_acumulado_left) / PERIODO_TIMER);
         potencia_left += ki_lineal * error_acumulado_left;
 
-        // pwm_right = KA * (velocidad_lineal_objetivo - (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2));
+        //potencia_right = KA * (velocidad_lineal_objetivo_temp - (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2));
         potencia_right += kp_lineal * error_lineal_right;
         potencia_right += kd_lineal * ((error_lineal_right - error_acumulado_right) / PERIODO_TIMER);
         potencia_right += ki_lineal * error_acumulado_right;
 
 #ifdef MOTORES_LOG_PID
-        if (1) {
-        //if (encoders_get_posicion_total_left() % 8 == 0) {
+        // if (1) {
+        // if (timer1_get_cuenta() % 4 == 1) {
+        if (timer1_get_cuenta() > 0.5 * (1.0/PERIODO_TIMER)) { // esperamos 1 segundo
         log_insert(
                 encoders_get_ultima_velocidad_left(),
-            velocidad_lineal_objetivo + (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2  ),
-           //     velocidad_lineal_objetivo,
+            velocidad_lineal_objetivo_temp + (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2  ),
+           //     velocidad_lineal_objetivo_temp,
                 error_lineal_left,
                 error_acumulado_left,
                 kp_lineal * error_lineal_left,
@@ -169,7 +182,8 @@ void motores_actualiza_velocidad() {
                 ki_lineal * error_acumulado_left,
                 //pwm_left,
                 potencia_left,
-                encoders_get_ticks_sin_actualizar_left()
+                //encoders_get_ticks_sin_actualizar_left()
+                encoders_get_posicion_left()
                 );
         }
 #endif
@@ -184,12 +198,32 @@ void motores_actualiza_velocidad() {
     }
 }
 
+void motores_set_maxima_velocidad_lineal(float velocidad) {
+    maxima_velocidad_lineal = velocidad;
+}
+
+float motores_get_maxima_velocidad_lineal() {
+    return maxima_velocidad_lineal;
+}
+
+void motores_set_maxima_aceleracion_lineal(float aceleracion) {
+    maxima_aceleracion_lineal = aceleracion;
+}
+
+float motores_get_maxima_aceleracion_lineal() {
+    return maxima_aceleracion_lineal;
+}
+
 void motores_set_velocidad(float velocidad_lineal, float velocidad_angular) {
 
-    if (velocidad_lineal > MAX_VELOCIDAD)
-        velocidad_lineal_objetivo = MAX_VELOCIDAD;
-    else
+    if (velocidad_lineal > motores_get_maxima_velocidad_lineal())
+        velocidad_lineal_objetivo = motores_get_maxima_velocidad_lineal();
+    else {
+        // velocidad_lineal_objetivo contiene la ultima velocidad seteada
+        // en esta función
+        velocidad_lineal_objetivo_temp = velocidad_lineal_objetivo;
         velocidad_lineal_objetivo = velocidad_lineal;
+    }
 
     velocidad_angular_objetivo = velocidad_angular;
 
@@ -224,7 +258,7 @@ void motores_actualiza_angulo() {
         angulo_actual_calculado += (aux_e1 - aux_e2) / DISTANCIA_ENTRE_RUEDAS;
     */
 
-    if (encoders_get_posicion_left() != encoders_get_posicion_right) {
+    if (encoders_get_posicion_left() != encoders_get_posicion_right()) {
         angulo_actual+= (LONGITUD_PASO_ENCODER * encoders_get_posicion_left() -
                          LONGITUD_PASO_ENCODER * encoders_get_posicion_right())
                          / 

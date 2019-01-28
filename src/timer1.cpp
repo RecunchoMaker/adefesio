@@ -1,6 +1,8 @@
 #include <Arduino.h>
 #include <timer1.h>
 
+volatile uint32_t cuenta;
+
 void timer1_init(float period, uint16_t prescaler) {
 
     /*
@@ -85,10 +87,10 @@ void timer1_init(float period, uint16_t prescaler) {
 
     // asignamos el valor del registro de comparacion
     uint32_t res = ((16000000.0 / prescaler ) * (period)) - 1;
-    /*
+
     Serial.print("OCR1A = ");
     Serial.println(res);
-    */
+
     OCR1A = res;
 
     // Asignamos el modo 4, activar CTC si timer = OCR1A
@@ -96,4 +98,18 @@ void timer1_init(float period, uint16_t prescaler) {
 
     // Asignamos la mascara de interrupcion a "Compare Match A"
     TIMSK1 |= (1 << OCIE1A);
+
+    cuenta = 0;
+}
+
+void timer1_incrementa_cuenta() {
+    cuenta++;
+}
+
+void timer1_reset_cuenta() {
+    cuenta=0;
+}
+
+uint32_t timer1_get_cuenta() {
+    return cuenta;
 }

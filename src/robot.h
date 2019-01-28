@@ -3,7 +3,6 @@
 
 #define RECTO 9999
 
-#define MAX_VELOCIDAD_LINEAL 0.10
 #define MAX_VELOCIDAD_GIRO   (PI/1.4)
 
 // orientaciones

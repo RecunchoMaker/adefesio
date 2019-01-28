@@ -19,6 +19,7 @@ ISR (TIMER1_COMPA_vect) {
     motores_actualiza_angulo();
     robot_actualiza_posicion();
     encoders_reset_posicion();
+    timer1_incrementa_cuenta();
 
 }
 
@@ -44,12 +45,20 @@ void setup() {
     robot_set_orientacion(ESTE);
 }
 
-uint8_t ori = OESTE;
-float pos = 0.40;
+uint8_t ori = ESTE;
+float pos = 0.60;
 
 void loop() {
 
     comando_prompt();
+
+    robot_set_posicion(0,0);
+    robot_set_orientacion(ESTE);
+    motores_set_potencia(0,0);
+    motores_set_velocidad(0,0);
+    encoders_reset_posicion();
+    encoders_reset_posicion_total();
+
     while (!comando_go()) {
         comando_lee_serial();
     }
@@ -69,10 +78,11 @@ void loop() {
     */
 
     robot_ir_a(pos, 0, RECTO);
+    timer1_reset_cuenta();
 #ifdef MOTORES_LOG_PID
     log_start();
 #endif
-    while (ori == OESTE and robot_get_posicion_x() <= 0.40 or ori == ESTE and robot_get_posicion_x() >=0 ) {
+    while (ori == ESTE and robot_get_posicion_x() <= pos or ori == OESTE and robot_get_posicion_x() >=0 ) {
 #ifdef ROBOT_LOG_ESTADO
         robot_log_estado();
         delay(100);
@@ -107,6 +117,4 @@ void loop() {
     ori = (ori == OESTE?ESTE:OESTE);
 
     */
-    motores_set_potencia(0,0);
-    motores_set_velocidad(0,0);
 }
