@@ -20,10 +20,10 @@ void robot_log_estado() {
 #ifdef MOTORES_LOG_PID
 #include <encoders.h>
 
-#define MAX_LOG_MEM 40
+#define MAX_LOG_MEM 35
 volatile uint8_t index = MAX_LOG_MEM + 1;
 volatile float a_ultima_velocidad[MAX_LOG_MEM];
-volatile float a_velocidad_lineal_objetivo[MAX_LOG_MEM];
+volatile float a_velocidad_lineal_objetivo_temp[MAX_LOG_MEM];
 volatile float a_error_lineal_left[MAX_LOG_MEM];
 volatile float a_error_acumulado_left[MAX_LOG_MEM];
 volatile float a_aux1[MAX_LOG_MEM];
@@ -34,7 +34,7 @@ volatile uint8_t a_ticks[MAX_LOG_MEM];
 
 void log_insert(
         float _ultima_velocidad,
-        float _velocidad_lineal_objetivo,
+        float _velocidad_lineal_objetivo_temp,
         float _error_lineal_left,
         float _error_acumulado_left,
         float _aux1,
@@ -47,7 +47,7 @@ void log_insert(
     if (index < MAX_LOG_MEM) {
 
         a_ultima_velocidad[index] = _ultima_velocidad;
-        a_velocidad_lineal_objetivo[index] = _velocidad_lineal_objetivo;
+        a_velocidad_lineal_objetivo_temp[index] = _velocidad_lineal_objetivo_temp;
         a_error_lineal_left[index] = _error_lineal_left;
         a_error_acumulado_left[index] = _error_acumulado_left;
         a_aux1[index] = _aux1;
@@ -64,7 +64,7 @@ void log_print() {
         Serial.println("ultimaVel velObjetivo errorLeft errorAcumulado kp kd ki potencia encoderPos");
         for (uint8_t i = 0; i < MAX_LOG_MEM; i++) {
            LOGF(a_ultima_velocidad[i],5);
-           LOGF(a_velocidad_lineal_objetivo[i],5);
+           LOGF(a_velocidad_lineal_objetivo_temp[i],5);
            LOGF(a_error_lineal_left[i],5);
            LOGF(a_error_acumulado_left[i],5);
            if (a_aux1[i]>1) a_aux1[i] = 1.5;

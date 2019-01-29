@@ -88,9 +88,6 @@ void timer1_init(float period, uint16_t prescaler) {
     // asignamos el valor del registro de comparacion
     uint32_t res = ((16000000.0 / prescaler ) * (period)) - 1;
 
-    Serial.print("OCR1A = ");
-    Serial.println(res);
-
     OCR1A = res;
 
     // Asignamos el modo 4, activar CTC si timer = OCR1A

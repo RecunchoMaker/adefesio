@@ -10,8 +10,11 @@ volatile float kp_lineal = -0.6;
 volatile float kd_lineal = -0.0;
 volatile float ki_lineal = -0.0;
 
+
 volatile float maxima_velocidad_lineal = 0.5;
 volatile float maxima_aceleracion_lineal = 2.0;
+
+volatile float aceleracion_lineal = 0.0;
 
 volatile float potencia_left = 0;
 volatile float potencia_right = 0;
@@ -50,6 +53,8 @@ void motores_init(float voltaje) {
     pinMode(MOTOR_RIGHT_PWM, OUTPUT);
 
     motores_set_maximo_pwm((int16_t) (255.0 * 6.0 / voltaje));
+    motores_set_maxima_velocidad_lineal(MAX_VELOCIDAD_LINEAL);
+    motores_set_maxima_aceleracion_lineal(MAX_ACELERACION_LINEAL);
 
     motores_set_potencia(0,0);
 }
@@ -129,8 +134,8 @@ int16_t motores_get_pwm_right() {
     return pwm_right;
 }
 
-float motores_get_velocidad_lineal_objetivo() {
-    return velocidad_lineal_objetivo;
+float motores_get_velocidad_lineal_objetivo_temp() {
+    return velocidad_lineal_objetivo_temp;
 }
 
 float motores_get_velocidad_angular_objetivo() {
@@ -139,11 +144,14 @@ float motores_get_velocidad_angular_objetivo() {
 
 void motores_actualiza_velocidad() {
 
-    if (velocidad_angular_objetivo != 0 or velocidad_lineal_objetivo != 0) {
+    if (velocidad_lineal_objetivo_temp != 0 or aceleracion_lineal != 0) {
+        velocidad_lineal_objetivo_temp += (aceleracion_lineal * PERIODO_TIMER);
 
-        velocidad_lineal_objetivo_temp += (maxima_aceleracion_lineal * PERIODO_TIMER);
+        // TODO: Este control ya no haria falta. Lo hace el planificador
+        /*
         if (velocidad_lineal_objetivo_temp > velocidad_lineal_objetivo)
             velocidad_lineal_objetivo_temp = velocidad_lineal_objetivo;
+        */
 
         error_lineal_left = encoders_get_ultima_velocidad_left() - 
            (velocidad_lineal_objetivo_temp + (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2  ));
@@ -168,12 +176,12 @@ void motores_actualiza_velocidad() {
         potencia_right += ki_lineal * error_acumulado_right;
 
 #ifdef MOTORES_LOG_PID
-        // if (1) {
-        // if (timer1_get_cuenta() % 4 == 1) {
-        if (timer1_get_cuenta() > 0.5 * (1.0/PERIODO_TIMER)) { // esperamos 1 segundo
+        if (1) {
+        //if (timer1_get_cuenta() % 2 == 1) {
+        // if (timer1_get_cuenta() > 0.5 * (1.0/PERIODO_TIMER)) { // esperamos 1 segundo
         log_insert(
                 encoders_get_ultima_velocidad_left(),
-            velocidad_lineal_objetivo_temp + (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2  ),
+                velocidad_lineal_objetivo_temp + (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2  ),
            //     velocidad_lineal_objetivo_temp,
                 error_lineal_left,
                 error_acumulado_left,
@@ -192,8 +200,8 @@ void motores_actualiza_velocidad() {
         error_acumulado_right = error_lineal_right;
 
         motores_set_potencia(potencia_left, potencia_right);
-    }
-    else {
+
+    } else {
         motores_set_potencia(0, 0);
     }
 }
@@ -212,6 +220,14 @@ void motores_set_maxima_aceleracion_lineal(float aceleracion) {
 
 float motores_get_maxima_aceleracion_lineal() {
     return maxima_aceleracion_lineal;
+}
+
+void motores_set_aceleracion_lineal(float aceleracion) {
+    aceleracion_lineal = aceleracion;
+}
+
+float motores_get_aceleracion_lineal() {
+    return aceleracion_lineal;
 }
 
 void motores_set_velocidad(float velocidad_lineal, float velocidad_angular) {

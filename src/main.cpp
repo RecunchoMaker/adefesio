@@ -46,7 +46,8 @@ void setup() {
 }
 
 uint8_t ori = ESTE;
-float pos = 0.60;
+float distancia;
+float parar_en;
 
 void loop() {
 
@@ -64,57 +65,60 @@ void loop() {
     }
     Serial.println("GO!");
 
-    /* Pruebas de aceleracion y deceleracion 
-    motores_set_velocidad(0.2, 0);
-    delay(1000);
-    log_start();
-    motores_set_velocidad(0.1, 0);
-    while (robot_get_posicion_x() <= 0.5) {
-        log_print();
-    }
-    robot_parar();
+    // avanzo 40 cm.
+    distancia = 0.4;
+    parar_en = distancia - 
+           motores_get_maxima_velocidad_lineal() * motores_get_maxima_velocidad_lineal() /
+           (motores_get_maxima_aceleracion_lineal() * 2);
+    Serial.print("Recorrrere: ");
+    Serial.println(distancia);
 
-    while(1);
-    */
 
-    robot_ir_a(pos, 0, RECTO);
-    timer1_reset_cuenta();
+    // acelero
+    motores_set_aceleracion_lineal(motores_get_maxima_aceleracion_lineal());
+    while (motores_get_velocidad_lineal_objetivo_temp() < motores_get_maxima_velocidad_lineal());
+    Serial.print("acelero hasta ");
+    Serial.println(encoders_get_posicion_total_left() * LONGITUD_PASO_ENCODER);
+    
+    // mantengo constante
+    motores_set_aceleracion_lineal(0);
+    while (encoders_get_posicion_total_left() * LONGITUD_PASO_ENCODER < parar_en);
+    Serial.print("decelero en ");
+    Serial.print(encoders_get_posicion_total_left() * LONGITUD_PASO_ENCODER);
+    Serial.print(" - deberia en ");
+    Serial.println(parar_en);
+
+    // decelero
+    bool aux_bool = false;
+    motores_set_aceleracion_lineal(-motores_get_maxima_aceleracion_lineal());
+    while (motores_get_velocidad_lineal_objetivo_temp() > 0) {
 #ifdef MOTORES_LOG_PID
-    log_start();
-#endif
-    while (ori == ESTE and robot_get_posicion_x() <= pos or ori == OESTE and robot_get_posicion_x() >=0 ) {
-#ifdef ROBOT_LOG_ESTADO
-        robot_log_estado();
-        delay(100);
-#endif
-#ifdef ENCODERS_LOG_ESTADO
-        encoders_log_estado();
-        delay(100);
-#endif
-#ifdef MOTORES_LOG_PID
-       log_print();
+        if (motores_get_velocidad_lineal_objetivo_temp() < 0.20 and aux_bool == false) {
+            log_start();
+            aux_bool = true;
+        }
+        else if (aux_bool)
+            log_print();
 #endif
     }
+
+    Serial.print("paro en ");
+    Serial.println(encoders_get_posicion_total_left() * LONGITUD_PASO_ENCODER, 5);
+    motores_set_aceleracion_lineal(0);
+    for (uint8_t aux = 0; aux<100; aux++) log_print();
 
     /*
-
-    pos = (pos == 0.40?0.0:0.40);
-
-    //log_start();
-    robot_gira(-1);
-    while (robot_get_orientacion() != ori) {
-#ifdef ROBOT_LOG_ESTADO
-        robot_log_estado();
-        delay(100);
-#endif
-#ifdef ENCODERS_LOG_ESTADO
-        encoders_log_estado();
-        delay(100);
-#endif
+    encoders_reset_posicion_total();
+    for (uint8_t aux = 0; aux<100; aux++) {
+        Serial.print(encoders_get_posicion_total_left());
+        Serial.print(" ");
     }
-
-
-    ori = (ori == OESTE?ESTE:OESTE);
-
     */
+    
+    /*
+#ifdef MOTORES_LOG_PID
+    log_start();
+#endif
+    */
+
 }

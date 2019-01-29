@@ -1,0 +1,137 @@
+go
+GO!
+Recorrrere: 0.40
+acelero hasta 0.06
+decelero en 0.34 - deberia en 0.34
+paro en 0.40383
+A> go
+GO!
+Recorrrere: 0.40
+acelero hasta 0.06
+decelero en 0.34 - deberia en 0.34
+paro en 0.40538
+A> go
+GO!
+Recorrrere: 0.40
+acelero hasta 0.06
+decelero en 0.34 - deberia en 0.34
+paro en 0.40383
+A> kp 0.8
+kp=0.80
+A> go
+GO!
+Recorrrere: 0.40
+acelero hasta 0.06
+decelero en 0.34 - deberia en 0.34
+paro en 0.40422
+A> kp -0.9
+kp=-0.90
+A> go
+GO!
+Recorrrere: 0.40
+acelero hasta 0.06
+decelero en 0.34 - deberia en 0.34
+paro en 0.40344
+A> kp -0.99
+kp=-0.99
+A> go
+GO!
+Recorrrere: 0.40
+acelero hasta 0.06
+decelero en 0.34 - deberia en 0.34
+paro en 0.40151
+A> kp -1.5
+kp=-1.50
+A> go
+GO!
+Recorrrere: 0.40
+acelero hasta 0.06
+decelero en 0.34 - deberia en 0.34
+paro en 0.40074
+A> gp 1.5
+A> go
+GO!
+Recorrrere: 0.40
+acelero hasta 0.06
+decelero en 0.34 - deberia en 0.34
+paro en 0.40190
+A> kp 1.5
+kp=1.50
+A> go
+GO!
+Recorrrere: 0.40
+acelero hasta 0.06
+decelero en 0.34 - deberia en 0.34
+paro en 0.40151
+A> go
+GO!
+Recorrrere: 0.40
+acelero hasta 0.06
+decelero en 0.34 - deberia en 0.34
+paro en 0.40151
+A> go
+GO!
+Recorrrere: 0.40
+acelero hasta 0.06
+decelero en 0.34 - deberia en 0.34
+paro en 0.40151
+A> kp 1.9
+kp=1.90
+A> go
+GO!
+Recorrrere: 0.40
+acelero hasta 0.06
+decelero en 0.34 - deberia en 0.34
+paro en 0.40151
+A> kp 2.5
+kp=2.50
+A> go
+GO!
+Recorrrere: 0.40
+acelero hasta 0.06
+decelero en 0.34 - deberia en 0.34
+paro en 0.40190
+A> kp 5
+kp=5.00
+A> go
+GO!
+Recorrrere: 0.40
+acelero hasta 0.09
+decelero en 0.34 - deberia en 0.34
+paro en 0.49271
+A> kp 0.6
+kp=0.60
+A> go
+GO!
+Recorrrere: 0.40
+acelero hasta 0.08
+decelero en 0.34 - deberia en 0.34
+paro en 0.40538
+A> go
+GO!
+Recorrrere: 0.40
+acelero hasta 0.06
+decelero en 0.34 - deberia en 0.34
+paro en 0.40654
+A> g+o
+A> go
+GO!
+Recorrrere: 0.40
+acelero hasta 0.07
+decelero en 0.34 - deberia en 0.34
+paro en 0.40422
+A> kp -0.6
+kp=-0.60
+A> go
+GO!
+Recorrrere: 0.40
+acelero hasta 0.06
+decelero en 0.34 - deberia en 0.34
+paro en 0.40383
+A> go
+GO!
+Recorrrere: 0.40
+acelero hasta 0.06
+decelero en 0.34 - deberia en 0.34
+paro en 0.40538
+A> 
