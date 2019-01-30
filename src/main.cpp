@@ -65,6 +65,7 @@ void loop() {
     }
     Serial.println("GO!");
 
+    /*
     // avanzo 40 cm.
     distancia = 0.4;
     parar_en = distancia - 
@@ -107,18 +108,74 @@ void loop() {
     motores_set_aceleracion_lineal(0);
     for (uint8_t aux = 0; aux<100; aux++) log_print();
 
-    /*
+    */
+
+    // Girando sobre si mismo
+    //
+    distancia = PI;  // en radianes
+
+    // calculo en radianes
+    parar_en = distancia - 
+           motores_get_maxima_velocidad_angular() * motores_get_maxima_velocidad_angular() /
+           (motores_get_maxima_aceleracion_angular() * 2);
+
+    Serial.println("parar en radianes: ");
+    Serial.println(parar_en);
+    // pasar a metros
+    parar_en = parar_en * (DISTANCIA_ENTRE_RUEDAS/2);
+
+    motores_set_aceleracion_angular(motores_get_maxima_aceleracion_angular());
+
+    log_start();
+    while (motores_get_velocidad_angular_objetivo_temp() < motores_get_maxima_velocidad_angular()) {
+#ifdef MOTORES_LOG_PID
+        log_print();
+#endif
+    }
+
+    Serial.print("acelero hasta ");
+    Serial.println(encoders_get_posicion_total_left() * LONGITUD_PASO_ENCODER);
+    Serial.print("la vle angular es : ");
+    Serial.println(motores_get_velocidad_angular_objetivo_temp());
+
+    // mantengo constante
+    motores_set_aceleracion_angular(0);
+    Serial.print(encoders_get_posicion_left());
+    while (encoders_get_posicion_total_left() * LONGITUD_PASO_ENCODER < parar_en)
+    {
+#ifdef MOTORES_LOG_PID
+        log_print();
+#endif
+    }
+    Serial.print("decelero en ");
+    Serial.print(encoders_get_posicion_total_left() * LONGITUD_PASO_ENCODER);
+    Serial.print(" - deberia en ");
+    Serial.println(parar_en, 8);
+
+    // decelero
+    bool aux_bool = false;
+    motores_set_aceleracion_angular(-motores_get_maxima_aceleracion_angular());
+    while (motores_get_velocidad_angular_objetivo_temp() > 0) {
+#ifdef MOTORES_LOG_PID
+        log_print();
+#endif
+    }
+
+    Serial.print("paro en: izq=");
+    Serial.print(encoders_get_posicion_total_left() * LONGITUD_PASO_ENCODER, 5);
+    Serial.print("paro en: der=");
+    Serial.println(encoders_get_posicion_total_right() * LONGITUD_PASO_ENCODER, 5);
+    motores_set_aceleracion_angular(0);
     encoders_reset_posicion_total();
     for (uint8_t aux = 0; aux<100; aux++) {
         Serial.print(encoders_get_posicion_total_left());
         Serial.print(" ");
     }
-    */
     
-    /*
 #ifdef MOTORES_LOG_PID
-    log_start();
+    for (uint8_t aux = 0; aux<100; aux++) {
+        log_print();
+    }
 #endif
-    */
 
 }

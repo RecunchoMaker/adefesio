@@ -50,6 +50,11 @@ void encoders_init(void) {
             encoders_ISR_right, RISING);
 }
 
+void encoders_set_direccion(uint8_t left, uint8_t right) {
+    direccion_left = left;
+    direccion_right = right;
+}
+
 void encoders_reset_posicion(void) {
     encoder_posicion_left = 0;
     encoder_posicion_right = 0;
@@ -92,14 +97,14 @@ void encoders_ISR_left(void) {
 
     if (direccion_left)
     {
-        encoder_posicion_left--;
-        encoder_posicion_total_left--;
+        encoder_posicion_left++;
+        encoder_posicion_total_left++;
     }
     
     else
     {
-        encoder_posicion_left++;
-        encoder_posicion_total_left++;
+        encoder_posicion_left--;
+        encoder_posicion_total_left--;
     }
 }
 
@@ -131,7 +136,10 @@ void encoders_calcula_velocidad() {
         velocidad_left = LONGITUD_PASO_ENCODER * encoder_posicion_left * OCR1A/
             (PERIODO_TIMER * ( (int32_t) OCR1A * (ticks_sin_actualizar_left + 1) + ultimo_tcnt1_left - tcnt1_anterior_left));
 
-        if (velocidad_left < 0 and direccion_left == DIRECCION_ADELANTE) {
+        if ((velocidad_left < 0 and direccion_left == DIRECCION_ADELANTE)
+            or
+            (velocidad_left > 0 and direccion_left == DIRECCION_ATRAS))
+        {
             ticks_sin_actualizar_left++;
             velocidad_left = LONGITUD_PASO_ENCODER * encoder_posicion_left * OCR1A/
                 (PERIODO_TIMER * ( (int32_t) OCR1A * (ticks_sin_actualizar_left + 1) + ultimo_tcnt1_left - tcnt1_anterior_left));
@@ -151,6 +159,15 @@ void encoders_calcula_velocidad() {
     else {
         velocidad_right = LONGITUD_PASO_ENCODER * encoder_posicion_right * OCR1A /
             (PERIODO_TIMER * ( (int32_t) OCR1A * (ticks_sin_actualizar_right + 1) + ultimo_tcnt1_right - tcnt1_anterior_right));
+
+        if ((velocidad_right < 0 and direccion_right == DIRECCION_ADELANTE)
+            or
+            (velocidad_right > 0 and direccion_right == DIRECCION_ATRAS))
+        {
+            ticks_sin_actualizar_right++;
+            velocidad_right = LONGITUD_PASO_ENCODER * encoder_posicion_right * OCR1A/
+                (PERIODO_TIMER * ( (int32_t) OCR1A * (ticks_sin_actualizar_right + 1) + ultimo_tcnt1_right - tcnt1_anterior_right));
+        }
 
         // velocidad_right = KALMAN_GAIN * velocidad_right + (1-KALMAN_GAIN) * ultima_velocidad_right;
         ticks_sin_actualizar_right = 0;

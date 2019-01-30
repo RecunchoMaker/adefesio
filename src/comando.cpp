@@ -89,6 +89,16 @@ void _procesa_comando(char *token, char *parametro) {
         Serial.print("a.max=");
         Serial.println(motores_get_maxima_aceleracion_lineal());
     }
+    else if (!strcmp(token, "va")) {
+        motores_set_maxima_velocidad_angular(atof(parametro));
+        Serial.print("v.a.max=");
+        Serial.println(motores_get_maxima_velocidad_angular());
+    }
+    else if (!strcmp(token, "aa")) {
+        motores_set_maxima_aceleracion_angular(atof(parametro));
+        Serial.print("a.a.max=");
+        Serial.println(motores_get_maxima_aceleracion_angular());
+    }
 }
 
 void _procesa_comando(char *token) {

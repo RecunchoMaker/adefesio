@@ -30,6 +30,13 @@ float motores_get_maxima_aceleracion_lineal();
 void motores_set_aceleracion_lineal(float aceleracion);
 float motores_get_aceleracion_lineal();
 
+void motores_set_maxima_velocidad_angular(float velocidad);
+float motores_get_maxima_velocidad_angular();
+void motores_set_maxima_aceleracion_angular(float aceleracion);
+float motores_get_maxima_aceleracion_angular();
+void motores_set_aceleracion_angular(float aceleracion);
+float motores_get_aceleracion_angular();
+
 void motores_set_maximo_pwm(int16_t pwm);
 void motores_set_pwm_left(int16_t right);
 void motores_set_pwm_right(int16_t left);
@@ -39,9 +46,8 @@ int16_t motores_get_pwm_right();
 void motores_set_ticks(int32_t left, int32_t right);
 uint32_t motores_get_ticks_left();
 uint32_t motores_get_ticks_right();
-float motores_get_velocidad_actual_left();
 float motores_get_velocidad_lineal_objetivo_temp();
-float motores_get_velocidad_angular_objetivo();
+float motores_get_velocidad_angular_objetivo_temp();
 void motores_actualiza_velocidad();
 void motores_set_velocidad(float lineal, float angular);
 void motores_actualiza_angulo();

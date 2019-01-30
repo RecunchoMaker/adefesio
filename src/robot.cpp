@@ -78,7 +78,7 @@ void robot_gira(int8_t o) {
 
 
 void robot_actualiza_posicion() {
-    if (motores_get_velocidad_angular_objetivo() == 0) {
+    if (motores_get_velocidad_angular_objetivo_temp() == 0) {
         switch (orientacion) {
             case NORTE: posicion_y = posicion_y_inicial + LONGITUD_PASO_ENCODER * (encoders_get_posicion_total_left() + encoders_get_posicion_total_right()) / 2.0;
                         break;
@@ -90,7 +90,7 @@ void robot_actualiza_posicion() {
                         break;
         }
     } else {
-        if (motores_get_velocidad_angular_objetivo() < 0) {
+        if (motores_get_velocidad_angular_objetivo_temp() < 0) {
             if (motores_get_angulo_actual() > 3*PI/2) orientacion = ESTE;
             else if (motores_get_angulo_actual() > PI) orientacion = SUR;
             else if (motores_get_angulo_actual() > PI/2) orientacion = OESTE;

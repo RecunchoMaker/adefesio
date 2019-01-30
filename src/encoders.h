@@ -24,6 +24,7 @@ float encoders_get_ultima_velocidad_right(void);
 uint8_t encoders_get_ticks_sin_actualizar_left(void);
 uint8_t encoders_get_ticks_sin_actualizar_right(void);
 void encoders_calcula_velocidad();
+void encoders_set_direccion(uint8_t left, uint8_t right);
 
 #ifdef ENCODERS_LOG_ESTADO
 void encoders_log_estado_cabecera();

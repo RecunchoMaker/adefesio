@@ -11,10 +11,13 @@ volatile float kd_lineal = -0.0;
 volatile float ki_lineal = -0.0;
 
 
-volatile float maxima_velocidad_lineal = 0.5;
-volatile float maxima_aceleracion_lineal = 2.0;
+volatile float maxima_velocidad_lineal = MAX_VELOCIDAD_LINEAL;
+volatile float maxima_aceleracion_lineal = MAX_ACELERACION_LINEAL;
+volatile float maxima_velocidad_angular = MAX_VELOCIDAD_ANGULAR;
+volatile float maxima_aceleracion_angular = MAX_ACELERACION_ANGULAR;
 
 volatile float aceleracion_lineal = 0.0;
+volatile float aceleracion_angular = 0.0;
 
 volatile float potencia_left = 0;
 volatile float potencia_right = 0;
@@ -28,7 +31,8 @@ volatile float velocidad_lineal_actual_left = 0;
 volatile float velocidad_lineal_actual_right = 0;
 volatile float velocidad_lineal_actual = 0;
 
-volatile float velocidad_angular_objetivo = 0;
+volatile float velocidad_angular_objetivo_temp = 0;
+
 volatile double angulo_actual = 0;
 volatile double angulo_actual_calculado = 0;
 
@@ -78,6 +82,8 @@ float motores_get_kd_lineal() { return kd_lineal; }
 void motores_set_potencia(float left, float right) {
     if (left > 1) left = 1;
     if (right > 1) right = 1;
+    if (left < -1) left = -1;
+    if (right < -1) right = -1;
     motores_set_pwm_left((int16_t) (left * maximo_pwm));
     motores_set_pwm_right((int16_t) (right * maximo_pwm));
     potencia_left = left;
@@ -122,10 +128,6 @@ void motores_set_pwm_left(int16_t left) {
     }
 }
 
-float motores_get_velocidad_actual_left() {
-    return velocidad_lineal_actual_left;
-}
-
 int16_t motores_get_pwm_left() {
     return pwm_left;
 }
@@ -138,14 +140,15 @@ float motores_get_velocidad_lineal_objetivo_temp() {
     return velocidad_lineal_objetivo_temp;
 }
 
-float motores_get_velocidad_angular_objetivo() {
-    return velocidad_angular_objetivo;
+float motores_get_velocidad_angular_objetivo_temp() {
+    return velocidad_angular_objetivo_temp;
 }
 
 void motores_actualiza_velocidad() {
 
-    if (velocidad_lineal_objetivo_temp != 0 or aceleracion_lineal != 0) {
+    if (velocidad_lineal_objetivo_temp != 0 or aceleracion_lineal != 0 or velocidad_angular_objetivo_temp != 0 or aceleracion_angular != 0) {
         velocidad_lineal_objetivo_temp += (aceleracion_lineal * PERIODO_TIMER);
+        velocidad_angular_objetivo_temp += (aceleracion_angular * PERIODO_TIMER);
 
         // TODO: Este control ya no haria falta. Lo hace el planificador
         /*
@@ -154,9 +157,9 @@ void motores_actualiza_velocidad() {
         */
 
         error_lineal_left = encoders_get_ultima_velocidad_left() - 
-           (velocidad_lineal_objetivo_temp + (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2  ));
+           (velocidad_lineal_objetivo_temp + (velocidad_angular_objetivo_temp * PI * DISTANCIA_ENTRE_RUEDAS / 2  ));
         error_lineal_right = encoders_get_ultima_velocidad_right() -
-           (velocidad_lineal_objetivo_temp - (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2  ));
+           (velocidad_lineal_objetivo_temp - (velocidad_angular_objetivo_temp * PI * DISTANCIA_ENTRE_RUEDAS / 2  ));
 
         /* no acumulamos todos los errores, sino que guardamos el último de ellos (mas abajo)
         error_acumulado_left += error_lineal_left;
@@ -164,26 +167,32 @@ void motores_actualiza_velocidad() {
         */
 
         /* no utilizamos KA
-        potencia_left = KA * (velocidad_lineal_objetivo_temp + (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2));
+        potencia_left = KA * (velocidad_lineal_objetivo_temp + (velocidad_angular_objetivo_temp * DISTANCIA_ENTRE_RUEDAS / 2));
         */
         potencia_left += kp_lineal * error_lineal_left; 
         potencia_left += kd_lineal * ((error_lineal_left - error_acumulado_left) / PERIODO_TIMER);
         potencia_left += ki_lineal * error_acumulado_left;
 
-        //potencia_right = KA * (velocidad_lineal_objetivo_temp - (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2));
+        //potencia_right = KA * (velocidad_lineal_objetivo_temp - (velocidad_angular_objetivo_temp * DISTANCIA_ENTRE_RUEDAS / 2));
         potencia_right += kp_lineal * error_lineal_right;
         potencia_right += kd_lineal * ((error_lineal_right - error_acumulado_right) / PERIODO_TIMER);
         potencia_right += ki_lineal * error_acumulado_right;
 
+        encoders_set_direccion(potencia_left > 0, potencia_right > 0);
+
 #ifdef MOTORES_LOG_PID
-        if (1) {
-        //if (timer1_get_cuenta() % 2 == 1) {
+        // if (1) {
+        if (timer1_get_cuenta() % 5 == 1) {
         // if (timer1_get_cuenta() > 0.5 * (1.0/PERIODO_TIMER)) { // esperamos 1 segundo
         log_insert(
                 encoders_get_ultima_velocidad_left(),
-                velocidad_lineal_objetivo_temp + (velocidad_angular_objetivo * DISTANCIA_ENTRE_RUEDAS / 2  ),
+                // velocidad_lineal_objetivo_temp + (velocidad_angular_objetivo_temp * PI * DISTANCIA_ENTRE_RUEDAS / 2  ),
+                velocidad_lineal_objetivo_temp + (velocidad_angular_objetivo_temp * PI * DISTANCIA_ENTRE_RUEDAS / 2  ),
            //     velocidad_lineal_objetivo_temp,
-                error_lineal_left,
+           //
+                // error_lineal_left,
+                encoders_get_ultima_velocidad_right(),
+
                 error_acumulado_left,
                 kp_lineal * error_lineal_left,
                 kd_lineal * ((error_lineal_right - error_acumulado_right) / PERIODO_TIMER),
@@ -230,6 +239,31 @@ float motores_get_aceleracion_lineal() {
     return aceleracion_lineal;
 }
 
+
+void motores_set_maxima_velocidad_angular(float velocidad) {
+    maxima_velocidad_angular = velocidad;
+}
+
+float motores_get_maxima_velocidad_angular() {
+    return maxima_velocidad_angular;
+}
+
+void motores_set_maxima_aceleracion_angular(float aceleracion) {
+    maxima_aceleracion_angular = aceleracion;
+}
+
+float motores_get_maxima_aceleracion_angular() {
+    return maxima_aceleracion_angular;
+}
+
+void motores_set_aceleracion_angular(float aceleracion) {
+    aceleracion_angular = aceleracion;
+}
+
+float motores_get_aceleracion_angular() {
+    return aceleracion_angular;
+}
+
 void motores_set_velocidad(float velocidad_lineal, float velocidad_angular) {
 
     if (velocidad_lineal > motores_get_maxima_velocidad_lineal())
@@ -241,7 +275,7 @@ void motores_set_velocidad(float velocidad_lineal, float velocidad_angular) {
         velocidad_lineal_objetivo = velocidad_lineal;
     }
 
-    velocidad_angular_objetivo = velocidad_angular;
+    velocidad_angular_objetivo_temp = velocidad_angular;
 
 }
 
@@ -263,7 +297,7 @@ void motores_actualiza_angulo() {
      * Forma 1 de calcular el angulo, presuponiendo que actualiza_velicidad()
      * funciona perfectamente
      *
-    angulo_actual_calculado += velocidad_angular_objetivo * PERIODO_TIMER;
+    angulo_actual_calculado += velocidad_angular_objetivo_temp * PERIODO_TIMER;
     */
 
     /*
