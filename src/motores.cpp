@@ -19,6 +19,8 @@ volatile float maxima_aceleracion_angular = MAX_ACELERACION_ANGULAR;
 volatile float aceleracion_lineal = 0.0;
 volatile float aceleracion_angular = 0.0;
 
+volatile float radio;
+
 volatile float potencia_left = 0;
 volatile float potencia_right = 0;
 
@@ -148,7 +150,9 @@ void motores_actualiza_velocidad() {
 
     if (velocidad_lineal_objetivo_temp != 0 or aceleracion_lineal != 0 or velocidad_angular_objetivo_temp != 0 or aceleracion_angular != 0) {
         velocidad_lineal_objetivo_temp += (aceleracion_lineal * PERIODO_TIMER);
-        velocidad_angular_objetivo_temp += (aceleracion_angular * PERIODO_TIMER);
+
+        // velocidad_angular_objetivo_temp += (aceleracion_angular * PERIODO_TIMER);
+        velocidad_angular_objetivo_temp = velocidad_lineal_objetivo_temp / radio;
 
         // TODO: Este control ya no haria falta. Lo hace el planificador
         /*
@@ -157,9 +161,9 @@ void motores_actualiza_velocidad() {
         */
 
         error_lineal_left = encoders_get_ultima_velocidad_left() - 
-           (velocidad_lineal_objetivo_temp + (velocidad_angular_objetivo_temp * PI * DISTANCIA_ENTRE_RUEDAS / 2  ));
+           (velocidad_lineal_objetivo_temp + (velocidad_angular_objetivo_temp * DISTANCIA_ENTRE_RUEDAS / 2  ));
         error_lineal_right = encoders_get_ultima_velocidad_right() -
-           (velocidad_lineal_objetivo_temp - (velocidad_angular_objetivo_temp * PI * DISTANCIA_ENTRE_RUEDAS / 2  ));
+           (velocidad_lineal_objetivo_temp - (velocidad_angular_objetivo_temp * DISTANCIA_ENTRE_RUEDAS / 2  ));
 
         /* no acumulamos todos los errores, sino que guardamos el último de ellos (mas abajo)
         error_acumulado_left += error_lineal_left;
@@ -277,6 +281,10 @@ void motores_set_velocidad(float velocidad_lineal, float velocidad_angular) {
 
     velocidad_angular_objetivo_temp = velocidad_angular;
 
+}
+
+void motores_set_radio(float r) {
+    radio = r;
 }
 
 double motores_get_angulo_actual() {

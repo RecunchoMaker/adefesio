@@ -29,6 +29,7 @@ void motores_set_maxima_aceleracion_lineal(float aceleracion);
 float motores_get_maxima_aceleracion_lineal();
 void motores_set_aceleracion_lineal(float aceleracion);
 float motores_get_aceleracion_lineal();
+void motores_set_radio(float r);
 
 void motores_set_maxima_velocidad_angular(float velocidad);
 float motores_get_maxima_velocidad_angular();

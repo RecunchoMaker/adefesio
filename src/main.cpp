@@ -110,6 +110,7 @@ void loop() {
 
     */
 
+    /*
     // Girando sobre si mismo
     //
     distancia = PI;  // en radianes
@@ -171,6 +172,48 @@ void loop() {
         Serial.print(encoders_get_posicion_total_left());
         Serial.print(" ");
     }
+    */
+
+    float accel = motores_get_maxima_aceleracion_lineal()/2;
+    float maxvel = 2*PI*0.09 / 2;
+    float radio = 0.09;
+    float maxvel_left = maxvel * (radio + DISTANCIA_ENTRE_RUEDAS/2) / radio;
+    float accel_left = accel * (radio + DISTANCIA_ENTRE_RUEDAS/2) / radio;
+
+    motores_set_aceleracion_lineal(accel);
+    motores_set_radio(radio);
+
+    parar_en = 2*PI*0.09 - (maxvel_left * maxvel_left / (accel_left * 2));
+    Serial.print("parar en ");
+    Serial.println(parar_en);
+    while(1) {
+        if (motores_get_velocidad_lineal_objetivo_temp() >= maxvel) {
+            motores_set_aceleracion_lineal(0);
+        }
+        if (encoders_get_posicion_total_left() * LONGITUD_PASO_ENCODER > parar_en)
+            motores_set_aceleracion_lineal(-accel);
+
+        Serial.print(motores_get_velocidad_lineal_objetivo_temp() + (motores_get_velocidad_angular_objetivo_temp() * DISTANCIA_ENTRE_RUEDAS / 2  ));
+        Serial.print(" ");
+        Serial.print(motores_get_velocidad_angular_objetivo_temp());
+        Serial.print(" ");
+        Serial.print(encoders_get_posicion_total_left());
+        Serial.print(" ");
+        Serial.print(encoders_get_posicion_total_right());
+        Serial.print(" ");
+        Serial.print(encoders_get_posicion_total_left() * LONGITUD_PASO_ENCODER);
+        Serial.print(" ");
+        Serial.println();
+
+        if (motores_get_velocidad_lineal_objetivo_temp() < 0)
+            break;
+
+    }
+    motores_set_aceleracion_lineal(0);
+    motores_set_velocidad(0,0);
+    Serial.print("Fin!");
+
+
     
 #ifdef MOTORES_LOG_PID
     for (uint8_t aux = 0; aux<100; aux++) {
