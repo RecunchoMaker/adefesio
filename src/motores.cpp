@@ -29,6 +29,8 @@ volatile int16_t pwm_right;
 
 volatile float velocidad_lineal_objetivo = 0;
 volatile float velocidad_lineal_objetivo_temp = 0;
+volatile float velocidad_lineal_objetivo_temp_left = 0;
+volatile float velocidad_lineal_objetivo_temp_right = 0;
 volatile float velocidad_lineal_actual_left = 0;
 volatile float velocidad_lineal_actual_right = 0;
 volatile float velocidad_lineal_actual = 0;
@@ -86,6 +88,7 @@ void motores_set_potencia(float left, float right) {
     if (right > 1) right = 1;
     if (left < -1) left = -1;
     if (right < -1) right = -1;
+
     motores_set_pwm_left((int16_t) (left * maximo_pwm));
     motores_set_pwm_right((int16_t) (right * maximo_pwm));
     potencia_left = left;
@@ -99,13 +102,13 @@ void motores_set_maximo_pwm(int16_t pwm) {
 
 void motores_set_pwm_right(int16_t right) {
     if (right > 0) {
-        if (right > MAX_PWM) right = MAX_PWM;
+        if (right > maximo_pwm) right = maximo_pwm;
         digitalWrite(MOTOR_RIGHT_IN1, HIGH);
         digitalWrite(MOTOR_RIGHT_IN2, LOW);
         analogWrite(MOTOR_RIGHT_PWM, right);
         pwm_right = right;
     } else {
-        if (right < -MAX_PWM) right = -MAX_PWM;
+        if (right < -maximo_pwm) right = -maximo_pwm;
         digitalWrite(MOTOR_RIGHT_IN1, LOW);
         digitalWrite(MOTOR_RIGHT_IN2, HIGH);
         analogWrite(MOTOR_RIGHT_PWM, -right);
@@ -116,13 +119,13 @@ void motores_set_pwm_right(int16_t right) {
 void motores_set_pwm_left(int16_t left) {
 
     if (left > 0) {
-        if (left > MAX_PWM) left = MAX_PWM;
+        if (left > maximo_pwm) left = maximo_pwm;
         digitalWrite(MOTOR_LEFT_IN1, HIGH);
         digitalWrite(MOTOR_LEFT_IN2, LOW);
         analogWrite(MOTOR_LEFT_PWM, left);
         pwm_left = left;
     } else {
-        if (left < -MAX_PWM) left = -MAX_PWM;
+        if (left < -maximo_pwm) left = -maximo_pwm;
         digitalWrite(MOTOR_LEFT_IN1, LOW);
         digitalWrite(MOTOR_LEFT_IN2, HIGH);
         analogWrite(MOTOR_LEFT_PWM, -left);
@@ -146,24 +149,27 @@ float motores_get_velocidad_angular_objetivo_temp() {
     return velocidad_angular_objetivo_temp;
 }
 
+float motores_get_velocidad_lineal_objetivo_temp_left() {
+    return velocidad_lineal_objetivo_temp_left;
+}
+
+float motores_get_velocidad_lineal_objetivo_temp_right() {
+    return velocidad_lineal_objetivo_temp_right;
+}
+
 void motores_actualiza_velocidad() {
 
     if (velocidad_lineal_objetivo_temp != 0 or aceleracion_lineal != 0 or velocidad_angular_objetivo_temp != 0 or aceleracion_angular != 0) {
+
         velocidad_lineal_objetivo_temp += (aceleracion_lineal * PERIODO_TIMER);
 
-        // velocidad_angular_objetivo_temp += (aceleracion_angular * PERIODO_TIMER);
         velocidad_angular_objetivo_temp = velocidad_lineal_objetivo_temp / radio;
 
-        // TODO: Este control ya no haria falta. Lo hace el planificador
-        /*
-        if (velocidad_lineal_objetivo_temp > velocidad_lineal_objetivo)
-            velocidad_lineal_objetivo_temp = velocidad_lineal_objetivo;
-        */
+        velocidad_lineal_objetivo_temp_left = velocidad_angular_objetivo_temp * (radio + DISTANCIA_ENTRE_RUEDAS/2);
+        velocidad_lineal_objetivo_temp_right = velocidad_angular_objetivo_temp * (radio - DISTANCIA_ENTRE_RUEDAS/2);
 
-        error_lineal_left = encoders_get_ultima_velocidad_left() - 
-           (velocidad_lineal_objetivo_temp + (velocidad_angular_objetivo_temp * DISTANCIA_ENTRE_RUEDAS / 2  ));
-        error_lineal_right = encoders_get_ultima_velocidad_right() -
-           (velocidad_lineal_objetivo_temp - (velocidad_angular_objetivo_temp * DISTANCIA_ENTRE_RUEDAS / 2  ));
+        error_lineal_left = encoders_get_ultima_velocidad_left() - velocidad_lineal_objetivo_temp_left;
+        error_lineal_right = encoders_get_ultima_velocidad_right() - velocidad_lineal_objetivo_temp_right;
 
         /* no acumulamos todos los errores, sino que guardamos el último de ellos (mas abajo)
         error_acumulado_left += error_lineal_left;

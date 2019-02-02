@@ -17,6 +17,26 @@ void robot_log_estado() {
 }
 #endif
 
+#ifdef MOTORES_LOG_PID_RESUMEN
+#include <encoders.h>
+#include <motores.h>
+void log_cabecera() {
+    Serial.println("vlineal vlinealLeft vlinealRight vEncoderLeft vEncoderRight pwmLeft pwmRight posLeft posRight");
+}
+
+void log_linea() {
+    LOGF(motores_get_velocidad_lineal_objetivo_temp(),5)
+    LOGF(motores_get_velocidad_lineal_objetivo_temp_left(),5)
+    LOGF(motores_get_velocidad_lineal_objetivo_temp_right(),5)
+    LOGF(encoders_get_ultima_velocidad_left(), 5);
+    LOGF(encoders_get_ultima_velocidad_right(), 5);
+    LOG(motores_get_pwm_left());
+    LOG(motores_get_pwm_right());
+    LOG(encoders_get_posicion_total_left());
+    LOGN(encoders_get_posicion_total_right());
+}
+#endif
+
 #ifdef MOTORES_LOG_PID
 #include <encoders.h>
 

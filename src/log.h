@@ -45,6 +45,12 @@ void log_start();
 
 #endif /* MOTORES_LOG_PID */
 
+
+#ifdef MOTORES_LOG_PID_RESUMEN
+void log_cabecera();
+void log_linea();
+#endif /* MOTORES_LOG_PID_RESUMEN */
+
 #endif /* ifndef LOG_H
 
  */

@@ -12,8 +12,6 @@
 #define MOTOR_RIGHT_IN1 7
 #define MOTOR_RIGHT_IN2 10
 
-#define MAX_PWM 200
-
 void motores_init(float voltaje);
 
 void motores_set_kp_lineal(float kp);
@@ -48,6 +46,8 @@ void motores_set_ticks(int32_t left, int32_t right);
 uint32_t motores_get_ticks_left();
 uint32_t motores_get_ticks_right();
 float motores_get_velocidad_lineal_objetivo_temp();
+float motores_get_velocidad_lineal_objetivo_temp_left();
+float motores_get_velocidad_lineal_objetivo_temp_right();
 float motores_get_velocidad_angular_objetivo_temp();
 void motores_actualiza_velocidad();
 void motores_set_velocidad(float lineal, float angular);
