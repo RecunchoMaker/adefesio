@@ -15,6 +15,7 @@ int16_t encoders_get_posicion_left(void);
 int16_t encoders_get_posicion_right(void);
 int32_t encoders_get_posicion_total_left(void);
 int32_t encoders_get_posicion_total_right(void);
+int32_t encoders_get_posicion_total(void);
 void encoders_ISR_left(void);
 void encoders_ISR_right(void);
 float encoders_get_velocidad_left(void);

@@ -89,6 +89,10 @@ int32_t encoders_get_posicion_total_right(void) {
     return encoder_posicion_total_right;
 }
 
+int32_t encoders_get_posicion_total(void) {
+    return (encoder_posicion_total_right + encoder_posicion_total_right) / 2;
+}
+
 void encoders_ISR_left(void) {
 
     ultimo_tcnt1_left = TCNT1;

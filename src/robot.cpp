@@ -2,108 +2,102 @@
 #include <settings.h>
 #include <robot.h>
 #include <motores.h>
+#include <encoders.h>
 
-volatile float posicion_x;
-volatile float posicion_y;
 
-volatile float posicion_x_inicial;
-volatile float posicion_y_inicial;
+struct tipo_accion {
+    uint32_t pasos_objetivo;
+    uint32_t pasos_hasta_decelerar;
+    float deceleracion;
+    float velocidad_maxima;
+    float radio;
+};
 
-volatile int8_t orientacion;
+#define ULTIMA_ACCION 1
+struct tipo_accion accion;
+struct tipo_accion accion_array[ULTIMA_ACCION+1];
+uint8_t accion_idx;
 
-void robot_set_posicion(float x, float y) {
-    posicion_x = x;
-    posicion_y = y;
-    posicion_x_inicial = x;
-    posicion_y_inicial = y;
+float _distancia_para_decelerar(float velocidad, float aceleracion) {
+    return velocidad * velocidad / (aceleracion * 2);
+}
+
+void robot_init() {
+
+    float distancia;
+    uint32_t pasos;
+    float deceleracion;
+    float velocidad_maxima;
+    float velocidad_final;
+    float radio;
+    
+    accion_array[0].pasos_objetivo = 9999;
+    accion_array[0].pasos_hasta_decelerar = 9999;
+    accion_array[0].deceleracion = 0;
+    accion_array[0].velocidad_maxima = 0;
+    accion_array[0].radio = 9999;
+
     encoders_reset_posicion_total();
-}
+    encoders_reset_posicion();
+    motores_set_potencia(0,0);
+    motores_set_velocidad(0, 0);
 
-void robot_set_orientacion(int8_t o) {
-    orientacion = o;
-}
+    distancia = 0.5;
+    pasos = distancia / LONGITUD_PASO_ENCODER;
+    deceleracion = 0.5;
+    velocidad_maxima = 0.2;
+    velocidad_final = 0;
+    radio = 9999;
 
-float robot_get_posicion_x() {
-    return posicion_x;
-}
+    accion_array[1].pasos_objetivo = pasos;
+    accion_array[1].pasos_hasta_decelerar = (distancia - _distancia_para_decelerar(velocidad_maxima - velocidad_final, deceleracion)) / LONGITUD_PASO_ENCODER;
+    accion_array[1].deceleracion = deceleracion;
+    accion_array[1].velocidad_maxima = velocidad_maxima;
+    accion_array[1].radio = radio;
 
-float robot_get_posicion_y() {
-    return posicion_y;
-}
+    accion_idx = 0;
+    accion = accion_array[0];
 
-int8_t robot_get_orientacion() {
-    return orientacion;
-}
+} 
 
-void robot_ir_a(float x, float y, float radio) {
+void robot_siguiente_accion() {
+    accion = accion_array[accion_idx];
+    if (accion_idx < ULTIMA_ACCION) {
+        accion = accion_array[++accion_idx];
 
-    if (radio == RECTO) {
-
-        // Estoy en la orientacion correcta?
-        if (posicion_x == x) {
-            if ((posicion_y < y and orientacion == NORTE)
-                or
-               (posicion_y > y and orientacion == SUR))
-                posicion_x_inicial = posicion_x;
-                posicion_y_inicial = posicion_y;
-                encoders_reset_posicion_total();
-                motores_set_velocidad(motores_get_maxima_velocidad_lineal(), 0);
-        }
-
-        if (posicion_y == y) {
-            if ((posicion_x < x and orientacion == ESTE)
-                or
-               (posicion_x > x and orientacion == OESTE)) {
-                posicion_x_inicial = posicion_x;
-                posicion_y_inicial = posicion_y;
-                encoders_reset_posicion_total();
-                motores_set_velocidad(motores_get_maxima_velocidad_lineal(),0);
-            }
-        }
-
-
-    }
-}
-
-void robot_gira(int8_t o) {
-
-    if (o == -1) {
-        motores_set_velocidad(0.0, -MAX_VELOCIDAD_GIRO);
-    } else {
-        motores_set_velocidad(0.0, +MAX_VELOCIDAD_GIRO);
-    }
-
-
-}
-
-
-void robot_actualiza_posicion() {
-    if (motores_get_velocidad_angular_objetivo_temp() == 0) {
-        switch (orientacion) {
-            case NORTE: posicion_y = posicion_y_inicial + LONGITUD_PASO_ENCODER * (encoders_get_posicion_total_left() + encoders_get_posicion_total_right()) / 2.0;
-                        break;
-            case SUR: posicion_y = posicion_y_inicial - LONGITUD_PASO_ENCODER * (encoders_get_posicion_total_left() + encoders_get_posicion_total_right()) / 2.0;
-                        break;
-            case ESTE: posicion_x = posicion_x_inicial + (LONGITUD_PASO_ENCODER * (encoders_get_posicion_total_left() + encoders_get_posicion_total_right()) / 2.0);
-                        break;
-            case OESTE: posicion_x = posicion_x_inicial - LONGITUD_PASO_ENCODER * (encoders_get_posicion_total_left() + encoders_get_posicion_total_right()) / 2.0;
-                        break;
+        if (motores_get_velocidad_lineal_objetivo_temp() < accion.velocidad_maxima) {
+            if (accion.radio = 9999)
+                motores_set_aceleracion_lineal(0.1);
+            motores_set_radio(accion.radio);
         }
     } else {
-        if (motores_get_velocidad_angular_objetivo_temp() < 0) {
-            if (motores_get_angulo_actual() > 3*PI/2) orientacion = ESTE;
-            else if (motores_get_angulo_actual() > PI) orientacion = SUR;
-            else if (motores_get_angulo_actual() > PI/2) orientacion = OESTE;
-            else if (motores_get_angulo_actual() > 0) orientacion = NORTE;
-        } else {
-            if (motores_get_angulo_actual() > 0) orientacion = OESTE;
-            else if (motores_get_angulo_actual() > PI/2) orientacion = NORTE;
-            else if (motores_get_angulo_actual() > PI) orientacion = ESTE;
-            else if (motores_get_angulo_actual() > 3*PI/2) orientacion = SUR;
-        }
+        accion_idx = 0;
+        accion = accion_array[0];
+        motores_parar();
     }
+    encoders_reset_posicion_total();
+    Serial.print("accion: ");
+    Serial.println(accion_idx);
 }
 
-void robot_parar() {
-    motores_set_velocidad(0.0, 0);
+void robot_control() {
+    if (encoders_get_posicion_total() >= accion.pasos_objetivo) {
+        Serial.print("Alcanzo pasos ");
+        Serial.print(accion.pasos_objetivo);
+        Serial.print(" a ");
+        Serial.print(motores_get_velocidad_lineal_objetivo_temp());
+        Serial.println(" m/s");
+        robot_siguiente_accion();
+    }
+    else if (encoders_get_posicion_total() > accion.pasos_hasta_decelerar) {
+        accion.pasos_hasta_decelerar = 999999; // no volver a entrar en este if
+        Serial.print("decelero en ");
+        Serial.println(encoders_get_posicion_total());
+        motores_set_aceleracion_lineal(-accion.deceleracion);
+    }
+    else
+        if (motores_get_velocidad_lineal_objetivo_temp() >= accion.velocidad_maxima) {
+            motores_set_aceleracion_lineal(0);
+        }
+    motores_actualiza_velocidad();
 }
