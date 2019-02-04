@@ -27,6 +27,7 @@ ISR (TIMER1_COMPA_vect) {
 void setup() {
 
     Serial.begin(115200);
+    cli();
 
     bateria_init();
     motores_init(bateria_get_voltaje());

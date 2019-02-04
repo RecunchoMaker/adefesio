@@ -90,7 +90,7 @@ int32_t encoders_get_posicion_total_right(void) {
 }
 
 int32_t encoders_get_posicion_total(void) {
-    return (encoder_posicion_total_right + encoder_posicion_total_right) / 2;
+    return (encoder_posicion_total_right + encoder_posicion_total_left) / 2;
 }
 
 void encoders_ISR_left(void) {

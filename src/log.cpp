@@ -25,9 +25,9 @@ void log_cabecera() {
 }
 
 void log_linea() {
-    LOGF(motores_get_velocidad_lineal_objetivo_temp(),5)
-    LOGF(motores_get_velocidad_lineal_objetivo_temp_left(),5)
-    LOGF(motores_get_velocidad_lineal_objetivo_temp_right(),5)
+    LOGF(motores_get_velocidad_lineal_objetivo(),5)
+    LOGF(motores_get_velocidad_lineal_objetivo_left(),5)
+    LOGF(motores_get_velocidad_lineal_objetivo_right(),5)
     LOGF(encoders_get_ultima_velocidad_left(), 5);
     LOGF(encoders_get_ultima_velocidad_right(), 5);
     LOG(motores_get_pwm_left());
@@ -43,7 +43,7 @@ void log_linea() {
 #define MAX_LOG_MEM 35
 volatile uint8_t index = MAX_LOG_MEM + 1;
 volatile float a_ultima_velocidad[MAX_LOG_MEM];
-volatile float a_velocidad_lineal_objetivo_temp[MAX_LOG_MEM];
+volatile float a_velocidad_lineal_objetivo[MAX_LOG_MEM];
 volatile float a_error_lineal_left[MAX_LOG_MEM];
 volatile float a_error_acumulado_left[MAX_LOG_MEM];
 volatile float a_aux1[MAX_LOG_MEM];
@@ -54,7 +54,7 @@ volatile uint8_t a_ticks[MAX_LOG_MEM];
 
 void log_insert(
         float _ultima_velocidad,
-        float _velocidad_lineal_objetivo_temp,
+        float _velocidad_lineal_objetivo,
         float _error_lineal_left,
         float _error_acumulado_left,
         float _aux1,
@@ -67,7 +67,7 @@ void log_insert(
     if (index < MAX_LOG_MEM) {
 
         a_ultima_velocidad[index] = _ultima_velocidad;
-        a_velocidad_lineal_objetivo_temp[index] = _velocidad_lineal_objetivo_temp;
+        a_velocidad_lineal_objetivo[index] = _velocidad_lineal_objetivo;
         a_error_lineal_left[index] = _error_lineal_left;
         a_error_acumulado_left[index] = _error_acumulado_left;
         a_aux1[index] = _aux1;
@@ -84,7 +84,7 @@ void log_print() {
         Serial.println("ultimaVel velObjetivo errorLeft errorAcumulado kp kd ki potencia encoderPos");
         for (uint8_t i = 0; i < MAX_LOG_MEM; i++) {
            LOGF(a_ultima_velocidad[i],5);
-           LOGF(a_velocidad_lineal_objetivo_temp[i],5);
+           LOGF(a_velocidad_lineal_objetivo[i],5);
            LOGF(a_error_lineal_left[i],5);
            LOGF(a_error_acumulado_left[i],5);
            if (a_aux1[i]>1) a_aux1[i] = 1.5;

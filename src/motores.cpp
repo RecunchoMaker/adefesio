@@ -14,10 +14,8 @@ volatile float ki_lineal = -0.0;
 volatile float maxima_velocidad_lineal = MAX_VELOCIDAD_LINEAL;
 volatile float maxima_aceleracion_lineal = MAX_ACELERACION_LINEAL;
 volatile float maxima_velocidad_angular = MAX_VELOCIDAD_ANGULAR;
-volatile float maxima_aceleracion_angular = MAX_ACELERACION_ANGULAR;
 
 volatile float aceleracion_lineal = 0.0;
-volatile float aceleracion_angular = 0.0;
 
 volatile float radio = 9999; // evita division por 0 en el init
 
@@ -28,14 +26,13 @@ volatile int16_t pwm_left;
 volatile int16_t pwm_right;
 
 volatile float velocidad_lineal_objetivo = 0;
-volatile float velocidad_lineal_objetivo_temp = 0;
-volatile float velocidad_lineal_objetivo_temp_left = 0;
-volatile float velocidad_lineal_objetivo_temp_right = 0;
+volatile float velocidad_lineal_objetivo_left = 0;
+volatile float velocidad_lineal_objetivo_right = 0;
 volatile float velocidad_lineal_actual_left = 0;
 volatile float velocidad_lineal_actual_right = 0;
 volatile float velocidad_lineal_actual = 0;
 
-volatile float velocidad_angular_objetivo_temp = 0;
+volatile float velocidad_angular_objetivo = 0;
 
 volatile double angulo_actual = 0;
 volatile double angulo_actual_calculado = 0;
@@ -141,54 +138,55 @@ int16_t motores_get_pwm_right() {
     return pwm_right;
 }
 
-float motores_get_velocidad_lineal_objetivo_temp() {
-    return velocidad_lineal_objetivo_temp;
+float motores_get_velocidad_lineal_objetivo() {
+    return velocidad_lineal_objetivo;
 }
 
-float motores_get_velocidad_angular_objetivo_temp() {
-    return velocidad_angular_objetivo_temp;
+float motores_get_velocidad_angular_objetivo() {
+    return velocidad_angular_objetivo;
 }
 
-float motores_get_velocidad_lineal_objetivo_temp_left() {
-    return velocidad_lineal_objetivo_temp_left;
+float motores_get_velocidad_lineal_objetivo_left() {
+    return velocidad_lineal_objetivo_left;
 }
 
-float motores_get_velocidad_lineal_objetivo_temp_right() {
-    return velocidad_lineal_objetivo_temp_right;
+float motores_get_velocidad_lineal_objetivo_right() {
+    return velocidad_lineal_objetivo_right;
 }
 
 void motores_parar() {
     aceleracion_lineal = 0;
-    velocidad_lineal_objetivo_temp = 0;
+    velocidad_lineal_objetivo = 0;
+    velocidad_angular_objetivo = 0;
+    motores_set_potencia(0,0);
 }
 
 void motores_actualiza_velocidad() {
 
 
-    if (velocidad_lineal_objetivo_temp != 0 or aceleracion_lineal != 0 or velocidad_angular_objetivo_temp != 0 or aceleracion_angular != 0) {
+    if (velocidad_lineal_objetivo != 0 or aceleracion_lineal != 0 or velocidad_angular_objetivo != 0) {
 
-        velocidad_lineal_objetivo_temp += (aceleracion_lineal * PERIODO_TIMER);
-        velocidad_angular_objetivo_temp = velocidad_lineal_objetivo_temp / radio;
+        velocidad_lineal_objetivo += (aceleracion_lineal * PERIODO_TIMER);
 
-        velocidad_lineal_objetivo_temp_left = velocidad_angular_objetivo_temp * (radio + DISTANCIA_ENTRE_RUEDAS/2);
-        velocidad_lineal_objetivo_temp_right = velocidad_angular_objetivo_temp * (radio - DISTANCIA_ENTRE_RUEDAS/2);
+        if (radio < 1) { // suponemos que un radio superior a 1m es siempre una recta
+            if (radio == 0) {
+                Serial.println("QUEEEEE");
+            }
+            velocidad_angular_objetivo = velocidad_lineal_objetivo / radio;
+            velocidad_lineal_objetivo_left = velocidad_angular_objetivo * (radio + DISTANCIA_ENTRE_RUEDAS/2);
+            velocidad_lineal_objetivo_right = velocidad_angular_objetivo * (radio - DISTANCIA_ENTRE_RUEDAS/2);
+        } else {
+            velocidad_lineal_objetivo_left = velocidad_lineal_objetivo;
+            velocidad_lineal_objetivo_right = velocidad_lineal_objetivo;
+        }
 
-        error_lineal_left = encoders_get_ultima_velocidad_left() - velocidad_lineal_objetivo_temp_left;
-        error_lineal_right = encoders_get_ultima_velocidad_right() - velocidad_lineal_objetivo_temp_right;
+        error_lineal_left = encoders_get_ultima_velocidad_left() - velocidad_lineal_objetivo_left;
+        error_lineal_right = encoders_get_ultima_velocidad_right() - velocidad_lineal_objetivo_right;
 
-        /* no acumulamos todos los errores, sino que guardamos el último de ellos (mas abajo)
-        error_acumulado_left += error_lineal_left;
-        error_acumulado_right += error_lineal_right;
-        */
-
-        /* no utilizamos KA
-        potencia_left = KA * (velocidad_lineal_objetivo_temp + (velocidad_angular_objetivo_temp * DISTANCIA_ENTRE_RUEDAS / 2));
-        */
         potencia_left += kp_lineal * error_lineal_left; 
         potencia_left += kd_lineal * ((error_lineal_left - error_acumulado_left) / PERIODO_TIMER);
         potencia_left += ki_lineal * error_acumulado_left;
 
-        //potencia_right = KA * (velocidad_lineal_objetivo_temp - (velocidad_angular_objetivo_temp * DISTANCIA_ENTRE_RUEDAS / 2));
         potencia_right += kp_lineal * error_lineal_right;
         potencia_right += kd_lineal * ((error_lineal_right - error_acumulado_right) / PERIODO_TIMER);
         potencia_right += ki_lineal * error_acumulado_right;
@@ -201,9 +199,9 @@ void motores_actualiza_velocidad() {
         // if (timer1_get_cuenta() > 0.5 * (1.0/PERIODO_TIMER)) { // esperamos 1 segundo
         log_insert(
                 encoders_get_ultima_velocidad_left(),
-                // velocidad_lineal_objetivo_temp + (velocidad_angular_objetivo_temp * PI * DISTANCIA_ENTRE_RUEDAS / 2  ),
-                velocidad_lineal_objetivo_temp + (velocidad_angular_objetivo_temp * PI * DISTANCIA_ENTRE_RUEDAS / 2  ),
-           //     velocidad_lineal_objetivo_temp,
+                // velocidad_lineal_objetivo + (velocidad_angular_objetivo * PI * DISTANCIA_ENTRE_RUEDAS / 2  ),
+                velocidad_lineal_objetivo + (velocidad_angular_objetivo * PI * DISTANCIA_ENTRE_RUEDAS / 2  ),
+           //     velocidad_lineal_objetivo,
            //
                 // error_lineal_left,
                 encoders_get_ultima_velocidad_right(),
@@ -219,9 +217,6 @@ void motores_actualiza_velocidad() {
                 );
         }
 #endif
-
-        // error_acumulado_left = error_lineal_left;
-        // error_acumulado_right = error_lineal_right;
 
         motores_set_potencia(potencia_left, potencia_right);
 
@@ -263,37 +258,6 @@ float motores_get_maxima_velocidad_angular() {
     return maxima_velocidad_angular;
 }
 
-void motores_set_maxima_aceleracion_angular(float aceleracion) {
-    maxima_aceleracion_angular = aceleracion;
-}
-
-float motores_get_maxima_aceleracion_angular() {
-    return maxima_aceleracion_angular;
-}
-
-void motores_set_aceleracion_angular(float aceleracion) {
-    aceleracion_angular = aceleracion;
-}
-
-float motores_get_aceleracion_angular() {
-    return aceleracion_angular;
-}
-
-void motores_set_velocidad(float velocidad_lineal, float velocidad_angular) {
-
-    if (velocidad_lineal > motores_get_maxima_velocidad_lineal())
-        velocidad_lineal_objetivo = motores_get_maxima_velocidad_lineal();
-    else {
-        // velocidad_lineal_objetivo contiene la ultima velocidad seteada
-        // en esta función
-        velocidad_lineal_objetivo_temp = velocidad_lineal_objetivo;
-        velocidad_lineal_objetivo = velocidad_lineal;
-    }
-
-    velocidad_angular_objetivo_temp = velocidad_angular;
-
-}
-
 void motores_set_radio(float r) {
     radio = r;
 }
@@ -316,7 +280,7 @@ void motores_actualiza_angulo() {
      * Forma 1 de calcular el angulo, presuponiendo que actualiza_velicidad()
      * funciona perfectamente
      *
-    angulo_actual_calculado += velocidad_angular_objetivo_temp * PERIODO_TIMER;
+    angulo_actual_calculado += velocidad_angular_objetivo * PERIODO_TIMER;
     */
 
     /*
