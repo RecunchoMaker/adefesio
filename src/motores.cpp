@@ -6,14 +6,12 @@
 
 #define KA (2.0)
 
-volatile float kp_lineal = -0.6;
+volatile float kp_lineal = -2;
 volatile float kd_lineal = -0.0;
 volatile float ki_lineal = -0.0;
 
-
-volatile float maxima_velocidad_lineal = MAX_VELOCIDAD_LINEAL;
-volatile float maxima_aceleracion_lineal = MAX_ACELERACION_LINEAL;
-volatile float maxima_velocidad_angular = MAX_VELOCIDAD_ANGULAR;
+volatile float kp_angular = -0.000;
+volatile float error_angulo;
 
 volatile float aceleracion_lineal = 0.0;
 
@@ -58,14 +56,16 @@ void motores_init(float voltaje) {
     pinMode(MOTOR_RIGHT_PWM, OUTPUT);
 
     motores_set_maximo_pwm((int16_t) (255.0 * 6.0 / voltaje));
-    motores_set_maxima_velocidad_lineal(MAX_VELOCIDAD_LINEAL);
-    motores_set_maxima_aceleracion_lineal(MAX_ACELERACION_LINEAL);
 
     motores_set_potencia(0,0);
 }
 
 void motores_set_kp_lineal(float kp) {
     kp_lineal = kp;
+}
+
+void motores_set_kp_angular(float kp) {
+    kp_angular = kp;
 }
 
 void motores_set_ki_lineal(float ki) {
@@ -76,9 +76,10 @@ void motores_set_kd_lineal(float kd) {
     kd_lineal = kd;
 }
 
-float motores_get_kp_lineal() { return kp_lineal; }
-float motores_get_ki_lineal() { return ki_lineal; }
-float motores_get_kd_lineal() { return kd_lineal; }
+float motores_get_kp_lineal()  { return kp_lineal; }
+float motores_get_kp_angular() { return kp_angular; }
+float motores_get_ki_lineal()  { return ki_lineal; }
+float motores_get_kd_lineal()  { return kd_lineal; }
 
 void motores_set_potencia(float left, float right) {
     if (left > 1) left = 1;
@@ -93,8 +94,11 @@ void motores_set_potencia(float left, float right) {
 }
 
 void motores_set_maximo_pwm(int16_t pwm) {
+    Serial.print("maximo pwm: ");
+    Serial.println(pwm);
     if (pwm > 255) pwm = 255;
     maximo_pwm = pwm;
+    Serial.println(pwm);
 }
 
 void motores_set_pwm_right(int16_t right) {
@@ -157,27 +161,37 @@ float motores_get_velocidad_lineal_objetivo_right() {
 void motores_parar() {
     aceleracion_lineal = 0;
     velocidad_lineal_objetivo = 0;
-    velocidad_angular_objetivo = 0;
     motores_set_potencia(0,0);
 }
 
 void motores_actualiza_velocidad() {
 
-
-    if (velocidad_lineal_objetivo != 0 or aceleracion_lineal != 0 or velocidad_angular_objetivo != 0) {
+    if (velocidad_lineal_objetivo != 0 or aceleracion_lineal != 0) {
 
         velocidad_lineal_objetivo += (aceleracion_lineal * PERIODO_TIMER);
 
-        if (radio < 1) { // suponemos que un radio superior a 1m es siempre una recta
-            if (radio == 0) {
-                Serial.println("QUEEEEE");
-            }
+        if (radio == 0) { // caso especial. giro sobre si mismo
+            velocidad_lineal_objetivo_left = -velocidad_lineal_objetivo;
+            velocidad_lineal_objetivo_right = velocidad_lineal_objetivo;
+
+            error_angulo = encoders_get_posicion_total_right() + encoders_get_posicion_total_left();
+
+            velocidad_lineal_objetivo_left -= error_angulo * kp_angular;
+            velocidad_lineal_objetivo_right += error_angulo * kp_angular;
+
+        } else if (radio < 1) { // suponemos que un radio superior a 1m es siempre una recta
             velocidad_angular_objetivo = velocidad_lineal_objetivo / radio;
             velocidad_lineal_objetivo_left = velocidad_angular_objetivo * (radio + DISTANCIA_ENTRE_RUEDAS/2);
             velocidad_lineal_objetivo_right = velocidad_angular_objetivo * (radio - DISTANCIA_ENTRE_RUEDAS/2);
         } else {
+
             velocidad_lineal_objetivo_left = velocidad_lineal_objetivo;
             velocidad_lineal_objetivo_right = velocidad_lineal_objetivo;
+
+            error_angulo = encoders_get_posicion_total_left() - encoders_get_posicion_total_right();
+
+            velocidad_lineal_objetivo_left += error_angulo * kp_angular;
+            velocidad_lineal_objetivo_right -= error_angulo * kp_angular;
         }
 
         error_lineal_left = encoders_get_ultima_velocidad_left() - velocidad_lineal_objetivo_left;
@@ -190,6 +204,9 @@ void motores_actualiza_velocidad() {
         potencia_right += kp_lineal * error_lineal_right;
         potencia_right += kd_lineal * ((error_lineal_right - error_acumulado_right) / PERIODO_TIMER);
         potencia_right += ki_lineal * error_acumulado_right;
+
+        error_acumulado_left = error_lineal_left;
+        error_acumulado_right = error_lineal_right;
 
         encoders_set_direccion(potencia_left > 0, potencia_right > 0);
 
@@ -225,22 +242,6 @@ void motores_actualiza_velocidad() {
     }
 }
 
-void motores_set_maxima_velocidad_lineal(float velocidad) {
-    maxima_velocidad_lineal = velocidad;
-}
-
-float motores_get_maxima_velocidad_lineal() {
-    return maxima_velocidad_lineal;
-}
-
-void motores_set_maxima_aceleracion_lineal(float aceleracion) {
-    maxima_aceleracion_lineal = aceleracion;
-}
-
-float motores_get_maxima_aceleracion_lineal() {
-    return maxima_aceleracion_lineal;
-}
-
 void motores_set_aceleracion_lineal(float aceleracion) {
     aceleracion_lineal = aceleracion;
 }
@@ -249,14 +250,6 @@ float motores_get_aceleracion_lineal() {
     return aceleracion_lineal;
 }
 
-
-void motores_set_maxima_velocidad_angular(float velocidad) {
-    maxima_velocidad_angular = velocidad;
-}
-
-float motores_get_maxima_velocidad_angular() {
-    return maxima_velocidad_angular;
-}
 
 void motores_set_radio(float r) {
     radio = r;

@@ -69,7 +69,13 @@ void _procesa_comando(char *token, char *parametro) {
         motores_set_kp_lineal(atof(parametro));
         Serial.print("kp=");
         Serial.println(motores_get_kp_lineal());
-    } else if (!strcmp(token, "kd")) {
+    }
+    if (!strcmp(token, "kpa")) {
+        motores_set_kp_angular(atof(parametro));
+        Serial.print("kpa=");
+        Serial.println(motores_get_kp_angular(),5);
+    }
+    else if (!strcmp(token, "kd")) {
         motores_set_kd_lineal(atof(parametro));
         Serial.print("kd=");
         Serial.println(motores_get_kd_lineal());
@@ -78,16 +84,6 @@ void _procesa_comando(char *token, char *parametro) {
         motores_set_ki_lineal(atof(parametro));
         Serial.print("ki=");
         Serial.println(motores_get_ki_lineal());
-    }
-    else if (!strcmp(token, "vm")) {
-        motores_set_maxima_velocidad_lineal(atof(parametro));
-        Serial.print("v.max=");
-        Serial.println(motores_get_maxima_velocidad_lineal());
-    }
-    else if (!strcmp(token, "am")) {
-        motores_set_maxima_aceleracion_lineal(atof(parametro));
-        Serial.print("a.max=");
-        Serial.println(motores_get_maxima_aceleracion_lineal());
     }
 }
 

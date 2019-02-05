@@ -50,4 +50,18 @@ void loop() {
     Serial.println("GO!");
     robot_siguiente_accion();
 
+    while (robot_get_accion() > 0) {
+        Serial.print(robot_get_accion());
+        Serial.print(" ");
+        Serial.print(timer1_get_cuenta());
+        Serial.print(" ");
+        Serial.print(encoders_get_velocidad_left(),6);
+        Serial.print(" ");
+        Serial.print(encoders_get_velocidad_right(),6);
+        Serial.print(" ");
+        Serial.print(motores_get_velocidad_lineal_objetivo(),6);
+        Serial.print(" ");
+        Serial.print(encoders_get_posicion_total());
+        Serial.println();
+    }
 }

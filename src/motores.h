@@ -17,21 +17,16 @@ void motores_init(float voltaje);
 void motores_set_kp_lineal(float kp);
 void motores_set_ki_lineal(float ki);
 void motores_set_kd_lineal(float kd);
+void motores_set_kp_angular(float kd);
 float motores_get_kp_lineal();
+float motores_get_kp_angular();
 float motores_get_ki_lineal();
 float motores_get_kd_lineal();
 
-void motores_set_maxima_velocidad_lineal(float velocidad);
-float motores_get_maxima_velocidad_lineal();
-void motores_set_maxima_aceleracion_lineal(float aceleracion);
-float motores_get_maxima_aceleracion_lineal();
 void motores_set_aceleracion_lineal(float aceleracion);
 float motores_get_aceleracion_lineal();
 void motores_set_radio(float r);
 void motores_parar();
-
-void motores_set_maxima_velocidad_angular(float velocidad);
-float motores_get_maxima_velocidad_angular();
 
 void motores_set_maximo_pwm(int16_t pwm);
 void motores_set_pwm_left(int16_t right);
