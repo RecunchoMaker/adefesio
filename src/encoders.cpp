@@ -2,9 +2,8 @@
 #include <motores.h>
 #include <settings.h>
 
-#define KALMAN_GAIN 1
-#define DIRECCION_ADELANTE 0
-#define DIRECCION_ATRAS 1
+#define DIRECCION_ADELANTE 1
+#define DIRECCION_ATRAS 0
 #define MIN_TCNT1 200
 
 
@@ -24,14 +23,14 @@ volatile uint16_t tcnt1_anterior_right = 0;
 volatile uint16_t ultimo_tcnt1_right = 0;
 volatile uint16_t michi = 0;
 
-volatile double velocidad_left = 0;
-volatile double velocidad_right = 0;
+volatile float velocidad_left = 0;
+volatile float velocidad_right = 0;
 
-volatile double ultima_velocidad_left = 0;
-volatile double ultima_velocidad_right = 0;
+volatile float ultima_velocidad_left = 0;
+volatile float ultima_velocidad_right = 0;
 
-volatile uint8_t direccion_left = DIRECCION_ADELANTE;
-volatile uint8_t direccion_right = DIRECCION_ATRAS;
+volatile bool direccion_left = DIRECCION_ADELANTE;
+volatile bool direccion_right = DIRECCION_ATRAS;
 
 void encoders_init(void) {
 
@@ -50,7 +49,15 @@ void encoders_init(void) {
             encoders_ISR_right, RISING);
 }
 
-void encoders_set_direccion(uint8_t left, uint8_t right) {
+uint16_t encoders_get_tcnt1_anterior_right() {
+    return tcnt1_anterior_right;
+}
+
+uint16_t encoders_get_ultimo_tcnt1_right() {
+    return ultimo_tcnt1_right;
+}
+
+void encoders_set_direccion(bool left, bool right) {
     direccion_left = left;
     direccion_right = right;
 }
@@ -149,7 +156,6 @@ void encoders_calcula_velocidad() {
                 (PERIODO_TIMER * ( (int32_t) OCR1A * (ticks_sin_actualizar_left + 1) + ultimo_tcnt1_left - tcnt1_anterior_left));
         }
 
-        // velocidad_left = KALMAN_GAIN * velocidad_left + (1-KALMAN_GAIN) * ultima_velocidad_left;
         ticks_sin_actualizar_left = 0;
         tcnt1_anterior_left = ultimo_tcnt1_left;
     }
@@ -173,7 +179,6 @@ void encoders_calcula_velocidad() {
                 (PERIODO_TIMER * ( (int32_t) OCR1A * (ticks_sin_actualizar_right + 1) + ultimo_tcnt1_right - tcnt1_anterior_right));
         }
 
-        // velocidad_right = KALMAN_GAIN * velocidad_right + (1-KALMAN_GAIN) * ultima_velocidad_right;
         ticks_sin_actualizar_right = 0;
         tcnt1_anterior_right = ultimo_tcnt1_right;
     }

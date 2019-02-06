@@ -37,6 +37,7 @@ int16_t motores_get_pwm_right();
 void motores_set_ticks(int32_t left, int32_t right);
 uint32_t motores_get_ticks_left();
 uint32_t motores_get_ticks_right();
+void motores_set_velocidad_lineal_objetivo(float velocidad);
 float motores_get_velocidad_lineal_objetivo();
 float motores_get_velocidad_lineal_objetivo_left();
 float motores_get_velocidad_lineal_objetivo_right();

@@ -40,8 +40,15 @@ void _crea_accion(float distancia,
     accion_array[ultima_accion].aceleracion = aceleracion;
     accion_array[ultima_accion].pasos_objetivo = distancia / LONGITUD_PASO_ENCODER;
     accion_array[ultima_accion].deceleracion = deceleracion;
-    accion_array[ultima_accion].pasos_hasta_decelerar = (distancia - _distancia_para_decelerar (velocidad_maxima - velocidad_final, deceleracion)) /
-                LONGITUD_PASO_ENCODER;
+    accion_array[ultima_accion].pasos_hasta_decelerar = (int32_t) ((distancia - _distancia_para_decelerar (velocidad_maxima - velocidad_final, deceleracion)) /
+                LONGITUD_PASO_ENCODER);
+    Serial.println("aqui");
+    Serial.println(ultima_accion);
+    Serial.println(_distancia_para_decelerar(0.3,0.5));
+    Serial.println(distancia - _distancia_para_decelerar (velocidad_maxima - velocidad_final, deceleracion)); 
+    Serial.println(accion_array[ultima_accion].pasos_hasta_decelerar);
+    Serial.println("-");
+
     accion_array[ultima_accion].velocidad_maxima = velocidad_maxima;
     accion_array[ultima_accion].radio = radio;
     ultima_accion++;
@@ -77,22 +84,11 @@ void robot_init() {
     // _         distancia  , aceleracion, deceleracion, velocidad_maxima, velocidad_final, radio
     _crea_accion(INFINITO   , 0          , 0.3         , 0.2             , 0              , INFINITO); // espera GO
 
-    /* Un giro sobre si mismo
-    _crea_accion(PI*DISTANCIA_ENTRE_RUEDAS/2, 0.5, 0.3 , 0.2             , 0              , 0); // gira 180g
-    */
-
-    /* Una recta de dos casillas cm, espera, y gira sobre si mismo
-    _crea_accion(0.18*2     , 0.5          , 0.5           , 0.3             , 0              , RECTO); // avanza
-    _crea_accion(ESPERA     , 0.5        , 0.5         , 0               , 0              , 1); // espera 1 segundo
-    _crea_accion(PI*DISTANCIA_ENTRE_RUEDAS/2, 0.5, 0.5 , 0.2             , 0              , GIRA180); // gira 180g
-     */
-
     /* Una recta de dos casillas y un giro de 90 grados
      */
-    _crea_accion(0.18*2     , 0.5          , 0.5           , 0.3             , 0              , RECTO); // avanza
-    _crea_accion((PI*0.09/2), 0.3        , 0.3         , 0.2             , 0.2            , 0.09);
-    _crea_accion(ESPERA     , 0.5        , 0.5         , 0               , 0              , 1); // espera 1 segundo
-    _crea_accion(PI*DISTANCIA_ENTRE_RUEDAS/2, 0.5, 0.5 , 0.2             , 0              , GIRA180); // gira 180g
+    _crea_accion(0.18*2     , 1          , 1           , 0.3             , 0.1            , RECTO); // avanza
+    _crea_accion(ESPERA     , 0.5        , 0.5         , 0               , 0              , 0.5); // espera 1/2 segundo
+    _crea_accion(PI*DISTANCIA_ENTRE_RUEDAS/2, 1, 1 , 0.2             , 0.1            , GIRA180); // gira 180g
 
     ultima_accion--;
     accion_idx = 0;
@@ -144,7 +140,9 @@ void robot_control() {
         }
     } else {
 
-        pasos_recorridos = accion.radio == 0 ? encoders_get_posicion_total_right() : encoders_get_posicion_total();
+        pasos_recorridos = accion.radio == 0 ? (encoders_get_posicion_total_right() 
+            - encoders_get_posicion_total_left()) / 2
+            : encoders_get_posicion_total();
         /*
         Serial.print(accion.radio);
         Serial.print(" ");

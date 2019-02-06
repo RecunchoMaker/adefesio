@@ -6,7 +6,7 @@
 
 #define KA (2.0)
 
-volatile float kp_lineal = -2;
+volatile float kp_lineal = -0.6;
 volatile float kd_lineal = -0.0;
 volatile float ki_lineal = -0.0;
 
@@ -91,6 +91,8 @@ void motores_set_potencia(float left, float right) {
     motores_set_pwm_right((int16_t) (right * maximo_pwm));
     potencia_left = left;
     potencia_right = right;
+    encoders_set_direccion(potencia_left > 0, potencia_right > 0);
+
 }
 
 void motores_set_maximo_pwm(int16_t pwm) {
@@ -142,6 +144,10 @@ int16_t motores_get_pwm_right() {
     return pwm_right;
 }
 
+void motores_set_velocidad_lineal_objetivo(float velocidad) {
+    velocidad_lineal_objetivo = velocidad;
+}
+
 float motores_get_velocidad_lineal_objetivo() {
     return velocidad_lineal_objetivo;
 }
@@ -188,10 +194,12 @@ void motores_actualiza_velocidad() {
             velocidad_lineal_objetivo_left = velocidad_lineal_objetivo;
             velocidad_lineal_objetivo_right = velocidad_lineal_objetivo;
 
+            /*
             error_angulo = encoders_get_posicion_total_left() - encoders_get_posicion_total_right();
 
             velocidad_lineal_objetivo_left += error_angulo * kp_angular;
             velocidad_lineal_objetivo_right -= error_angulo * kp_angular;
+            */
         }
 
         error_lineal_left = encoders_get_ultima_velocidad_left() - velocidad_lineal_objetivo_left;
@@ -207,8 +215,6 @@ void motores_actualiza_velocidad() {
 
         error_acumulado_left = error_lineal_left;
         error_acumulado_right = error_lineal_right;
-
-        encoders_set_direccion(potencia_left > 0, potencia_right > 0);
 
 #ifdef MOTORES_LOG_PID
         // if (1) {
