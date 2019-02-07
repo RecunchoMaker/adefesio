@@ -21,6 +21,7 @@ struct tipo_accion {
 #define ESPERA   99999.0
 #define GIRA180  0
 
+
 tipo_accion accion;
 tipo_accion accion_array[MAX_ACCIONES+1];
 volatile uint8_t accion_idx;
@@ -85,10 +86,29 @@ void robot_init() {
     _crea_accion(INFINITO   , 0          , 0.3         , 0.2             , 0              , INFINITO); // espera GO
 
     /* Una recta de dos casillas y un giro de 90 grados
-     */
     _crea_accion(0.18*2     , 1          , 1           , 0.3             , 0.1            , RECTO); // avanza
     _crea_accion(ESPERA     , 0.5        , 0.5         , 0               , 0              , 0.5); // espera 1/2 segundo
     _crea_accion(PI*DISTANCIA_ENTRE_RUEDAS/2, 1, 1 , 0.2             , 0.1            , GIRA180); // gira 180g
+    */
+
+
+    // Secuencia ADAAII
+#define AMAX 1.0
+#define ACUR 0.6
+#define AFIN 0.6
+#define VR 0.2
+#define VC 0.15
+#define DIST 0.18
+#define DISTG (2*PI*(DIST/2)/4)
+
+    _crea_accion(DIST/2, AMAX, AMAX, VR, VR, INFINITO);   // inicial
+    _crea_accion(DIST  , AMAX, ACUR, VR, VC, INFINITO);   // avanza
+    _crea_accion(DISTG , AMAX, AMAX   , VC, VC, DIST/2);  // derecha
+    _crea_accion(DIST  , AMAX, AMAX   , VR, VR, INFINITO);// avanza
+    _crea_accion(DIST  , AMAX, ACUR, VR, VC, INFINITO);   // avanza
+    _crea_accion(DISTG , AMAX, AMAX   , VC, VC, -DIST/2); // izquierda
+    _crea_accion(DISTG , AMAX, AMAX   , VC, VC, -DIST/2); // izquierda
+    _crea_accion(DIST/2, AMAX, AFIN, VC, VC, INFINITO);   // final
 
     ultima_accion--;
     accion_idx = 0;
