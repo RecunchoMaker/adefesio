@@ -124,6 +124,10 @@ void loop() {
         Serial.print(motores_get_velocidad_lineal_objetivo(),6);
         Serial.print(" ");
         Serial.print(encoders_get_posicion_total());
+        //Serial.print(" ");
+        //Serial.print(encoders_get_posicion_total() * LONGITUD_PASO_ENCODER/(timer1_get_cuenta() * PERIODO_TIMER),5);
+        Serial.print(" ");
+        Serial.print(motores_get_aceleracion_lineal(),5);
         Serial.println();
     }
 }

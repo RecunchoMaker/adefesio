@@ -96,11 +96,8 @@ void motores_set_potencia(float left, float right) {
 }
 
 void motores_set_maximo_pwm(int16_t pwm) {
-    Serial.print("maximo pwm: ");
-    Serial.println(pwm);
     if (pwm > 255) pwm = 255;
     maximo_pwm = pwm;
-    Serial.println(pwm);
 }
 
 void motores_set_pwm_right(int16_t right) {

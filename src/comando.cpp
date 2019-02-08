@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <comando.h>
 #include <motores.h>
+#include <robot.h>
 
 #define COMANDO_MAX_TAMANO 16
 #define COMANDO_DELIMITADOR ' '
@@ -14,6 +15,16 @@ static uint8_t buffer_idx;
 char caracter;
 int8_t aux_i;
 bool go = false;
+
+char const *comando_kp = "kp";
+char const *comando_kd = "kd";
+char const *comando_ki = "ki";
+char const *comando_kpa = "kpa";
+char const *comando_amax = "amax";
+char const *comando_acur = "acur";
+char const *comando_afin = "afin";
+char const *comando_vc = "vc";
+char const *comando_vr = "vr";
 
 void comando_prompt() {
     go = false;
@@ -64,27 +75,29 @@ void _procesa_buffer() {
         comando_prompt();
 }
 
+void _procesa_setter(char const *comando, char *token, char *parametro, 
+        void (*setter)(float), float (*getter)()) {
+
+    if (!strcmp(token, comando)) {
+        (*setter) (atof(parametro));
+        Serial.print(token);
+        Serial.print(" = ");
+        Serial.println((*getter)(),5);
+    }
+}
+
 void _procesa_comando(char *token, char *parametro) {
-    if (!strcmp(token, "kp")) {
-        motores_set_kp_lineal(atof(parametro));
-        Serial.print("kp=");
-        Serial.println(motores_get_kp_lineal());
-    }
-    if (!strcmp(token, "kpa")) {
-        motores_set_kp_angular(atof(parametro));
-        Serial.print("kpa=");
-        Serial.println(motores_get_kp_angular(),5);
-    }
-    else if (!strcmp(token, "kd")) {
-        motores_set_kd_lineal(atof(parametro));
-        Serial.print("kd=");
-        Serial.println(motores_get_kd_lineal());
-    }
-    else if (!strcmp(token, "ki")) {
-        motores_set_ki_lineal(atof(parametro));
-        Serial.print("ki=");
-        Serial.println(motores_get_ki_lineal());
-    }
+
+    _procesa_setter(comando_kp, token, parametro, motores_set_kp_lineal, motores_get_kp_lineal);
+    _procesa_setter(comando_kd, token, parametro, motores_set_kd_lineal, motores_get_kp_lineal);
+    _procesa_setter(comando_ki, token, parametro, motores_set_ki_lineal, motores_get_ki_lineal);
+    _procesa_setter(comando_kpa, token, parametro, motores_set_kp_angular, motores_get_kp_angular);
+    _procesa_setter(comando_amax, token, parametro, robot_set_amax, robot_get_amax);
+    _procesa_setter(comando_acur, token, parametro, robot_set_acur, robot_get_acur);
+    _procesa_setter(comando_afin, token, parametro, robot_set_afin, robot_get_afin);
+    _procesa_setter(comando_vc, token, parametro, robot_set_vc, robot_get_vc);
+    _procesa_setter(comando_vr, token, parametro, robot_set_vr, robot_get_vr);
+
 }
 
 void _procesa_comando(char *token) {
