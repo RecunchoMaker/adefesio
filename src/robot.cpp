@@ -15,7 +15,7 @@ struct tipo_accion {
     volatile float radio;
 };
 
-#define MAX_ACCIONES 10
+#define MAX_ACCIONES 20
 #define INFINITO 99999.0
 #define RECTO    99999.0
 #define ESPERA   99999.0
@@ -143,6 +143,7 @@ void robot_init() {
 
 
     // Secuencia ADAAII
+
     _crea_accion(ROBOT_DIST/2, amax, amax, vr, vr, INFINITO);         // inicial
     _crea_accion(ROBOT_DIST  , amax, acur, vr, vc, INFINITO);         // avanza
     _crea_accion(ROBOT_DISTG , amax, amax, vc, vc, ROBOT_DIST/2);     // derecha
@@ -150,7 +151,21 @@ void robot_init() {
     _crea_accion(ROBOT_DIST  , amax, acur, vr, vc, INFINITO);         // avanza
     _crea_accion(ROBOT_DISTG , amax, amax, vc, vc, -ROBOT_DIST/2);    // izquierda
     _crea_accion(ROBOT_DISTG , amax, amax, vc, vc, -ROBOT_DIST/2);    // izquierda
-    _crea_accion(ROBOT_DIST/2, amax, afin, vc, vc, INFINITO);         // final
+    _crea_accion(ROBOT_DIST/2, amax, afin, vc, 0.1, INFINITO);         // final
+
+    // Espera 1 segundo
+    _crea_accion(ESPERA, 0.5, 0.5 , 0, 0, 1); // espera 1/2 segundo
+    _crea_accion(PI*DISTANCIA_ENTRE_RUEDAS/2, acur, acur , vc, 0.1, GIRA180); // gira 180g
+    _crea_accion(ESPERA, 0.5, 0.5 , 0, 0, 1); // espera 1/2 segundo
+
+    // Secuencia IIAADA
+    _crea_accion(ROBOT_DISTG , amax, amax, vc, vc, ROBOT_DIST/2);     // derecha
+    _crea_accion(ROBOT_DISTG , amax, amax, vc, vc, ROBOT_DIST/2);     // derecha
+    _crea_accion(ROBOT_DIST  , amax, amax, vr, vr, INFINITO);         // avanza
+    _crea_accion(ROBOT_DIST  , amax, acur, vr, vc, INFINITO);         // avanza
+    _crea_accion(ROBOT_DISTG , amax, amax, vc, vc, -ROBOT_DIST/2);    // izquierda
+    _crea_accion(ROBOT_DIST  , amax, acur, vr, vc, INFINITO);         // avanza
+    _crea_accion(PI*DISTANCIA_ENTRE_RUEDAS/2, acur, acur , vc , 0.1, GIRA180); // gira 180g
 
     ultima_accion--;
     accion_idx = 0;
@@ -172,6 +187,7 @@ void robot_siguiente_accion() {
         motores_parar();
     }
     accion = accion_array[accion_idx];
+
     motores_set_radio(accion.radio);
 
     if (accion.velocidad_maxima > motores_get_velocidad_lineal_objetivo()) {
