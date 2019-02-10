@@ -18,10 +18,12 @@ void motores_set_kp_lineal(float kp);
 void motores_set_ki_lineal(float ki);
 void motores_set_kd_lineal(float kd);
 void motores_set_kp_angular(float kd);
+void motores_set_distancia_entre_ruedas(float dr);
 float motores_get_kp_lineal();
 float motores_get_kp_angular();
 float motores_get_ki_lineal();
 float motores_get_kd_lineal();
+float motores_get_distancia_entre_ruedas();
 
 void motores_set_aceleracion_lineal(float aceleracion);
 float motores_get_aceleracion_lineal();

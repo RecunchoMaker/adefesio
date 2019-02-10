@@ -16,15 +16,16 @@ char caracter;
 int8_t aux_i;
 bool go = false;
 
-char const *comando_kp = "kp";
-char const *comando_kd = "kd";
-char const *comando_ki = "ki";
-char const *comando_kpa = "kpa";
-char const *comando_amax = "amax";
-char const *comando_acur = "acur";
-char const *comando_afin = "afin";
-char const *comando_vc = "vc";
-char const *comando_vr = "vr";
+char const *comando_kp = "kp";       // set KP
+char const *comando_kd = "kd";       // set KD
+char const *comando_ki = "ki";       // set KI
+char const *comando_kpa = "kpa";     // set KP angular
+char const *comando_amax = "amax";   // set aceleracion maxima
+char const *comando_acur = "acur";   // set aceleracion para entrada en curbas
+char const *comando_afin = "afin";   // set deceleracion final
+char const *comando_vc = "vc";       // set velocidad en curva
+char const *comando_vr = "vr";       // set velocidad en recta
+char const *comando_dr = "dr";       // set distancia entre ruedas
 
 void comando_prompt() {
     go = false;
@@ -89,7 +90,7 @@ void _procesa_setter(char const *comando, char *token, char *parametro,
 void _procesa_comando(char *token, char *parametro) {
 
     _procesa_setter(comando_kp, token, parametro, motores_set_kp_lineal, motores_get_kp_lineal);
-    _procesa_setter(comando_kd, token, parametro, motores_set_kd_lineal, motores_get_kp_lineal);
+    _procesa_setter(comando_kd, token, parametro, motores_set_kd_lineal, motores_get_kd_lineal);
     _procesa_setter(comando_ki, token, parametro, motores_set_ki_lineal, motores_get_ki_lineal);
     _procesa_setter(comando_kpa, token, parametro, motores_set_kp_angular, motores_get_kp_angular);
     _procesa_setter(comando_amax, token, parametro, robot_set_amax, robot_get_amax);
@@ -97,6 +98,8 @@ void _procesa_comando(char *token, char *parametro) {
     _procesa_setter(comando_afin, token, parametro, robot_set_afin, robot_get_afin);
     _procesa_setter(comando_vc, token, parametro, robot_set_vc, robot_get_vc);
     _procesa_setter(comando_vr, token, parametro, robot_set_vr, robot_get_vr);
+    _procesa_setter(comando_vr, token, parametro, robot_set_vr, robot_get_vr);
+    _procesa_setter(comando_dr, token, parametro, motores_set_distancia_entre_ruedas, motores_get_distancia_entre_ruedas);
 
 }
 

@@ -15,26 +15,26 @@ struct tipo_accion {
     volatile float radio;
 };
 
-#define MAX_ACCIONES 20
+#define MAX_ACCIONES 25
 #define INFINITO 99999.0
 #define RECTO    99999.0
 #define ESPERA   99999.0
 #define GIRA180  0
 
 // Aceleracion maxima, usada en las rectas
-#define ROBOT_AMAX 0.5
+#define ROBOT_AMAX 1.0
 
 // Aceleracion de frenada, antes de entrar en una curba
-#define ROBOT_ACUR 0.25
+#define ROBOT_ACUR 1.0
 
 // Aceleracion de la frenada final en la ultima casilla
-#define ROBOT_AFIN 0.6
+#define ROBOT_AFIN 1
 
 // Velocidad maxima en recta
-#define ROBOT_VR 0.2
+#define ROBOT_VR 0.40
 
-// Velocidad maxima en curba
-#define ROBOT_VC 0.15
+// Velocidad maxima en curva
+#define ROBOT_VC 0.30
 
 /* Constantes imposibles para facilitar calculos
 #define ROBOT_AMAX 1.0
@@ -104,7 +104,7 @@ float robot_get_vc() {
 }
 
 float _distancia_para_decelerar(float vi, float vf, float aceleracion) {
-    return (0.5 * (vi - vf) * (vi - vf)) + (vi * (vi - vf) / aceleracion);
+    return (0.5 * (vi - vf) * (vi - vf)) + (vf * (vi - vf) / aceleracion);
 }
 
 void _crea_accion(float distancia,
@@ -132,16 +132,18 @@ void robot_init() {
     encoders_reset_posicion();
     motores_parar();
 
+    ultima_accion = 0;
+
     // _         distancia  , aceleracion, deceleracion, velocidad_maxima, velocidad_final, radio
-    _crea_accion(INFINITO   , 0          , 0.3         , 0.2             , 0.01            , INFINITO); // espera GO
+    _crea_accion(INFINITO   , 0          , 0.3         , 0.2             , 0.005            , INFINITO); // espera GO
 
     /* Una recta de dos casillas y un giro de 90 grados
     _crea_accion(0.18*2     , 1          , 1           , 0.3             , 0.1            , RECTO); // avanza
     _crea_accion(ESPERA     , 0.5        , 0.5         , 0               , 0              , 0.5); // espera 1/2 segundo
-    _crea_accion(PI*DISTANCIA_ENTRE_RUEDAS/2, 1, 1 , 0.2             , 0.1            , GIRA180); // gira 180g
+    _crea_accion(PI*distancia_entre_ruedas/2, 1, 1 , 0.2             , 0.1            , GIRA180); // gira 180g
     */
 
-
+    
     // Secuencia ADAAII
 
     _crea_accion(ROBOT_DIST/2, amax, amax, vr, vr, INFINITO);         // inicial
@@ -151,21 +153,24 @@ void robot_init() {
     _crea_accion(ROBOT_DIST  , amax, acur, vr, vc, INFINITO);         // avanza
     _crea_accion(ROBOT_DISTG , amax, amax, vc, vc, -ROBOT_DIST/2);    // izquierda
     _crea_accion(ROBOT_DISTG , amax, amax, vc, vc, -ROBOT_DIST/2);    // izquierda
-    _crea_accion(ROBOT_DIST/2, amax, afin, vc, 0.1, INFINITO);         // final
+    _crea_accion(ROBOT_DIST/2, amax, afin, vc, 0.03, INFINITO);         // final
 
     // Espera 1 segundo
     _crea_accion(ESPERA, 0.5, 0.5 , 0, 0, 1); // espera 1/2 segundo
-    _crea_accion(PI*DISTANCIA_ENTRE_RUEDAS/2, acur, acur , vc, 0.1, GIRA180); // gira 180g
+    _crea_accion(PI*motores_get_distancia_entre_ruedas()/2, acur, acur , vc, 0.03, GIRA180); // gira 180g
     _crea_accion(ESPERA, 0.5, 0.5 , 0, 0, 1); // espera 1/2 segundo
 
     // Secuencia IIAADA
+    _crea_accion(ROBOT_DIST/2, amax, amax, vc, vc, INFINITO);         // inicial
     _crea_accion(ROBOT_DISTG , amax, amax, vc, vc, ROBOT_DIST/2);     // derecha
     _crea_accion(ROBOT_DISTG , amax, amax, vc, vc, ROBOT_DIST/2);     // derecha
     _crea_accion(ROBOT_DIST  , amax, amax, vr, vr, INFINITO);         // avanza
     _crea_accion(ROBOT_DIST  , amax, acur, vr, vc, INFINITO);         // avanza
     _crea_accion(ROBOT_DISTG , amax, amax, vc, vc, -ROBOT_DIST/2);    // izquierda
     _crea_accion(ROBOT_DIST  , amax, acur, vr, vc, INFINITO);         // avanza
-    _crea_accion(PI*DISTANCIA_ENTRE_RUEDAS/2, acur, acur , vc , 0.1, GIRA180); // gira 180g
+    _crea_accion(ROBOT_DIST/2, amax, afin, vc, 0.03, INFINITO);         // final
+    _crea_accion(ESPERA, 0.5, 0.5 , 0, 0, 1); // espera 1/2 segundo
+    _crea_accion(PI*motores_get_distancia_entre_ruedas()/2, acur, acur , vc , 0.03, GIRA180); // gira 180g
 
     ultima_accion--;
     accion_idx = 0;

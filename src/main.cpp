@@ -67,6 +67,8 @@ void loop() {
     }
     Serial.println("GO!");
 
+    robot_init(); // volvemos a crear acciones con nuevos valores de v,a,distancia..
+
     /*
     for (float p = 0.20; p<=0.20; p+=1.04) {
         Serial.println(p,5);

@@ -6,9 +6,11 @@
 
 #define KA (2.0)
 
-volatile float kp_lineal = -0.6;
-volatile float kd_lineal = -0.0;
-volatile float ki_lineal = -0.0;
+volatile float distancia_entre_ruedas = DISTANCIA_ENTRE_RUEDAS;
+
+volatile float kp_lineal = KP_LINEAL;
+volatile float kd_lineal = KD_LINEAL;
+volatile float ki_lineal = KI_LINEAL;
 
 volatile float kp_angular = -0.000;
 volatile float error_angulo;
@@ -161,6 +163,14 @@ float motores_get_velocidad_lineal_objetivo_right() {
     return velocidad_lineal_objetivo_right;
 }
 
+void motores_set_distancia_entre_ruedas(float dr) {
+    distancia_entre_ruedas = dr;
+}
+
+float motores_get_distancia_entre_ruedas() {
+    return distancia_entre_ruedas;
+}
+
 void motores_parar() {
     aceleracion_lineal = 0;
     velocidad_lineal_objetivo = 0;
@@ -186,8 +196,8 @@ void motores_actualiza_velocidad() {
 
         } else if (radio < 1) { // suponemos que un radio superior a 1m es siempre una recta
             velocidad_angular_objetivo = velocidad_lineal_objetivo / radio;
-            velocidad_lineal_objetivo_left = velocidad_angular_objetivo * (radio + DISTANCIA_ENTRE_RUEDAS/2);
-            velocidad_lineal_objetivo_right = velocidad_angular_objetivo * (radio - DISTANCIA_ENTRE_RUEDAS/2);
+            velocidad_lineal_objetivo_left = velocidad_angular_objetivo * (radio + distancia_entre_ruedas/2);
+            velocidad_lineal_objetivo_right = velocidad_angular_objetivo * (radio - distancia_entre_ruedas/2);
         } else {
 
             velocidad_lineal_objetivo_left = velocidad_lineal_objetivo;
@@ -221,8 +231,8 @@ void motores_actualiza_velocidad() {
         // if (timer1_get_cuenta() > 0.5 * (1.0/PERIODO_TIMER)) { // esperamos 1 segundo
         log_insert(
                 encoders_get_ultima_velocidad_left(),
-                // velocidad_lineal_objetivo + (velocidad_angular_objetivo * PI * DISTANCIA_ENTRE_RUEDAS / 2  ),
-                velocidad_lineal_objetivo + (velocidad_angular_objetivo * PI * DISTANCIA_ENTRE_RUEDAS / 2  ),
+                // velocidad_lineal_objetivo + (velocidad_angular_objetivo * PI * distancia_entre_ruedas / 2  ),
+                velocidad_lineal_objetivo + (velocidad_angular_objetivo * PI * distancia_entre_ruedas / 2  ),
            //     velocidad_lineal_objetivo,
            //
                 // error_lineal_left,
@@ -286,14 +296,14 @@ void motores_actualiza_angulo() {
      *
     aux_e1 = encoders_get_ultima_velocidad_left() * PERIODO_TIMER;
     aux_e2 = encoders_get_ultima_velocidad_right() * PERIODO_TIMER;
-        angulo_actual_calculado += (aux_e1 - aux_e2) / DISTANCIA_ENTRE_RUEDAS;
+        angulo_actual_calculado += (aux_e1 - aux_e2) / distancia_entre_ruedas;
     */
 
     if (encoders_get_posicion_left() != encoders_get_posicion_right()) {
         angulo_actual+= (LONGITUD_PASO_ENCODER * encoders_get_posicion_left() -
                          LONGITUD_PASO_ENCODER * encoders_get_posicion_right())
                          / 
-                         DISTANCIA_ENTRE_RUEDAS;
+                         distancia_entre_ruedas;
         if (angulo_actual < 0) angulo_actual+=2*PI;
         else if (angulo_actual>2*PI) angulo_actual -= 2*PI;
     }
