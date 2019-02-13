@@ -181,7 +181,7 @@ void motores_actualiza_velocidad() {
 
     if (velocidad_lineal_objetivo != 0 or aceleracion_lineal != 0) {
 
-        velocidad_lineal_objetivo += (aceleracion_lineal * PERIODO_TIMER);
+        velocidad_lineal_objetivo += (aceleracion_lineal * PERIODO_CICLO);
 
         if (radio == 0) { // caso especial. giro sobre si mismo
             velocidad_lineal_objetivo_left = -velocidad_lineal_objetivo;
@@ -215,11 +215,11 @@ void motores_actualiza_velocidad() {
         error_lineal_right = encoders_get_ultima_velocidad_right() - velocidad_lineal_objetivo_right;
 
         potencia_left += kp_lineal * error_lineal_left; 
-        potencia_left += kd_lineal * ((error_lineal_left - error_acumulado_left) / PERIODO_TIMER);
+        potencia_left += kd_lineal * ((error_lineal_left - error_acumulado_left) / PERIODO_CICLO);
         potencia_left += ki_lineal * error_acumulado_left;
 
         potencia_right += kp_lineal * error_lineal_right;
-        potencia_right += kd_lineal * ((error_lineal_right - error_acumulado_right) / PERIODO_TIMER);
+        potencia_right += kd_lineal * ((error_lineal_right - error_acumulado_right) / PERIODO_CICLO);
         potencia_right += ki_lineal * error_acumulado_right;
 
         error_acumulado_left = error_lineal_left;
@@ -228,7 +228,7 @@ void motores_actualiza_velocidad() {
 #ifdef MOTORES_LOG_PID
         // if (1) {
         if (timer1_get_cuenta() % 5 == 1) {
-        // if (timer1_get_cuenta() > 0.5 * (1.0/PERIODO_TIMER)) { // esperamos 1 segundo
+        // if (timer1_get_cuenta() > 0.5 * (1.0/PERIODO_CICLO)) { // esperamos 1 segundo
         log_insert(
                 encoders_get_ultima_velocidad_left(),
                 // velocidad_lineal_objetivo + (velocidad_angular_objetivo * PI * distancia_entre_ruedas / 2  ),
@@ -240,7 +240,7 @@ void motores_actualiza_velocidad() {
 
                 error_acumulado_left,
                 kp_lineal * error_lineal_left,
-                kd_lineal * ((error_lineal_right - error_acumulado_right) / PERIODO_TIMER),
+                kd_lineal * ((error_lineal_right - error_acumulado_right) / PERIODO_CICLO),
                 ki_lineal * error_acumulado_left,
                 //pwm_left,
                 potencia_left,
@@ -288,14 +288,14 @@ void motores_actualiza_angulo() {
      * Forma 1 de calcular el angulo, presuponiendo que actualiza_velicidad()
      * funciona perfectamente
      *
-    angulo_actual_calculado += velocidad_angular_objetivo * PERIODO_TIMER;
+    angulo_actual_calculado += velocidad_angular_objetivo * PERIODO_CICLO;
     */
 
     /*
      * Forma 2 de calcular el angulo
      *
-    aux_e1 = encoders_get_ultima_velocidad_left() * PERIODO_TIMER;
-    aux_e2 = encoders_get_ultima_velocidad_right() * PERIODO_TIMER;
+    aux_e1 = encoders_get_ultima_velocidad_left() * PERIODO_CICLO;
+    aux_e2 = encoders_get_ultima_velocidad_right() * PERIODO_CICLO;
         angulo_actual_calculado += (aux_e1 - aux_e2) / distancia_entre_ruedas;
     */
 

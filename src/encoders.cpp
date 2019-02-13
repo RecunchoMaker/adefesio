@@ -1,6 +1,7 @@
 #include <encoders.h>
 #include <motores.h>
 #include <settings.h>
+#include <timer1.h>
 
 #define DIRECCION_ADELANTE 1
 #define DIRECCION_ATRAS 0
@@ -102,9 +103,11 @@ int32_t encoders_get_posicion_total(void) {
 
 void encoders_ISR_left(void) {
 
-    ultimo_tcnt1_left = TCNT1;
+    ultimo_tcnt1_left = OCR1A * timer1_get_estado() + TCNT1;
+    /*
     if (ultimo_tcnt1_left < MIN_TCNT1)
-        ultimo_tcnt1_left = OCR1A;
+        ultimo_tcnt1_left = OCR1A * NUMERO_ESTADOS;
+        */
 
     if (direccion_left)
     {
@@ -121,9 +124,11 @@ void encoders_ISR_left(void) {
 
 void encoders_ISR_right(void) {
 
-    ultimo_tcnt1_right = TCNT1;
+    ultimo_tcnt1_right = OCR1A * timer1_get_estado() + TCNT1;
+    /*
     if (ultimo_tcnt1_right < MIN_TCNT1)
-        ultimo_tcnt1_right = OCR1A;
+        ultimo_tcnt1_right = OCR1A * NUMERO_ESTADOS;
+        */
 
     if (direccion_right)
     {
@@ -144,16 +149,16 @@ void encoders_calcula_velocidad() {
     }
     else {
 
-        velocidad_left = LONGITUD_PASO_ENCODER * encoder_posicion_left * OCR1A/
-            (PERIODO_TIMER * ( (int32_t) OCR1A * (ticks_sin_actualizar_left + 1) + ultimo_tcnt1_left - tcnt1_anterior_left));
+        velocidad_left = LONGITUD_PASO_ENCODER * encoder_posicion_left * OCR1A_POR_CICLO /
+            (PERIODO_CICLO * ( (int32_t) OCR1A_POR_CICLO * (ticks_sin_actualizar_left + 1) + ultimo_tcnt1_left - tcnt1_anterior_left));
 
         if ((velocidad_left < 0 and direccion_left == DIRECCION_ADELANTE)
             or
             (velocidad_left > 0 and direccion_left == DIRECCION_ATRAS))
         {
             ticks_sin_actualizar_left++;
-            velocidad_left = LONGITUD_PASO_ENCODER * encoder_posicion_left * OCR1A/
-                (PERIODO_TIMER * ( (int32_t) OCR1A * (ticks_sin_actualizar_left + 1) + ultimo_tcnt1_left - tcnt1_anterior_left));
+            velocidad_left = LONGITUD_PASO_ENCODER * encoder_posicion_left * OCR1A_POR_CICLO /
+                (PERIODO_CICLO * ( (int32_t) OCR1A_POR_CICLO * (ticks_sin_actualizar_left + 1) + ultimo_tcnt1_left - tcnt1_anterior_left));
         }
 
         ticks_sin_actualizar_left = 0;
@@ -167,16 +172,16 @@ void encoders_calcula_velocidad() {
         velocidad_right = ticks_sin_actualizar_right < 10 ? ultima_velocidad_right : 0;
     }
     else {
-        velocidad_right = LONGITUD_PASO_ENCODER * encoder_posicion_right * OCR1A /
-            (PERIODO_TIMER * ( (int32_t) OCR1A * (ticks_sin_actualizar_right + 1) + ultimo_tcnt1_right - tcnt1_anterior_right));
+        velocidad_right = LONGITUD_PASO_ENCODER * encoder_posicion_right * OCR1A_POR_CICLO /
+            (PERIODO_CICLO * ( (int32_t) OCR1A_POR_CICLO * (ticks_sin_actualizar_right + 1) + ultimo_tcnt1_right - tcnt1_anterior_right));
 
         if ((velocidad_right < 0 and direccion_right == DIRECCION_ADELANTE)
             or
             (velocidad_right > 0 and direccion_right == DIRECCION_ATRAS))
         {
             ticks_sin_actualizar_right++;
-            velocidad_right = LONGITUD_PASO_ENCODER * encoder_posicion_right * OCR1A/
-                (PERIODO_TIMER * ( (int32_t) OCR1A * (ticks_sin_actualizar_right + 1) + ultimo_tcnt1_right - tcnt1_anterior_right));
+            velocidad_right = LONGITUD_PASO_ENCODER * encoder_posicion_right * OCR1A_POR_CICLO /
+                (PERIODO_CICLO * ( (int32_t) OCR1A_POR_CICLO * (ticks_sin_actualizar_right + 1) + ultimo_tcnt1_right - tcnt1_anterior_right));
         }
 
         ticks_sin_actualizar_right = 0;

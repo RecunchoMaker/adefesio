@@ -2,6 +2,7 @@
 #include <timer1.h>
 
 volatile uint32_t cuenta;
+volatile int8_t estado;
 
 void timer1_init(float period, uint16_t prescaler) {
 
@@ -97,10 +98,13 @@ void timer1_init(float period, uint16_t prescaler) {
     TIMSK1 |= (1 << OCIE1A);
 
     cuenta = 0;
+    estado = 0;
 }
 
 void timer1_incrementa_cuenta() {
     cuenta++;
+    estado++;
+    if (estado == 4) estado = 0;
 }
 
 void timer1_reset_cuenta() {
@@ -109,4 +113,8 @@ void timer1_reset_cuenta() {
 
 uint32_t timer1_get_cuenta() {
     return cuenta;
+}
+
+int8_t timer1_get_estado() {
+    return estado;
 }

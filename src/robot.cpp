@@ -244,7 +244,7 @@ void robot_control() {
 
     if (accion.velocidad_maxima == 0.0) {
         motores_parar();
-        if (timer1_get_cuenta() * PERIODO_TIMER > accion.radio) {
+        if (timer1_get_cuenta() * PERIODO_CICLO > accion.radio) {
             robot_siguiente_accion();
         }
     } else {
