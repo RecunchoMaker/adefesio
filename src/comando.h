@@ -8,7 +8,8 @@ void comando_lee_serial();
 void _procesa_buffer();
 void _procesa_comando(char *token, char *parametro);
 void _procesa_comando(char *token);
-bool comando_go();
+void comando_set_go();
+bool comando_get_go();
 
 #endif /* ifndef _COMANDO_H
 

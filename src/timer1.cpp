@@ -1,8 +1,8 @@
 #include <Arduino.h>
 #include <timer1.h>
 
-volatile uint32_t cuenta;
-volatile int8_t estado;
+volatile uint32_t timer_cuenta;
+volatile int8_t timer_estado;
 
 void timer1_init(float period, uint16_t prescaler) {
 
@@ -97,24 +97,24 @@ void timer1_init(float period, uint16_t prescaler) {
     // Asignamos la mascara de interrupcion a "Compare Match A"
     TIMSK1 |= (1 << OCIE1A);
 
-    cuenta = 0;
-    estado = 0;
+    timer_cuenta = 0;
+    timer_estado = 0;
 }
 
 void timer1_incrementa_cuenta() {
-    cuenta++;
-    estado++;
-    if (estado == 4) estado = 0;
+    timer_cuenta++;
+    timer_estado++;
+    if (timer_estado == 4) timer_estado = 0;
 }
 
 void timer1_reset_cuenta() {
-    cuenta=0;
+    timer_cuenta=0;
 }
 
 uint32_t timer1_get_cuenta() {
-    return cuenta;
+    return timer_cuenta;
 }
 
 int8_t timer1_get_estado() {
-    return estado;
+    return timer_estado;
 }

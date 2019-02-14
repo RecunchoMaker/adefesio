@@ -22,9 +22,10 @@ ISR (TIMER1_COMPA_vect) {
 
 
     switch (timer1_get_estado()) {
-        case 0: digitalWrite(LED_IZQ, HIGH);
+        case 0: leds_enciende(LED_IZQ);
                 break;
-        case 1: digitalWrite(LED_IZQ, LOW);
+        case 1: leds_actualiza_valor(SENSOR_IZQ);
+                leds_apaga(LED_IZQ);
                 break;
         case 2: 
                 break;
@@ -83,13 +84,15 @@ void loop() {
 
     comando_prompt();
 
-    while (!comando_go()) {
+    while (!comando_get_go()) {
         comando_lee_serial();
     }
     Serial.println("GO!");
     robot_init();
 
+    /*
     robot_siguiente_accion();
+
 
     while (robot_get_accion() > 0) {
         Serial.print(robot_get_accion());
@@ -108,7 +111,12 @@ void loop() {
         Serial.print(" ");
         Serial.print(motores_get_aceleracion_lineal(),5);
         Serial.println();
-}
+        */
 
-
+    for (int i = 0; i< 10000; i++) {
+        delay(50);
+        Serial.print(SENSOR_IZQ);
+        Serial.print(" ");
+        Serial.println(leds_get_valor(SENSOR_IZQ));
+    }
 }

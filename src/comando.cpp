@@ -2,6 +2,7 @@
 #include <comando.h>
 #include <motores.h>
 #include <robot.h>
+#include <leds.h>
 
 #define COMANDO_MAX_TAMANO 16
 #define COMANDO_DELIMITADOR ' '
@@ -16,6 +17,8 @@ char caracter;
 int8_t aux_i;
 bool go = false;
 
+char const *comando_go = "go";       
+
 char const *comando_kp = "kp";       // set KP
 char const *comando_kd = "kd";       // set KD
 char const *comando_ki = "ki";       // set KI
@@ -26,6 +29,9 @@ char const *comando_afin = "afin";   // set deceleracion final
 char const *comando_vc = "vc";       // set velocidad en curva
 char const *comando_vr = "vr";       // set velocidad en recta
 char const *comando_dr = "dr";       // set distancia entre ruedas
+
+char const *comando_l1 = "l1";       // activar leds
+char const *comando_l0 = "l0";       // desactivar leds
 
 void comando_prompt() {
     go = false;
@@ -87,6 +93,13 @@ void _procesa_setter(char const *comando, char *token, char *parametro,
     }
 }
 
+void _procesa_comando_simple(char const *comando, char *token, void (*funcion)(void)) {
+    if (!strcmp(token, comando)) {
+        (*funcion)();
+    }
+}
+
+
 void _procesa_comando(char *token, char *parametro) {
 
     _procesa_setter(comando_kp, token, parametro, motores_set_kp_lineal, motores_get_kp_lineal);
@@ -104,11 +117,16 @@ void _procesa_comando(char *token, char *parametro) {
 }
 
 void _procesa_comando(char *token) {
-    if (!strcmp(token, "go")) {
-        go = true;
-    }
+
+    _procesa_comando_simple(comando_l0, token, leds_desactiva);
+    _procesa_comando_simple(comando_l1, token, leds_activa);
+    _procesa_comando_simple(comando_go, token, comando_set_go);
 }
 
-bool comando_go() {
+void comando_set_go() {
+    go = true;
+}
+
+bool comando_get_go() {
     return go;
 }
