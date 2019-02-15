@@ -22,14 +22,21 @@ ISR (TIMER1_COMPA_vect) {
 
 
     switch (timer1_get_estado()) {
-        case 0: leds_enciende(LED_IZQ);
+        case 0: 
+                leds_actualiza_valor(LED_FDER);
+                leds_enciende(LED_IZQ);
                 break;
-        case 1: leds_actualiza_valor(SENSOR_IZQ);
-                leds_apaga(LED_IZQ);
+        case 1: 
+                leds_actualiza_valor(LED_IZQ);
+                leds_enciende(LED_DER);
                 break;
         case 2: 
+                leds_actualiza_valor(LED_DER);
+                leds_enciende(LED_FIZQ);
                 break;
         case 3: 
+                leds_actualiza_valor(LED_FIZQ);
+                leds_enciende(LED_FDER);
                 encoders_calcula_velocidad();
                 encoders_reset_posicion();
                 motores_actualiza_velocidad();
@@ -88,6 +95,7 @@ void loop() {
         comando_lee_serial();
     }
     Serial.println("GO!");
+    leds_activa();
     robot_init();
 
     /*
@@ -115,8 +123,12 @@ void loop() {
 
     for (int i = 0; i< 10000; i++) {
         delay(50);
-        Serial.print(SENSOR_IZQ);
-        Serial.print(" ");
-        Serial.println(leds_get_valor(SENSOR_IZQ));
+        Serial.print(leds_get_valor(LED_IZQ));
+        Serial.print("\t");
+        Serial.print(leds_get_valor(LED_DER));
+        Serial.print("\t");
+        Serial.print(leds_get_valor(LED_FIZQ));
+        Serial.print("\t");
+        Serial.println(leds_get_valor(LED_FDER));
     }
 }
