@@ -1,0 +1,326 @@
+EESchema Schematic File Version 2
+LIBS:power
+LIBS:device
+LIBS:transistors
+LIBS:conn
+LIBS:linear
+LIBS:regul
+LIBS:74xx
+LIBS:cmos4000
+LIBS:adc-dac
+LIBS:memory
+LIBS:xilinx
+LIBS:microcontrollers
+LIBS:dsp
+LIBS:microchip
+LIBS:analog_switches
+LIBS:motorola
+LIBS:texas
+LIBS:intel
+LIBS:audio
+LIBS:interface
+LIBS:digital-audio
+LIBS:philips
+LIBS:display
+LIBS:cypress
+LIBS:siliconi
+LIBS:opto
+LIBS:atmel
+LIBS:contrib
+LIBS:valves
+LIBS:escornabot-cache
+EELAYER 26 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L D_Photo D2
+U 1 1 5C61C5FF
+P 4650 1150
+F 0 "D2" H 4600 934 50  0001 C CNN
+F 1 "SENSOR1" H 4400 1100 50  0000 C CNN
+F 2 "LEDs:LED_D1.8mm_W1.8mm_H2.4mm_Horizontal_O3.81mm_Z1.6mm" H 4600 1150 50  0001 C CNN
+F 3 "" H 4600 1150 50  0001 C CNN
+	1    4650 1150
+	-1   0    0    1   
+$EndComp
+$Comp
+L R R2
+U 1 1 5C61C6BE
+P 4150 1350
+F 0 "R2" V 3943 1350 50  0000 C CNN
+F 1 "10K" V 4034 1350 50  0000 C CNN
+F 2 "Resistors_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 4080 1350 50  0001 C CNN
+F 3 "" H 4150 1350 50  0001 C CNN
+	1    4150 1350
+	0    1    1    0   
+$EndComp
+Text GLabel 4600 850  2    60   Input ~ 0
+SENSOR
+$Comp
+L ULN2003 U1
+U 1 1 5C65A7BF
+P 1900 1350
+F 0 "U1" H 1900 1917 50  0000 C CNN
+F 1 "ULN2003" H 1900 1826 50  0000 C CNN
+F 2 "Housings_DIP:DIP-16_W7.62mm_LongPads" H 1950 700 50  0001 L CNN
+F 3 "" H 2000 1250 50  0001 C CNN
+	1    1900 1350
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR01
+U 1 1 5C65A8AF
+P 1900 2150
+F 0 "#PWR01" H 1900 1900 50  0001 C CNN
+F 1 "GND" H 1905 1977 50  0000 C CNN
+F 2 "" H 1900 2150 50  0001 C CNN
+F 3 "" H 1900 2150 50  0001 C CNN
+	1    1900 2150
+	1    0    0    -1  
+$EndComp
+$Comp
+L R R1
+U 1 1 5C65AB79
+P 3350 1350
+F 0 "R1" V 3143 1350 50  0000 C CNN
+F 1 "50 ohm" V 3234 1350 50  0000 C CNN
+F 2 "Resistors_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 3280 1350 50  0001 C CNN
+F 3 "" H 3350 1350 50  0001 C CNN
+	1    3350 1350
+	0    1    1    0   
+$EndComp
+Text GLabel 1350 1350 0    60   Input ~ 0
+LED_DER
+$Comp
+L LED D1
+U 1 1 5C65AC0F
+P 2650 1350
+F 0 "D1" H 2642 1095 50  0001 C CNN
+F 1 "LED_DER" H 2950 1300 50  0000 C CNN
+F 2 "LEDs:LED_D1.8mm_W1.8mm_H2.4mm_Horizontal_O6.35mm_Z1.6mm" H 2650 1350 50  0001 C CNN
+F 3 "" H 2650 1350 50  0001 C CNN
+	1    2650 1350
+	1    0    0    1   
+$EndComp
+Text GLabel 1350 1650 0    60   Input ~ 0
+LED_FIZQ
+Text GLabel 1350 1550 0    60   Input ~ 0
+LED_FDER
+Text GLabel 1350 1450 0    60   Input ~ 0
+LED_IZQ
+$Comp
+L LED D3
+U 1 1 5C65BD70
+P 2650 1450
+F 0 "D3" H 2642 1195 50  0001 C CNN
+F 1 "LED_IZQ" H 2950 1400 50  0000 C CNN
+F 2 "LEDs:LED_D1.8mm_W1.8mm_H2.4mm_Horizontal_O6.35mm_Z1.6mm" H 2650 1450 50  0001 C CNN
+F 3 "" H 2650 1450 50  0001 C CNN
+	1    2650 1450
+	1    0    0    1   
+$EndComp
+$Comp
+L LED D4
+U 1 1 5C65BE9A
+P 2650 1550
+F 0 "D4" H 2642 1295 50  0001 C CNN
+F 1 "LED_FDER" H 2950 1500 50  0000 C CNN
+F 2 "LEDs:LED_D1.8mm_W1.8mm_H2.4mm_Horizontal_O6.35mm_Z1.6mm" H 2650 1550 50  0001 C CNN
+F 3 "" H 2650 1550 50  0001 C CNN
+	1    2650 1550
+	1    0    0    1   
+$EndComp
+$Comp
+L LED D5
+U 1 1 5C65BEE6
+P 2650 1650
+F 0 "D5" H 2642 1395 50  0001 C CNN
+F 1 "LED_FIZQ" H 2950 1600 50  0000 C CNN
+F 2 "LEDs:LED_D1.8mm_W1.8mm_H2.4mm_Horizontal_O6.35mm_Z1.6mm" H 2650 1650 50  0001 C CNN
+F 3 "" H 2650 1650 50  0001 C CNN
+	1    2650 1650
+	1    0    0    1   
+$EndComp
+$Comp
+L D_Photo D7
+U 1 1 5C65C0F4
+P 4650 1550
+F 0 "D7" H 4600 1334 50  0001 C CNN
+F 1 "SENSOR3" H 4400 1500 50  0000 C CNN
+F 2 "LEDs:LED_D1.8mm_W1.8mm_H2.4mm_Horizontal_O3.81mm_Z1.6mm" H 4600 1550 50  0001 C CNN
+F 3 "" H 4600 1550 50  0001 C CNN
+	1    4650 1550
+	-1   0    0    1   
+$EndComp
+$Comp
+L D_Photo D6
+U 1 1 5C65C0E3
+P 4650 1350
+F 0 "D6" H 4600 1134 50  0001 C CNN
+F 1 "SENSOR2" H 4400 1300 50  0000 C CNN
+F 2 "LEDs:LED_D1.8mm_W1.8mm_H2.4mm_Horizontal_O3.81mm_Z1.6mm" H 4600 1350 50  0001 C CNN
+F 3 "" H 4600 1350 50  0001 C CNN
+	1    4650 1350
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	4850 1150 5200 1150
+Connection ~ 4400 1150
+Wire Wire Line
+	2300 1350 2500 1350
+Wire Wire Line
+	1350 1350 1500 1350
+Wire Wire Line
+	1900 2050 1900 2150
+Wire Wire Line
+	5200 2050 1900 2050
+Wire Wire Line
+	2800 1350 3200 1350
+Wire Wire Line
+	2300 1450 2500 1450
+Wire Wire Line
+	2800 1450 3150 1450
+Wire Wire Line
+	3150 1350 3150 1650
+Connection ~ 3150 1350
+Wire Wire Line
+	2300 1550 2500 1550
+Wire Wire Line
+	3150 1550 2800 1550
+Connection ~ 3150 1450
+Wire Wire Line
+	2300 1650 2500 1650
+Wire Wire Line
+	3150 1650 2800 1650
+Connection ~ 3150 1550
+Wire Wire Line
+	1350 1450 1500 1450
+Wire Wire Line
+	1500 1550 1350 1550
+Wire Wire Line
+	1350 1650 1500 1650
+Wire Wire Line
+	4400 1550 4550 1550
+Wire Wire Line
+	4400 1750 4550 1750
+Connection ~ 4400 1550
+Wire Wire Line
+	4850 1350 5200 1350
+Connection ~ 5200 1350
+Wire Wire Line
+	4850 1550 5200 1550
+Connection ~ 5200 1550
+Wire Wire Line
+	4850 1750 5200 1750
+Connection ~ 5200 1750
+Wire Wire Line
+	3500 1350 4000 1350
+Connection ~ 3750 1350
+Text GLabel 1700 3250 2    60   Input ~ 0
+LED_DER
+Text GLabel 1700 3350 2    60   Input ~ 0
+LED_IZQ
+Text GLabel 1700 3450 2    60   Input ~ 0
+LED_FDER
+Text GLabel 1700 3550 2    60   Input ~ 0
+LED_FIZQ
+Text GLabel 1700 3050 2    60   Input ~ 0
+SENSOR
+$Comp
+L +5V #PWR02
+U 1 1 5C65ADA2
+P 3750 950
+F 0 "#PWR02" H 3750 800 50  0001 C CNN
+F 1 "+5V" H 3750 1100 50  0000 C CNN
+F 2 "" H 3750 950 50  0001 C CNN
+F 3 "" H 3750 950 50  0001 C CNN
+	1    3750 950 
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR03
+U 1 1 5C65DCF6
+P 1750 3700
+F 0 "#PWR03" H 1750 3450 50  0001 C CNN
+F 1 "GND" H 1755 3527 50  0000 C CNN
+F 2 "" H 1750 3700 50  0001 C CNN
+F 3 "" H 1750 3700 50  0001 C CNN
+	1    1750 3700
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1750 3700 1750 3650
+Wire Wire Line
+	1750 3650 1500 3650
+Wire Wire Line
+	1700 3550 1500 3550
+Wire Wire Line
+	1500 3450 1700 3450
+Wire Wire Line
+	1700 3350 1500 3350
+Wire Wire Line
+	1500 3250 1700 3250
+$Comp
+L CONN_01X08 J1
+U 1 1 5C67F6A2
+P 1300 3300
+F 0 "J1" H 1219 2725 50  0000 C CNN
+F 1 "CONN_01X08" H 1219 2816 50  0000 C CNN
+F 2 "Connectors_Samtec:SL-108-X-XX_1x08" H 1300 3300 50  0001 C CNN
+F 3 "" H 1300 3300 50  0001 C CNN
+	1    1300 3300
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	1500 3050 1700 3050
+$Comp
+L +5V #PWR04
+U 1 1 5C67F786
+P 1750 2800
+F 0 "#PWR04" H 1750 2650 50  0001 C CNN
+F 1 "+5V" H 1765 2973 50  0000 C CNN
+F 2 "" H 1750 2800 50  0001 C CNN
+F 3 "" H 1750 2800 50  0001 C CNN
+	1    1750 2800
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1500 2950 1750 2950
+Wire Wire Line
+	1750 2950 1750 2800
+Wire Wire Line
+	4600 850  4400 850 
+Wire Wire Line
+	4400 850  4400 1750
+Wire Wire Line
+	5200 1150 5200 2050
+Wire Wire Line
+	4550 1150 4400 1150
+Wire Wire Line
+	3750 950  3750 1350
+$Comp
+L D_Photo D8
+U 1 1 5C65C105
+P 4650 1750
+F 0 "D8" H 4600 1534 50  0001 C CNN
+F 1 "SENSOR4" H 4400 1700 50  0000 C CNN
+F 2 "LEDs:LED_D1.8mm_W1.8mm_H2.4mm_Horizontal_O3.81mm_Z1.6mm" H 4600 1750 50  0001 C CNN
+F 3 "" H 4600 1750 50  0001 C CNN
+	1    4650 1750
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	4300 1350 4550 1350
+Connection ~ 4400 1350
+$EndSCHEMATC
