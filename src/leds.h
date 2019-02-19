@@ -5,7 +5,7 @@
 #define LED_DER A2
 #define LED_FIZQ A3
 #define LED_FDER A4
-#define LED_SENSOR A0
+#define LED_SENSOR A5
 
 void leds_init();
 void leds_activa();

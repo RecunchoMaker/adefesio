@@ -28,7 +28,10 @@ LIBS:opto
 LIBS:atmel
 LIBS:contrib
 LIBS:valves
-LIBS:escornabot-cache
+LIBS:switches
+LIBS:arduino_nano
+LIBS:bl_kicad
+LIBS:adefesio-cache
 EELAYER 26 0
 EELAYER END
 $Descr A4 11693 8268
@@ -174,6 +177,264 @@ F 3 "" H 4600 1350 50  0001 C CNN
 	1    4650 1350
 	-1   0    0    1   
 $EndComp
+$Comp
+L +5V #PWR02
+U 1 1 5C65ADA2
+P 3750 950
+F 0 "#PWR02" H 3750 800 50  0001 C CNN
+F 1 "+5V" H 3750 1100 50  0000 C CNN
+F 2 "" H 3750 950 50  0001 C CNN
+F 3 "" H 3750 950 50  0001 C CNN
+	1    3750 950 
+	1    0    0    -1  
+$EndComp
+$Comp
+L D_Photo D8
+U 1 1 5C65C105
+P 4650 1750
+F 0 "D8" H 4600 1534 50  0001 C CNN
+F 1 "SENSOR4" H 4400 1700 50  0000 C CNN
+F 2 "LEDs:LED_D1.8mm_W1.8mm_H2.4mm_Horizontal_O3.81mm_Z1.6mm" H 4600 1750 50  0001 C CNN
+F 3 "" H 4600 1750 50  0001 C CNN
+	1    4650 1750
+	-1   0    0    1   
+$EndComp
+$Comp
+L Arduino_Nano A1
+U 1 1 5C6C2552
+P 2100 6000
+F 0 "A1" H 2125 7337 60  0000 C CNN
+F 1 "Arduino_Nano" H 2125 7231 60  0000 C CNN
+F 2 "arduino_nano:arduino_nano" H 2100 6000 60  0001 C CNN
+F 3 "" H 2100 6000 60  0000 C CNN
+	1    2100 6000
+	1    0    0    -1  
+$EndComp
+Text GLabel 3000 5350 2    60   Input ~ 0
+MOTOR_LEFT_IN2
+Text GLabel 3000 5050 2    60   Input ~ 0
+BLUETOOTH_TX
+Text GLabel 3000 4950 2    60   Input ~ 0
+BLUETOOTH_RX
+Text GLabel 3000 5450 2    60   Input ~ 0
+MOTOR_LEFT_PWM
+Text GLabel 3000 5250 2    60   Input ~ 0
+ENCODER_RIGHT_C1
+Text GLabel 3000 5550 2    60   Input ~ 0
+MOTOR_RIGHT_PWM
+Text GLabel 3000 5650 2    60   Input ~ 0
+MOTOR_RIGHT_IN1
+Text GLabel 3000 5950 2    60   Input ~ 0
+MOTOR_RIGHT_IN2
+Text GLabel 3000 5850 2    60   Input ~ 0
+MOTOR_LEFT_IN1
+Text GLabel 3000 5750 2    60   Input ~ 0
+ENCODER_RIGHT_C2
+Text GLabel 3000 6150 2    60   Input ~ 0
+ENCODER_LEFT_C2
+Text GLabel 3000 6250 2    60   Input ~ 0
+BATERIA_LED_PIN
+Text GLabel 3000 6550 2    60   Input ~ 0
+LED_DER
+Text GLabel 3000 6650 2    60   Input ~ 0
+LED_FIZQ
+Text GLabel 3000 6450 2    60   Input ~ 0
+LED_IZQ
+Text GLabel 3000 6350 2    60   Input ~ 0
+BATERIA_VOLTAJE_PIN
+Text GLabel 3000 6750 2    60   Input ~ 0
+LED_FDER
+Text GLabel 3000 6850 2    60   Input ~ 0
+LED_SENSOR
+Text GLabel 3000 5150 2    60   Input ~ 0
+ENCODER_LEFT_C1
+Text GLabel 1150 5350 0    60   Input ~ 0
+VBAT
+Text GLabel 1150 5450 0    60   Input ~ 0
+5V
+$Comp
+L GND #PWR05
+U 1 1 5C6C2959
+P 1300 7200
+F 0 "#PWR05" H 1300 6950 50  0001 C CNN
+F 1 "GND" H 1305 7027 50  0000 C CNN
+F 2 "" H 1300 7200 50  0001 C CNN
+F 3 "" H 1300 7200 50  0001 C CNN
+	1    1300 7200
+	1    0    0    -1  
+$EndComp
+NoConn ~ 1450 5550
+NoConn ~ 1450 5700
+NoConn ~ 1450 6150
+$Comp
+L TB6612FNG_BREAKOUT U2
+U 1 1 5C6C34F0
+P 4700 3500
+F 0 "U2" H 4675 4337 60  0000 C CNN
+F 1 "TB6612FNG_BREAKOUT" H 4675 4231 60  0000 C CNN
+F 2 "bl_kicad:DIP-16_600" H 4700 3500 60  0001 C CNN
+F 3 "" H 4700 3500 60  0000 C CNN
+	1    4700 3500
+	1    0    0    -1  
+$EndComp
+Text GLabel 3700 3100 0    60   Input ~ 0
+VBAT
+Text GLabel 3700 3200 0    60   Input ~ 0
+5V
+$Comp
+L GND #PWR06
+U 1 1 5C6C39C5
+P 3900 4150
+F 0 "#PWR06" H 3900 3900 50  0001 C CNN
+F 1 "GND" H 3905 3977 50  0000 C CNN
+F 2 "" H 3900 4150 50  0001 C CNN
+F 3 "" H 3900 4150 50  0001 C CNN
+	1    3900 4150
+	1    0    0    -1  
+$EndComp
+Text GLabel 5650 3400 2    60   Input ~ 0
+5V
+Text GLabel 5650 3100 2    60   Input ~ 0
+MOTOR_LEFT_PWM
+Text GLabel 5650 3200 2    60   Input ~ 0
+MOTOR_LEFT_IN1
+Text GLabel 5650 3300 2    60   Input ~ 0
+MOTOR_LEFT_IN2
+Text GLabel 5650 3600 2    60   Input ~ 0
+MOTOR_RIGHT_IN1
+Text GLabel 5650 3500 2    60   Input ~ 0
+MOTOR_RIGHT_IN2
+Text GLabel 5650 3700 2    60   Input ~ 0
+MOTOR_RIGHT_PWM
+Text GLabel 3700 3400 0    60   Input ~ 0
+MOTOR_A1
+Text GLabel 3700 3500 0    60   Input ~ 0
+MOTOR_A2
+Text GLabel 3700 3600 0    60   Input ~ 0
+MOTOR_B1
+Text GLabel 3700 3700 0    60   Input ~ 0
+MOTOR_B2
+$Comp
+L CONN_01X06 J2
+U 1 1 5C6C44BB
+P 5100 5050
+F 0 "J2" H 5019 4575 50  0000 C CNN
+F 1 "MOTOR_IZQ" H 5019 4666 50  0000 C CNN
+F 2 "Connectors:PINHEAD1-6" H 5100 5050 50  0001 C CNN
+F 3 "" H 5100 5050 50  0001 C CNN
+	1    5100 5050
+	-1   0    0    1   
+$EndComp
+$Comp
+L CONN_01X06 J3
+U 1 1 5C6C45EB
+P 5100 6200
+F 0 "J3" H 5019 5725 50  0000 C CNN
+F 1 "MOTOR_DER" H 5019 5816 50  0000 C CNN
+F 2 "Connectors:PINHEAD1-6" H 5100 6200 50  0001 C CNN
+F 3 "" H 5100 6200 50  0001 C CNN
+	1    5100 6200
+	-1   0    0    1   
+$EndComp
+Text GLabel 5450 4900 2    60   Input ~ 0
+5V
+$Comp
+L GND #PWR07
+U 1 1 5C6C46F7
+P 6500 5100
+F 0 "#PWR07" H 6500 4850 50  0001 C CNN
+F 1 "GND" H 6505 4927 50  0000 C CNN
+F 2 "" H 6500 5100 50  0001 C CNN
+F 3 "" H 6500 5100 50  0001 C CNN
+	1    6500 5100
+	1    0    0    -1  
+$EndComp
+Text GLabel 5450 5000 2    60   Input ~ 0
+ENCODER_LEFT_C1
+Text GLabel 5450 6250 2    60   Input ~ 0
+ENCODER_RIGHT_C2
+Text GLabel 5450 6150 2    60   Input ~ 0
+ENCODER_RIGHT_C1
+Text GLabel 5450 5100 2    60   Input ~ 0
+ENCODER_LEFT_C2
+Text GLabel 5450 5200 2    60   Input ~ 0
+MOTOR_A1
+Text GLabel 5450 5300 2    60   Input ~ 0
+MOTOR_A2
+Text GLabel 5450 5950 2    60   Input ~ 0
+MOTOR_B1
+Text GLabel 5450 6050 2    60   Input ~ 0
+MOTOR_B2
+Text GLabel 5450 6350 2    60   Input ~ 0
+5V
+$Comp
+L GND #PWR08
+U 1 1 5C6C4D92
+P 5450 6550
+F 0 "#PWR08" H 5450 6300 50  0001 C CNN
+F 1 "GND" H 5455 6377 50  0000 C CNN
+F 2 "" H 5450 6550 50  0001 C CNN
+F 3 "" H 5450 6550 50  0001 C CNN
+	1    5450 6550
+	1    0    0    -1  
+$EndComp
+$Comp
+L SW_SPST SW1
+U 1 1 5C6C52BB
+P 8200 4150
+F 0 "SW1" H 8200 4385 50  0000 C CNN
+F 1 "SW_SPST" H 8200 4294 50  0000 C CNN
+F 2 "Buttons_Switches_SMD:SW_DIP_x1_W7.62mm_Slide_Copal_CHS-B" H 8200 4150 50  0001 C CNN
+F 3 "" H 8200 4150 50  0001 C CNN
+	1    8200 4150
+	1    0    0    -1  
+$EndComp
+$Comp
+L CONN_01X02 J4
+U 1 1 5C6C53BB
+P 7500 4200
+F 0 "J4" H 7419 3925 50  0000 C CNN
+F 1 "CONN_01X02" H 7419 4016 50  0000 C CNN
+F 2 "Connectors:PINHEAD1-2" H 7500 4200 50  0001 C CNN
+F 3 "" H 7500 4200 50  0001 C CNN
+	1    7500 4200
+	-1   0    0    1   
+$EndComp
+Text GLabel 8800 4150 2    60   Input ~ 0
+VBAT
+$Comp
+L GND #PWR09
+U 1 1 5C6C567B
+P 7850 5250
+F 0 "#PWR09" H 7850 5000 50  0001 C CNN
+F 1 "GND" H 7855 5077 50  0000 C CNN
+F 2 "" H 7850 5250 50  0001 C CNN
+F 3 "" H 7850 5250 50  0001 C CNN
+	1    7850 5250
+	1    0    0    -1  
+$EndComp
+$Comp
+L R R3
+U 1 1 5C6C5741
+P 8550 4450
+F 0 "R3" H 8620 4496 50  0000 L CNN
+F 1 "R" H 8620 4405 50  0000 L CNN
+F 2 "Resistors_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal" V 8480 4450 50  0001 C CNN
+F 3 "" H 8550 4450 50  0001 C CNN
+	1    8550 4450
+	1    0    0    -1  
+$EndComp
+$Comp
+L R R4
+U 1 1 5C6C57B7
+P 8550 4900
+F 0 "R4" H 8620 4946 50  0000 L CNN
+F 1 "R" H 8620 4855 50  0000 L CNN
+F 2 "Resistors_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal" V 8480 4900 50  0001 C CNN
+F 3 "" H 8550 4900 50  0001 C CNN
+	1    8550 4900
+	1    0    0    -1  
+$EndComp
 Wire Wire Line
 	4850 1150 5200 1150
 Connection ~ 4400 1150
@@ -227,78 +488,6 @@ Connection ~ 5200 1750
 Wire Wire Line
 	3500 1350 4000 1350
 Connection ~ 3750 1350
-Text GLabel 1700 3250 2    60   Input ~ 0
-LED_DER
-Text GLabel 1700 3350 2    60   Input ~ 0
-LED_IZQ
-Text GLabel 1700 3450 2    60   Input ~ 0
-LED_FDER
-Text GLabel 1700 3550 2    60   Input ~ 0
-LED_FIZQ
-Text GLabel 1700 3050 2    60   Input ~ 0
-SENSOR
-$Comp
-L +5V #PWR02
-U 1 1 5C65ADA2
-P 3750 950
-F 0 "#PWR02" H 3750 800 50  0001 C CNN
-F 1 "+5V" H 3750 1100 50  0000 C CNN
-F 2 "" H 3750 950 50  0001 C CNN
-F 3 "" H 3750 950 50  0001 C CNN
-	1    3750 950 
-	1    0    0    -1  
-$EndComp
-$Comp
-L GND #PWR03
-U 1 1 5C65DCF6
-P 1750 3700
-F 0 "#PWR03" H 1750 3450 50  0001 C CNN
-F 1 "GND" H 1755 3527 50  0000 C CNN
-F 2 "" H 1750 3700 50  0001 C CNN
-F 3 "" H 1750 3700 50  0001 C CNN
-	1    1750 3700
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	1750 3700 1750 3650
-Wire Wire Line
-	1750 3650 1500 3650
-Wire Wire Line
-	1700 3550 1500 3550
-Wire Wire Line
-	1500 3450 1700 3450
-Wire Wire Line
-	1700 3350 1500 3350
-Wire Wire Line
-	1500 3250 1700 3250
-$Comp
-L CONN_01X08 J1
-U 1 1 5C67F6A2
-P 1300 3300
-F 0 "J1" H 1219 2725 50  0000 C CNN
-F 1 "CONN_01X08" H 1219 2816 50  0000 C CNN
-F 2 "Connectors_Samtec:SL-108-X-XX_1x08" H 1300 3300 50  0001 C CNN
-F 3 "" H 1300 3300 50  0001 C CNN
-	1    1300 3300
-	-1   0    0    1   
-$EndComp
-Wire Wire Line
-	1500 3050 1700 3050
-$Comp
-L +5V #PWR04
-U 1 1 5C67F786
-P 1750 2800
-F 0 "#PWR04" H 1750 2650 50  0001 C CNN
-F 1 "+5V" H 1765 2973 50  0000 C CNN
-F 2 "" H 1750 2800 50  0001 C CNN
-F 3 "" H 1750 2800 50  0001 C CNN
-	1    1750 2800
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	1500 2950 1750 2950
-Wire Wire Line
-	1750 2950 1750 2800
 Wire Wire Line
 	4600 850  4400 850 
 Wire Wire Line
@@ -309,18 +498,138 @@ Wire Wire Line
 	4550 1150 4400 1150
 Wire Wire Line
 	3750 950  3750 1350
-$Comp
-L D_Photo D8
-U 1 1 5C65C105
-P 4650 1750
-F 0 "D8" H 4600 1534 50  0001 C CNN
-F 1 "SENSOR4" H 4400 1700 50  0000 C CNN
-F 2 "LEDs:LED_D1.8mm_W1.8mm_H2.4mm_Horizontal_O3.81mm_Z1.6mm" H 4600 1750 50  0001 C CNN
-F 3 "" H 4600 1750 50  0001 C CNN
-	1    4650 1750
-	-1   0    0    1   
-$EndComp
 Wire Wire Line
 	4300 1350 4550 1350
 Connection ~ 4400 1350
+Wire Wire Line
+	1300 6900 1300 7200
+Wire Wire Line
+	1300 7000 1450 7000
+Wire Wire Line
+	1450 6900 1300 6900
+Connection ~ 1300 7000
+Wire Wire Line
+	1150 5350 1450 5350
+Wire Wire Line
+	1450 5450 1150 5450
+Wire Wire Line
+	3000 4950 2800 4950
+Wire Wire Line
+	3000 5050 2800 5050
+Wire Wire Line
+	3000 5150 2800 5150
+Wire Wire Line
+	2800 5250 3000 5250
+Wire Wire Line
+	3000 5350 2800 5350
+Wire Wire Line
+	2800 5450 3000 5450
+Wire Wire Line
+	3000 5550 2800 5550
+Wire Wire Line
+	2800 5650 3000 5650
+Wire Wire Line
+	3000 5750 2800 5750
+Wire Wire Line
+	2800 5850 3000 5850
+Wire Wire Line
+	3000 5950 2800 5950
+Wire Wire Line
+	3000 6150 2800 6150
+Wire Wire Line
+	2800 6250 3000 6250
+Wire Wire Line
+	3000 6350 2800 6350
+Wire Wire Line
+	2800 6450 3000 6450
+Wire Wire Line
+	3000 6550 2800 6550
+Wire Wire Line
+	2800 6650 3000 6650
+Wire Wire Line
+	3000 6750 2800 6750
+Wire Wire Line
+	2800 6850 3000 6850
+Wire Wire Line
+	5450 3400 5650 3400
+Wire Wire Line
+	3700 3100 3900 3100
+Wire Wire Line
+	3900 3200 3700 3200
+Wire Wire Line
+	3700 3400 3900 3400
+Wire Wire Line
+	3900 3500 3700 3500
+Wire Wire Line
+	3700 3600 3900 3600
+Wire Wire Line
+	3900 3700 3700 3700
+Wire Wire Line
+	5450 3800 5450 4150
+Wire Wire Line
+	3900 3300 3900 4150
+Connection ~ 3900 3800
+Wire Wire Line
+	3900 4150 5450 4150
+Wire Wire Line
+	5650 3100 5450 3100
+Wire Wire Line
+	5450 3200 5650 3200
+Wire Wire Line
+	5650 3300 5450 3300
+Wire Wire Line
+	5650 3500 5450 3500
+Wire Wire Line
+	5450 3600 5650 3600
+Wire Wire Line
+	5650 3700 5450 3700
+Wire Wire Line
+	5300 4800 6500 4800
+Wire Wire Line
+	5300 4900 5450 4900
+Wire Wire Line
+	5450 5000 5300 5000
+Wire Wire Line
+	5300 5100 5450 5100
+Wire Wire Line
+	5450 5200 5300 5200
+Wire Wire Line
+	5300 5300 5450 5300
+Wire Wire Line
+	5450 5950 5300 5950
+Wire Wire Line
+	5300 6050 5450 6050
+Wire Wire Line
+	5450 6150 5300 6150
+Wire Wire Line
+	5450 6350 5300 6350
+Wire Wire Line
+	5300 6250 5450 6250
+Wire Wire Line
+	5450 6550 5450 6450
+Wire Wire Line
+	5450 6450 5300 6450
+Wire Wire Line
+	8400 4150 8800 4150
+Wire Wire Line
+	7700 4150 8000 4150
+Wire Wire Line
+	7700 4250 7850 4250
+Wire Wire Line
+	7850 4250 7850 5250
+Wire Wire Line
+	7850 5050 8550 5050
+Connection ~ 7850 5050
+Wire Wire Line
+	8550 4300 8550 4150
+Connection ~ 8550 4150
+Text GLabel 8700 4650 2    60   Input ~ 0
+BATERIA_VOLTAJE_PIN
+Wire Wire Line
+	8700 4650 8550 4650
+Wire Wire Line
+	8550 4600 8550 4750
+Connection ~ 8550 4650
+Wire Wire Line
+	6500 4800 6500 5100
 $EndSCHEMATC
