@@ -11,8 +11,6 @@ float bateria_get_voltaje() {
 }
 
 bool bateria_agotada() {
-    Serial.println("Ojo. Sin control de bateria");
-    return false;
     float bv = bateria_get_voltaje();
     if (bv < BATERIA_VOLTAJE_USB)
         return false;
@@ -22,8 +20,7 @@ bool bateria_agotada() {
 void bateria_muestra_nivel() {
     float bv = bateria_get_voltaje();
     if (bv < BATERIA_VOLTAJE_USB) {
-        // No imprimir
-        // Serial.println("USB");
+        Serial.println("USB");
     }
     else {
         Serial.print("Bateria: ");

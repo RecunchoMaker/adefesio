@@ -5,8 +5,8 @@
 
 // H-bridge pins
 #define MOTOR_LEFT_PWM 5 
-#define MOTOR_LEFT_IN1 9
-#define MOTOR_LEFT_IN2 4
+#define MOTOR_LEFT_IN1 4
+#define MOTOR_LEFT_IN2 9
 
 #define MOTOR_RIGHT_PWM 6 
 #define MOTOR_RIGHT_IN1 7

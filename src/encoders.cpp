@@ -48,6 +48,10 @@ void encoders_init(void) {
     attachInterrupt(
             digitalPinToInterrupt(ENCODER_RIGHT_C1),
             encoders_ISR_right, RISING);
+
+    encoders_reset_posicion();
+    encoders_reset_posicion_total();
+
 }
 
 uint16_t encoders_get_tcnt1_anterior_right() {

@@ -1,11 +1,11 @@
 #ifndef __LEDS_H
 #define __LEDS_H
 
-#define LED_IZQ A1
-#define LED_DER A2
-#define LED_FIZQ A3
-#define LED_FDER A4
-#define LED_SENSOR A5
+#define LED_IZQ A0
+#define LED_DER A1
+#define LED_FIZQ A2
+#define LED_FDER A3
+#define LED_SENSOR A4
 
 void leds_init();
 void leds_activa();

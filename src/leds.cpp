@@ -49,9 +49,9 @@ void leds_actualiza_valor(int8_t led) {
     delayMicroseconds(15); // maxima lectura 710
     leds_lectura1 = analogRead(LED_SENSOR);
 
-    leds_valor[led - A1] = leds_lectura1 - leds_lectura0;
+    leds_valor[led - A0] = leds_lectura1 - leds_lectura0;
 }
 
 int16_t leds_get_valor(int8_t led) {
-    return leds_valor[led-A1];
+    return leds_valor[led-A0];
 }

@@ -143,7 +143,6 @@ void robot_init() {
     _crea_accion(PI*distancia_entre_ruedas/2, 1, 1 , 0.2             , 0.1            , GIRA180); // gira 180g
     */
 
-    
     // Secuencia ADAAII
 
     _crea_accion(ROBOT_DIST/2, amax, amax, vr, vr, INFINITO);         // inicial

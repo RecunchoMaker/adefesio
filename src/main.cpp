@@ -98,7 +98,6 @@ void loop() {
     leds_activa();
     robot_init();
 
-    /*
     robot_siguiente_accion();
 
 
@@ -119,16 +118,23 @@ void loop() {
         Serial.print(" ");
         Serial.print(motores_get_aceleracion_lineal(),5);
         Serial.println();
-        */
-
-    for (int i = 0; i< 10000; i++) {
-        delay(50);
-        Serial.print(leds_get_valor(LED_IZQ));
-        Serial.print("\t");
-        Serial.print(leds_get_valor(LED_DER));
-        Serial.print("\t");
-        Serial.print(leds_get_valor(LED_FIZQ));
-        Serial.print("\t");
-        Serial.println(leds_get_valor(LED_FDER));
     }
+
+    //for (int i = 0; i< 10000; i++) {
+    /*
+    while (1) {
+        Serial.print(encoders_get_posicion_total_left());
+        Serial.print(" \t");
+        Serial.print(encoders_get_posicion_total_right());
+        Serial.print(" \t - ");
+        Serial.print(leds_get_valor(LED_IZQ));
+        Serial.print(" \t");
+        Serial.print(leds_get_valor(LED_DER));
+        Serial.print(" \t");
+        Serial.print(leds_get_valor(LED_FIZQ));
+        Serial.print(" \t");
+        Serial.print(leds_get_valor(LED_FDER));
+        Serial.println();
+    }
+    */
 }

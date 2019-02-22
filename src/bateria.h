@@ -5,7 +5,7 @@
 
 #define BATERIA_VOLTAJE_UMBRAL 7.2
 #define BATERIA_VOLTAJE_USB 4.90
-#define BATERIA_VOLTAJE_PIN A0
+#define BATERIA_VOLTAJE_PIN A7
 #define BATERIA_LED_PIN 13
 
 void bateria_init(void);
