@@ -1,9 +1,9 @@
 #ifndef __LEDS_H
 #define __LEDS_H
 
-#define LED_IZQ A0
+#define LED_FIZQ A0
+#define LED_IZQ A2
 #define LED_DER A1
-#define LED_FIZQ A2
 #define LED_FDER A3
 #define LED_SENSOR A4
 

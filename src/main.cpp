@@ -101,9 +101,11 @@ void loop() {
     robot_siguiente_accion();
 
 
+    //while (1) {
     while (robot_get_accion() > 0) {
         Serial.print(robot_get_accion());
         Serial.print(" ");
+        /*
         Serial.print(timer1_get_cuenta());
         Serial.print(" ");
         Serial.print(encoders_get_velocidad_left(),6);
@@ -112,11 +114,22 @@ void loop() {
         Serial.print(" ");
         Serial.print(motores_get_velocidad_lineal_objetivo(),6);
         Serial.print(" ");
+        */
         Serial.print(encoders_get_posicion_total());
-        //Serial.print(" ");
-        //Serial.print(encoders_get_posicion_total() * LONGITUD_PASO_ENCODER/(timer1_get_cuenta() * PERIODO_TIMER),5);
+        Serial.print(" ");
+        /*
+        /Serial.print(encoders_get_posicion_total() * LONGITUD_PASO_ENCODER/(timer1_get_cuenta() * PERIODO_TIMER),5);
         Serial.print(" ");
         Serial.print(motores_get_aceleracion_lineal(),5);
+        Serial.println();
+        */
+        Serial.print(leds_get_valor(LED_IZQ));
+        Serial.print(" \t");
+        Serial.print(leds_get_valor(LED_FIZQ));
+        Serial.print(" \t");
+        Serial.print(leds_get_valor(LED_FDER));
+        Serial.print(" \t");
+        Serial.print(leds_get_valor(LED_DER));
         Serial.println();
     }
 
