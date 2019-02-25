@@ -2,6 +2,7 @@
 #include <log.h>
 #include <settings.h>
 #include <motores.h>
+#include <leds.h>
 #include <timer1.h>
 
 #define KA (2.0)
@@ -221,6 +222,11 @@ void motores_actualiza_velocidad() {
         potencia_right += kp_lineal * error_lineal_right;
         potencia_right += kd_lineal * ((error_lineal_right - error_acumulado_right) / PERIODO_CICLO);
         potencia_right += ki_lineal * error_acumulado_right;
+
+        // Suponemos que estamos en un pasillo
+        potencia_left += 0.0001 * leds_get_desvio_centro();
+        potencia_right -= 0.0001 * leds_get_desvio_centro();
+        
 
         error_acumulado_left = error_lineal_left;
         error_acumulado_right = error_lineal_right;

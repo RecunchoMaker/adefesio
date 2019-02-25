@@ -14,5 +14,8 @@ void leds_enciende(int8_t led);
 void leds_apaga(int8_t led);
 void leds_actualiza_valor(int8_t sensor);
 int16_t leds_get_valor(int8_t sensor);
+int16_t leds_get_valor_d(int8_t sensor);
+int16_t leds_get_desvio_centro();
+bool leds_pared_enfrente();
 
 #endif

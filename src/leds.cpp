@@ -3,6 +3,7 @@
 
 volatile bool leds_activados = false;
 volatile int16_t leds_valor[4];
+volatile int16_t leds_valor_d[4];
 
 volatile int16_t leds_lectura0;
 volatile int16_t leds_lectura1;
@@ -49,9 +50,22 @@ void leds_actualiza_valor(int8_t led) {
     delayMicroseconds(15); // maxima lectura 710
     leds_lectura1 = analogRead(LED_SENSOR);
 
+    leds_valor_d[led - A0] = leds_valor[led - A0] - leds_lectura1 + leds_lectura0;
     leds_valor[led - A0] = leds_lectura1 - leds_lectura0;
 }
 
 int16_t leds_get_valor(int8_t led) {
     return leds_valor[led-A0];
+}
+
+int16_t leds_get_valor_d(int8_t led) {
+    return leds_valor_d[led-A0];
+}
+
+int16_t leds_get_desvio_centro() {
+    return leds_valor[LED_IZQ - A0] - leds_valor[LED_DER - A0];
+}
+
+bool leds_pared_enfrente() {
+    return leds_valor[LED_FDER - A0] + leds_valor[LED_FIZQ - A0] > 30;
 }

@@ -98,31 +98,15 @@ void loop() {
     leds_activa();
     robot_init();
 
-    robot_siguiente_accion();
-
+    robot_set_estado(ROBOT_EXPLORANDO);
 
     //while (1) {
-    while (robot_get_accion() > 0) {
+    while (robot_get_estado() != ROBOT_PARADO) {
+        /*
         Serial.print(robot_get_accion());
         Serial.print(" ");
-        /*
-        Serial.print(timer1_get_cuenta());
-        Serial.print(" ");
-        Serial.print(encoders_get_velocidad_left(),6);
-        Serial.print(" ");
-        Serial.print(encoders_get_velocidad_right(),6);
-        Serial.print(" ");
-        Serial.print(motores_get_velocidad_lineal_objetivo(),6);
-        Serial.print(" ");
-        */
         Serial.print(encoders_get_posicion_total());
         Serial.print(" ");
-        /*
-        /Serial.print(encoders_get_posicion_total() * LONGITUD_PASO_ENCODER/(timer1_get_cuenta() * PERIODO_TIMER),5);
-        Serial.print(" ");
-        Serial.print(motores_get_aceleracion_lineal(),5);
-        Serial.println();
-        */
         Serial.print(leds_get_valor(LED_IZQ));
         Serial.print(" \t");
         Serial.print(leds_get_valor(LED_FIZQ));
@@ -130,7 +114,10 @@ void loop() {
         Serial.print(leds_get_valor(LED_FDER));
         Serial.print(" \t");
         Serial.print(leds_get_valor(LED_DER));
+        Serial.print(" \t");
+        Serial.print(leds_get_valor_d(LED_DER));
         Serial.println();
+        */
     }
 
     //for (int i = 0; i< 10000; i++) {
