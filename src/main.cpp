@@ -9,14 +9,7 @@
 #include <comando.h>
 #include <robot.h>
 #include <leds.h>
-
-volatile uint8_t max_tcnt1=0;
-volatile uint8_t min_tcnt1=255;
-
-volatile uint32_t aux_1;
-volatile uint32_t aux_2;
-
-volatile float aux_1f=0;
+#include <laberinto.h>
 
 ISR (TIMER1_COMPA_vect) {
 
@@ -83,6 +76,10 @@ void setup() {
     bateria_muestra_nivel();
     timer1_init(PERIODO_TIMER, 1);
     robot_init();
+
+    laberinto_init();
+
+    laberinto_print();
 
     sei();
 }

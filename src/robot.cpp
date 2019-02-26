@@ -16,7 +16,7 @@ struct tipo_accion {
     volatile float radio;
 };
 
-#define MAX_ACCIONES 25
+#define MAX_ACCIONES 5
 #define INFINITO 99999.0
 #define RECTO    99999.0
 #define ESPERA   99999.0
