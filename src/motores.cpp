@@ -183,6 +183,8 @@ void motores_actualiza_velocidad() {
     if (velocidad_lineal_objetivo != 0 or aceleracion_lineal != 0) {
 
         velocidad_lineal_objetivo += (aceleracion_lineal * PERIODO_CICLO);
+        if (velocidad_lineal_objetivo < 0)
+            velocidad_lineal_objetivo = 0; // TODO fix cuando no da tiempo a decelerar
 
         if (radio == 0) { // caso especial. giro sobre si mismo
             velocidad_lineal_objetivo_left = -velocidad_lineal_objetivo;

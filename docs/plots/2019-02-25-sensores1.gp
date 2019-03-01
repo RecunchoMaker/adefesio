@@ -17,12 +17,11 @@ set grid
 set key autotitle columnhead
 
 # para mostrar nombres de colores: show palette colornames
-plot '/tmp/data.dat' using ($2/10) linecolor "red" title "encoder"
-replot '/tmp/data.dat' using 3 linecolor "gray" title "IZQ"
-replot '/tmp/data.dat' using 4  linecolor "dark-plum" title "FIZQ"
-replot '/tmp/data.dat' using 5 linecolor "magenta" title "FDER"
-replot '/tmp/data.dat' using 6 linecolor "blue" title "DER"
-replot '/tmp/data.dat' using 7 linecolor "blue" title "DER"
+plot '/tmp/data.dat' using 1 linecolor "red" title "encoder"
+replot '/tmp/data.dat' using 2 linecolor "gray" title "IZQ"
+replot '/tmp/data.dat' using 3  linecolor "dark-plum" title "FIZQ"
+replot '/tmp/data.dat' using 4 linecolor "magenta" title "FDER"
+replot '/tmp/data.dat' using 5 linecolor "blue" title "DER"
 
 # Espera a que se pulse una tecla
 pause mouse keypress

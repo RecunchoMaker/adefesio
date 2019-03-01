@@ -67,6 +67,11 @@ void encoders_set_direccion(bool left, bool right) {
     direccion_right = right;
 }
 
+void encoders_decrementa_posicion_total(int16_t pasos) {
+    encoder_posicion_total_left -= pasos;
+    encoder_posicion_total_right -= pasos;
+}
+
 void encoders_reset_posicion(void) {
     encoder_posicion_left = 0;
     encoder_posicion_right = 0;

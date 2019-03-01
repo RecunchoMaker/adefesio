@@ -18,6 +18,11 @@
 #define KD_LINEAL -0.0
 #define KI_LINEAL -0.0
 
+#define LABERINTO_FILAS 5
+#define LABERINTO_COLUMNAS 4
+#define CASILLA_INICIAL 20
+#define ORIENTACION_INICIAL NORTE
+
 #endif /* ifndef SETTINGS_H
 
  */

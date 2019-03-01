@@ -5,6 +5,20 @@
 #define ROBOT_PARADO 0
 #define ROBOT_EXPLORANDO 1
 
+struct tipo_accion {
+    volatile int32_t pasos_objetivo;
+    volatile int32_t pasos_hasta_decelerar;
+    volatile float aceleracion;
+    volatile float deceleracion;
+    volatile float velocidad_maxima;
+    volatile float velocidad_final;
+    volatile float radio;
+};
+
+typedef enum tipo_orientacion {NORTE, ESTE, SUR, OESTE};
+typedef enum tipo_estado {PARADO, EXPLORANDO};
+
+
 void robot_set_amax(float aceleracion_maxima);
 float robot_get_amax();
 void robot_set_acur(float aceleracion_entrada_en_curva);
@@ -16,13 +30,21 @@ float robot_get_vr();
 void robot_set_vc(float velocidad_en_curva);
 float robot_get_vc();
 
+// TODO: esta funcion es privada
+void _crea_accion(float distancia,
+                  float aceleracion, float deceleracion,
+                  float velocidad_maxima, float velocidad_final,
+                  float radio); 
+
 void robot_init();
 void robot_siguiente_accion();
 void robot_control();
-uint8_t robot_get_accion();
+void robot_inicia_exploracion();
+tipo_accion robot_get_accion();
 
-int8_t robot_get_estado();
-void robot_set_estado(int8_t estado);
+uint8_t robot_get_casilla();
+tipo_estado robot_get_estado();
+tipo_orientacion robot_get_orientacion();
 
 float _distancia_para_decelerar(float velocidad, float aceleracion);
 

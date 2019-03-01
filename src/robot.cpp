@@ -5,18 +5,8 @@
 #include <encoders.h>
 #include <leds.h>
 #include <timer1.h>
+#include <laberinto.h>
 
-struct tipo_accion {
-    volatile int32_t pasos_objetivo;
-    volatile int32_t pasos_hasta_decelerar;
-    volatile float aceleracion;
-    volatile float deceleracion;
-    volatile float velocidad_maxima;
-    volatile float velocidad_final;
-    volatile float radio;
-};
-
-#define MAX_ACCIONES 5
 #define INFINITO 99999.0
 #define RECTO    99999.0
 #define ESPERA   99999.0
@@ -29,7 +19,7 @@ struct tipo_accion {
 #define ROBOT_ACUR 1.0
 
 // Aceleracion de la frenada final en la ultima casilla
-#define ROBOT_AFIN 1
+#define ROBOT_AFIN 0.3
 
 // Velocidad maxima en recta
 #define ROBOT_VR 0.40
@@ -37,14 +27,17 @@ struct tipo_accion {
 // Velocidad maxima en curva
 #define ROBOT_VC 0.30
 
+// Velocidad maxima en exploracion
+#define ROBOT_VE 0.20
+
 // TODO: estas medidas deben estar en otro fichero
 #define ROBOT_DIST 0.18
 #define ROBOT_DISTG (2*PI*(ROBOT_DIST/2)/4)
 
 tipo_accion accion;
-tipo_accion accion_array[MAX_ACCIONES+1];
-volatile uint8_t accion_idx;
-volatile uint8_t ultima_accion = 0;
+
+volatile int32_t aux_cuenta = 0;
+volatile int32_t aux_pasos = 0;
 
 volatile int32_t pasos_recorridos;
 
@@ -53,8 +46,15 @@ volatile float acur = ROBOT_ACUR;
 volatile float afin = ROBOT_AFIN;
 volatile float vr = ROBOT_VR;
 volatile float vc = ROBOT_VC;
+volatile float ve = ROBOT_VE;
 
-volatile int8_t robot_estado = ROBOT_PARADO;
+typedef struct {
+    tipo_estado estado:2;
+    tipo_orientacion orientacion: 2;
+    uint8_t casilla = 0;
+} tipo_robot;
+
+volatile tipo_robot robot;
 
 void robot_set_amax(float aceleracion_maxima) {
     amax = aceleracion_maxima;
@@ -101,10 +101,16 @@ float _distancia_para_decelerar(float vi, float vf, float aceleracion) {
 }
 
 void _print_accion(tipo_accion accion) {
+
+    //laberinto_print();
+
     Serial.print("accion: acel ");
     Serial.print(accion.aceleracion);
     Serial.print(" vmax="); Serial.print(accion.velocidad_maxima);
     Serial.print(" vfin="); Serial.print(accion.velocidad_final);
+    Serial.print(" deceleracion="); Serial.print(accion.deceleracion);
+    Serial.print(" pasos_hasta_dec="); Serial.print(accion.pasos_hasta_decelerar);
+    Serial.print(" pasos_obj="); Serial.print(accion.pasos_objetivo);
 
     Serial.println();
 }
@@ -115,18 +121,28 @@ void _crea_accion(float distancia,
                   float radio) {
 
 
-    accion_array[ultima_accion].aceleracion = aceleracion;
-    accion_array[ultima_accion].pasos_objetivo = distancia / LONGITUD_PASO_ENCODER;
-    accion_array[ultima_accion].deceleracion = deceleracion;
-    accion_array[ultima_accion].pasos_hasta_decelerar = ((distancia - _distancia_para_decelerar (velocidad_maxima, velocidad_final, deceleracion)) /
+    accion.aceleracion = aceleracion;
+    accion.pasos_objetivo = distancia / LONGITUD_PASO_ENCODER;
+    accion.deceleracion = deceleracion;
+    accion.pasos_hasta_decelerar = ((distancia - _distancia_para_decelerar (velocidad_maxima, velocidad_final, deceleracion)) /
                 LONGITUD_PASO_ENCODER);
-    accion_array[ultima_accion].velocidad_maxima = velocidad_maxima;
-    accion_array[ultima_accion].velocidad_final = velocidad_final;
-    accion_array[ultima_accion].radio = radio;
+    accion.velocidad_maxima = velocidad_maxima;
+    accion.velocidad_final = velocidad_final;
+    accion.radio = radio;
 
-    _print_accion(accion_array[ultima_accion]);
 
-    ultima_accion++;
+    motores_set_radio(accion.radio);
+
+    if (accion.velocidad_maxima > motores_get_velocidad_lineal_objetivo()) {
+        motores_set_aceleracion_lineal(accion.aceleracion);
+    }
+    else
+        motores_set_aceleracion_lineal(0);
+
+    encoders_decrementa_posicion_total(pasos_recorridos);
+
+    // _print_accion(accion);
+
 }
 
 
@@ -136,30 +152,8 @@ void robot_init() {
     encoders_reset_posicion();
     motores_parar();
 
-    ultima_accion = 0;
-
-    // _         distancia  , aceleracion, deceleracion, velocidad_maxima, velocidad_final, radio
-    // _crea_accion(INFINITO   , 0          , 0.3         , 0.2             , 0.005            , INFINITO); // espera GO
-
-    /* Una recta de dos casillas y un giro de 90 grados
-    _crea_accion(0.18*2     , 1          , 1           , 0.3             , 0.1            , RECTO); // avanza
-    _crea_accion(ESPERA     , 0.5        , 0.5         , 0               , 0              , 0.5); // espera 1/2 segundo
-    _crea_accion(PI*distancia_entre_ruedas/2, 1, 1 , 0.2             , 0.1            , GIRA180); // gira 180g
-    */
-
-    /*
-     * Pasillo de 6 casillas
-     */
-    /*
-    _crea_accion(ROBOT_DIST/2, amax, amax, vr, vr, INFINITO);         // inicial
-    _crea_accion(ROBOT_DIST * 4, amax, amax, vr, vr, INFINITO);         // inicial
-    _crea_accion(ROBOT_DIST/2, amax, afin, vc, 0.03, INFINITO);         // final
-    _crea_accion(PI*motores_get_distancia_entre_ruedas()/2, acur, acur , vc , 0.03, GIRA180); // gira 180g
-    */
-
-    /*
-     * Primera accion, dejando las demás dependiendo de los sensores
-     */
+    robot.casilla = CASILLA_INICIAL;
+    robot.orientacion = ORIENTACION_INICIAL;
 
     /*
      * Secuencia ADAAII
@@ -198,53 +192,80 @@ void robot_init() {
     // accion = accion_array[0];
 } 
 
-uint8_t robot_get_accion() {
-    return accion_idx;
+tipo_accion robot_get_accion() {
+    return accion;
+}
+
+void _incrementa_casilla() {
+    switch (robot.orientacion) {
+        case NORTE:
+            robot.casilla += CASILLA_NORTE;
+            break;
+        case SUR:
+            robot.casilla += CASILLA_SUR;
+            break;
+        case ESTE:
+            robot.casilla += CASILLA_ESTE;
+            break;
+        case OESTE:
+            robot.casilla += CASILLA_OESTE;
+            break;
+    }
 }
 
 void robot_siguiente_accion() {
 
-
-    switch (robot_estado) {
+    switch (robot.estado) {
         case ROBOT_PARADO:
+            motores_parar();
             break;
         case ROBOT_EXPLORANDO:
-            ultima_accion = 0;
-            Serial.print("sig: ");
+
+            aux_cuenta++;
+
+            if (!leds_pared_enfrente()) {
+                _crea_accion(0.01, amax, amax, ve, ve, INFINITO);
+            } else {
+                _crea_accion(0.08, afin, afin, ve, 0.09, INFINITO);
+                robot.estado = ROBOT_PARADO;
+            }
+
+/*
+            laberinto_pon_paredes(robot.casilla, 
+                    leds_pared_izquierda(),
+                    leds_pared_justo_enfrente(),
+                    leds_pared_derecha()
+                    );
+
+            Serial.print("explorando. v = ");
             Serial.println(motores_get_velocidad_lineal_objetivo());
             if (motores_get_velocidad_lineal_objetivo() == 0) {
                 // Robot parado. Inicio con media casilla hasta vmax
-                Serial.print("media casilla acelerando");
+                Serial.println("media casilla acelerando");
                 _crea_accion(ROBOT_DIST/2, amax, amax, vc, vc, INFINITO);         // inicial
                 //_crea_accion(INFINITO,0, 0.3, 0.2, 0.005,INFINITO); // espera GO
             }
             else if (motores_get_velocidad_lineal_objetivo() < 0.15 and leds_pared_enfrente()) {
-                Serial.print("pared enfrente, paro");
+                Serial.println("pared enfrente, paro");
                 _crea_accion(INFINITO,0, 0.3, 0.2, 0.005,INFINITO); // espera GO
-                robot_estado = ROBOT_PARADO;
+                robot.estado = ROBOT_PARADO;
                 motores_parar();
             } else if (motores_get_velocidad_lineal_objetivo() < 0.05 ) {
                 // Robot frenando
             } else if (leds_pared_enfrente()) {
                 // Robot en movimiento con pared enfrente: freno
                 _crea_accion(ROBOT_DIST/2, amax, afin, vc, 0.03, INFINITO);         // final
+                _incrementa_casilla();
                 Serial.println("pared: freno");
             } else {
                 // Robot en movimiento sin pared enfrente. Continuo
-                Serial.print("continuo recto");
+                Serial.println("continuo recto");
+                _incrementa_casilla();
                 _crea_accion(ROBOT_DIST  , amax, amax, vr, vr, INFINITO);         // avanza
             }
-            accion = accion_array[0]; // la siguiente se sobreescribira
 
-            motores_set_radio(accion.radio);
+    */
 
-            if (accion.velocidad_maxima > motores_get_velocidad_lineal_objetivo()) {
-                motores_set_aceleracion_lineal(accion.aceleracion);
-            }
-            else
-                motores_set_aceleracion_lineal(0);
-
-            encoders_reset_posicion_total();
             timer1_reset_cuenta();
             break;
     }
@@ -312,12 +333,25 @@ void robot_siguiente_accion() {
 }
 */
 
-int8_t robot_get_estado() {
-    return robot_estado;
+uint8_t robot_get_casilla() {
+    return robot.casilla;
 }
 
-void robot_set_estado(int8_t estado) {
-    robot_estado = estado;
+tipo_orientacion robot_get_orientacion() {
+    return robot.orientacion;
+}
+
+tipo_estado robot_get_estado() {
+    return robot.estado;
+}
+
+void robot_inicia_exploracion() {
+
+    robot.estado = ROBOT_EXPLORANDO;
+    robot.casilla = CASILLA_INICIAL;
+    robot.orientacion = ORIENTACION_INICIAL;
+    
+    robot_siguiente_accion();
 }
 
 void robot_control() {

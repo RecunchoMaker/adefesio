@@ -16,24 +16,24 @@ ISR (TIMER1_COMPA_vect) {
 
     switch (timer1_get_estado()) {
         case 0: 
-                leds_actualiza_valor(LED_FDER);
+//                leds_actualiza_valor(LED_FDER);
                 leds_enciende(LED_IZQ);
                 break;
         case 1: 
                 leds_actualiza_valor(LED_IZQ);
-                leds_enciende(LED_DER);
+//                leds_enciende(LED_DER);
                 break;
         case 2: 
-                leds_actualiza_valor(LED_DER);
-                leds_enciende(LED_FIZQ);
+//                leds_actualiza_valor(LED_DER);
+//                leds_enciende(LED_FIZQ);
                 break;
         case 3: 
-                leds_actualiza_valor(LED_FIZQ);
-                leds_enciende(LED_FDER);
-                encoders_calcula_velocidad();
-                encoders_reset_posicion();
-                motores_actualiza_velocidad();
-                robot_control();
+//                leds_actualiza_valor(LED_FIZQ);
+//                leds_enciende(LED_FDER);
+//                encoders_calcula_velocidad();
+//                encoders_reset_posicion();
+//                motores_actualiza_velocidad();
+//                robot_control();
                 break;
     }
 
@@ -76,7 +76,6 @@ void setup() {
     bateria_muestra_nivel();
     timer1_init(PERIODO_TIMER, 1);
     robot_init();
-
     laberinto_init();
 
     laberinto_print();
@@ -87,51 +86,68 @@ void setup() {
 void loop() {
 
     comando_prompt();
+    leds_activa();
 
     while (!comando_get_go()) {
         comando_lee_serial();
     }
     Serial.println("GO!");
-    leds_activa();
-    robot_init();
 
-    robot_set_estado(ROBOT_EXPLORANDO);
+
+    //robot_inicia_exploracion();
 
     //while (1) {
-    while (robot_get_estado() != ROBOT_PARADO) {
-        /*
-        Serial.print(robot_get_accion());
-        Serial.print(" ");
+    motores_set_potencia(0.5, 0);
+    while (encoders_get_posicion_total() < 1000) {
+    //while (robot_get_estado() != ROBOT_PARADO) {
         Serial.print(encoders_get_posicion_total());
         Serial.print(" ");
+        // Serial.print(leds_pared_enfrente() ? " | " : "   ");
         Serial.print(leds_get_valor(LED_IZQ));
         Serial.print(" \t");
-        Serial.print(leds_get_valor(LED_FIZQ));
+        Serial.print(leds_get_valor_apagado(LED_IZQ));
         Serial.print(" \t");
-        Serial.print(leds_get_valor(LED_FDER));
-        Serial.print(" \t");
-        Serial.print(leds_get_valor(LED_DER));
-        Serial.print(" \t");
-        Serial.print(leds_get_valor_d(LED_DER));
+        Serial.print(leds_get_valor_encendido(LED_IZQ));
         Serial.println();
-        */
+    }
+    motores_set_potencia(0.0, 0.25);
+    while (encoders_get_posicion_total() < 2000) {
+        Serial.print(encoders_get_posicion_total());
+        Serial.print(" ");
+        // Serial.print(leds_pared_enfrente() ? " | " : "   ");
+        Serial.print(leds_get_valor(LED_IZQ));
+        Serial.print(" \t");
+        Serial.print(leds_get_valor_apagado(LED_IZQ));
+        Serial.print(" \t");
+        Serial.print(leds_get_valor_encendido(LED_IZQ));
+        Serial.println();
+    }
+    motores_set_potencia(0.4, 0.4);
+    while (encoders_get_posicion_total() < 4000) {
+    //while (robot_get_estado() != ROBOT_PARADO) {
+        Serial.print(encoders_get_posicion_total());
+        Serial.print(" ");
+        // Serial.print(leds_pared_enfrente() ? " | " : "   ");
+        Serial.print(leds_get_valor(LED_IZQ));
+        Serial.print(" \t");
+        Serial.print(leds_get_valor_apagado(LED_IZQ));
+        Serial.print(" \t");
+        Serial.print(leds_get_valor_encendido(LED_IZQ));
+        Serial.println();
+    }
+    motores_set_potencia(0.0, 0.0);
+    while (1) {
+    //while (robot_get_estado() != ROBOT_PARADO) {
+        Serial.print(encoders_get_posicion_total());
+        Serial.print(" ");
+        // Serial.print(leds_pared_enfrente() ? " | " : "   ");
+        Serial.print(leds_get_valor(LED_IZQ));
+        Serial.print(" \t");
+        Serial.print(leds_get_valor_apagado(LED_IZQ));
+        Serial.print(" \t");
+        Serial.print(leds_get_valor_encendido(LED_IZQ));
+        Serial.println();
     }
 
-    //for (int i = 0; i< 10000; i++) {
-    /*
-    while (1) {
-        Serial.print(encoders_get_posicion_total_left());
-        Serial.print(" \t");
-        Serial.print(encoders_get_posicion_total_right());
-        Serial.print(" \t - ");
-        Serial.print(leds_get_valor(LED_IZQ));
-        Serial.print(" \t");
-        Serial.print(leds_get_valor(LED_DER));
-        Serial.print(" \t");
-        Serial.print(leds_get_valor(LED_FIZQ));
-        Serial.print(" \t");
-        Serial.print(leds_get_valor(LED_FDER));
-        Serial.println();
-    }
-    */
+    Serial.println("fin");
 }
