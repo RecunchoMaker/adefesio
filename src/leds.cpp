@@ -21,6 +21,11 @@ void leds_init() {
 
     pinMode(LED_SENSOR, INPUT);
 
+    leds_apaga(LED_IZQ);
+    leds_apaga(LED_DER);
+    leds_apaga(LED_FIZQ);
+    leds_apaga(LED_FDER);
+
     leds_activados = false;
 }
 
@@ -30,6 +35,10 @@ void leds_activa() {
 
 void leds_desactiva() {
     leds_activados = false;
+    leds_apaga(LED_IZQ);
+    leds_apaga(LED_DER);
+    leds_apaga(LED_FDER);
+    leds_apaga(LED_FIZQ);
 }
 
 void leds_enciende(int8_t led) {
@@ -44,21 +53,15 @@ void leds_apaga(int8_t led) {
 void leds_actualiza_valor(int8_t led) {
 
     leds_lectura0 = analogRead(LED_SENSOR);
-    leds_apaga(led);
-    // sin esperas maxima lectura 230
-    delayMicroseconds(15); // maxima lectura 460
-    delayMicroseconds(15); // maxima lectura 650
-    delayMicroseconds(15); // maxima lectura 710
-    delayMicroseconds(15); // maxima lectura 710
-    delayMicroseconds(15); // maxima lectura 460
-    delayMicroseconds(100);
-    delayMicroseconds(100);
+    leds_enciende(led);
+    delayMicroseconds(50);
     leds_lectura1 = analogRead(LED_SENSOR);
+    leds_apaga(led);
 
-    leds_valor_d[led - A0] = leds_valor[led - A0] - leds_lectura1 + leds_lectura0;
-    leds_valor[led - A0] = leds_lectura1 - leds_lectura0;
-    leds_valor_encendido[led - A0] = leds_lectura0;
-    leds_valor_apagado[led - A0] = leds_lectura1;
+    leds_valor_d[led - A0] = leds_lectura0 - leds_lectura1 - leds_valor[led - A0];
+    leds_valor[led - A0] = leds_lectura0 - leds_lectura1;
+    leds_valor_encendido[led - A0] = leds_lectura1;
+    leds_valor_apagado[led - A0] = leds_lectura0;
 }
 
 int16_t leds_get_valor(int8_t led) {
