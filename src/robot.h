@@ -43,6 +43,7 @@ void robot_inicia_exploracion();
 tipo_accion robot_get_accion();
 
 uint8_t robot_get_casilla();
+float robot_get_casilla_offset();
 tipo_estado robot_get_estado();
 tipo_orientacion robot_get_orientacion();
 

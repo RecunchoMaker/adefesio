@@ -72,6 +72,7 @@ void loop() {
 
     //while (1) {
     while (encoders_get_posicion_total() < 10000) {
+        //while (encoders_get_posicion_total() % 100 != 10);
         Serial.print(encoders_get_posicion_total());
         Serial.print(" ");
         Serial.print(leds_get_valor(LED_IZQ));
@@ -81,6 +82,10 @@ void loop() {
         Serial.print(leds_get_valor(LED_FDER));
         Serial.print(" \t");
         Serial.print(leds_get_valor(LED_DER));
+        Serial.print(" \t");
+        Serial.print(robot_get_casilla_offset());
+        Serial.print(" \t");
+        Serial.print(motores_get_velocidad_lineal_objetivo());
         Serial.print(" \t");
         Serial.println();
     }

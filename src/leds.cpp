@@ -85,7 +85,7 @@ int16_t leds_get_desvio_centro() {
 }
 
 bool leds_pared_enfrente() {
-    return leds_valor[LED_FDER - A0] + leds_valor[LED_FIZQ - A0] > 60; // TODO
+    return leds_valor[LED_FDER - A0] + leds_valor[LED_FIZQ - A0] > 30; // TODO
 }
 
 bool leds_pared_izquierda() {
