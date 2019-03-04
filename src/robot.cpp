@@ -19,7 +19,7 @@
 #define ROBOT_ACUR 1.0
 
 // Aceleracion de la frenada final en la ultima casilla
-#define ROBOT_AFIN 0.1
+#define ROBOT_AFIN 0.8
 
 // Velocidad maxima en recta
 #define ROBOT_VR 0.40
@@ -46,10 +46,10 @@ volatile float vc = ROBOT_VC;
 volatile float ve = ROBOT_VE;
 
 typedef struct {
-    tipo_estado estado:2;
-    tipo_orientacion orientacion: 2;
-    uint8_t casilla = 0;
-    float casilla_offset = 0;
+    volatile tipo_estado estado:2;
+    volatile tipo_orientacion orientacion: 2;
+    volatile uint8_t casilla = 0;
+    volatile float casilla_offset = 0;
 } tipo_robot;
 
 volatile tipo_robot robot;
@@ -139,7 +139,7 @@ void _crea_accion(float distancia,
 
     encoders_decrementa_posicion_total(pasos_recorridos);
 
-    _print_accion(accion);
+    //_print_accion(accion);
 
 }
 
@@ -153,6 +153,13 @@ void robot_init() {
     robot.casilla = CASILLA_INICIAL;
     robot.orientacion = ORIENTACION_INICIAL;
     robot.casilla_offset = ROBOT_DIST / 2; // empezamos a mitad de casilla;
+
+
+    laberinto_pon_paredes(robot.casilla, 
+            leds_pared_izquierda(),
+            leds_pared_enfrente(),
+            leds_pared_derecha()
+            );
 
     /*
      * Secuencia ADAAII
@@ -196,6 +203,7 @@ tipo_accion robot_get_accion() {
 }
 
 void _incrementa_casilla() {
+    Serial.println("incremento casilla!");
     switch (robot.orientacion) {
         case NORTE:
             robot.casilla += CASILLA_NORTE;
@@ -210,34 +218,49 @@ void _incrementa_casilla() {
             robot.casilla += CASILLA_OESTE;
             break;
     }
+    Serial.println(robot.casilla);
 }
 
 void robot_siguiente_accion() {
 
-    robot.casilla_offset += (pasos_recorridos * LONGITUD_PASO_ENCODER);
+    robot.casilla_offset += ( pasos_recorridos * LONGITUD_PASO_ENCODER);
+
+    // control de posicion
+    if (robot.casilla_offset > ROBOT_DIST) {
+        _incrementa_casilla();
+        robot.casilla_offset -= ROBOT_DIST;
+        laberinto_pon_paredes(robot.casilla, 
+                leds_pared_izquierda(),
+                leds_pared_enfrente(),
+                leds_pared_derecha()
+                );
+    }
 
     switch (robot.estado) {
-        case ROBOT_PARADO:
+        case PARADO:
             motores_parar();
             encoders_reset_posicion_total();
             break;
-        case ROBOT_EXPLORANDO:
+        case EXPLORANDO:
 
             if (!leds_pared_enfrente()) {
                 _crea_accion(0.02, amax, amax, ve, ve, INFINITO);
             } else {
-                Serial.print("pared!");
-                _crea_accion(0.06, afin, afin, ve, 0.9, INFINITO);
-                robot.estado = ROBOT_PARADO;
+                Serial.print("pared detectada en casilla ");
+                Serial.print(robot.casilla);
+                Serial.print(":");
+                Serial.println(leds_distancia_frontal());
+                laberinto_pon_paredes(robot.casilla, 
+                        leds_pared_izquierda(),
+                        leds_pared_enfrente(),
+                        leds_pared_derecha()
+                        );
+                _crea_accion(ROBOT_DIST/2.0 - leds_distancia_frontal(), afin, afin, ve, 0.00, INFINITO);
+                robot.estado = PARADO;
             }
 
-/*
-            laberinto_pon_paredes(robot.casilla, 
-                    leds_pared_izquierda(),
-                    leds_pared_justo_enfrente(),
-                    leds_pared_derecha()
-                    );
 
+            /*
             Serial.print("explorando. v = ");
             Serial.println(motores_get_velocidad_lineal_objetivo());
             if (motores_get_velocidad_lineal_objetivo() == 0) {
@@ -264,8 +287,7 @@ void robot_siguiente_accion() {
                 _incrementa_casilla();
                 _crea_accion(ROBOT_DIST  , amax, amax, vr, vr, INFINITO);         // avanza
             }
-
-    */
+            */
 
             timer1_reset_cuenta();
             break;
@@ -349,7 +371,7 @@ tipo_estado robot_get_estado() {
 
 void robot_inicia_exploracion() {
 
-    robot.estado = ROBOT_EXPLORANDO;
+    robot.estado = EXPLORANDO;
     robot.casilla = CASILLA_INICIAL;
     robot.orientacion = ORIENTACION_INICIAL;
     

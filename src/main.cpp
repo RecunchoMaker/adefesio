@@ -52,14 +52,13 @@ void setup() {
     robot_init();
     laberinto_init();
 
-    laberinto_print();
-
     sei();
 }
 
 void loop() {
 
     comando_prompt();
+    leds_activa();
 
     while (!comando_get_go()) {
         comando_lee_serial();
@@ -70,24 +69,30 @@ void loop() {
     leds_activa();
     robot_inicia_exploracion();
 
-    //while (1) {
-    while (encoders_get_posicion_total() < 10000) {
-        //while (encoders_get_posicion_total() % 100 != 10);
-        Serial.print(encoders_get_posicion_total());
-        Serial.print(" ");
-        Serial.print(leds_get_valor(LED_IZQ));
-        Serial.print(" \t");
-        Serial.print(leds_get_valor(LED_FIZQ));
-        Serial.print(" \t");
-        Serial.print(leds_get_valor(LED_FDER));
-        Serial.print(" \t");
-        Serial.print(leds_get_valor(LED_DER));
-        Serial.print(" \t");
-        Serial.print(robot_get_casilla_offset());
-        Serial.print(" \t");
-        Serial.print(motores_get_velocidad_lineal_objetivo());
-        Serial.print(" \t");
-        Serial.println();
+    uint8_t casilla = -1;
+
+    while (1) {
+        if (robot_get_casilla() != casilla) {
+            casilla = robot_get_casilla();
+            laberinto_print();
+
+
+            Serial.print(encoders_get_posicion_total());
+            Serial.print(" ");
+            Serial.print(leds_get_valor(LED_IZQ));
+            Serial.print(" \t");
+            Serial.print(leds_get_valor(LED_FIZQ));
+            Serial.print(" \t");
+            Serial.print(leds_get_valor(LED_FDER));
+            Serial.print(" \t");
+            Serial.print(leds_get_valor(LED_DER));
+            Serial.print(" \t");
+            Serial.print(motores_get_velocidad_lineal_objetivo());
+            Serial.print(" \t");
+            Serial.print(robot_get_casilla_offset());
+            Serial.print(" \t");
+            Serial.println();
+        }
     }
     
     motores_set_potencia(0.0, 0);

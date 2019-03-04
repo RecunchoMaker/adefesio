@@ -29,14 +29,13 @@ void laberinto_inicializa_bordes() {
         celda[idx].paredN = (idx < num_columnas) or (idx >= num_filas * (num_columnas+1));
         celda[idx].paredE = (idx % CASILLA_SUR == 0 or idx % CASILLA_SUR == num_columnas);
     }
-    celda[6].paredN = true;
-    celda[17].paredE = true;
 }
 
 void laberinto_pon_paredes(uint8_t casilla, bool izq, bool frente, bool der) {
     celda[casilla].paredN = frente;
     celda[casilla].paredE = izq;
     celda[casilla+CASILLA_ESTE].paredE = der;
+    laberinto_print();
 }
 
 void laberinto_print() {

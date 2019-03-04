@@ -81,11 +81,19 @@ int16_t leds_get_valor_d(int8_t led) {
 }
 
 int16_t leds_get_desvio_centro() {
-    return leds_valor[LED_IZQ - A0] - leds_valor[LED_DER - A0];
+    if (leds_pared_izquierda() and leds_pared_derecha()) {
+        return leds_valor[LED_IZQ - A0] - leds_valor[LED_DER - A0];
+    } else if (leds_pared_izquierda()) {
+        return leds_valor[LED_IZQ - A0] - 150;
+    } else if (leds_pared_derecha()) {
+        // return 30 - leds_valor[LED_DER - A0];
+        return 0;
+    } else
+        return 0;
 }
 
 bool leds_pared_enfrente() {
-    return leds_valor[LED_FDER - A0] + leds_valor[LED_FIZQ - A0] > 30; // TODO
+    return leds_valor[LED_FDER - A0] + leds_valor[LED_FIZQ - A0] > 100; // TODO
 }
 
 bool leds_pared_izquierda() {
@@ -94,4 +102,15 @@ bool leds_pared_izquierda() {
 
 bool leds_pared_derecha() {
     return (leds_valor[LED_DER - A0] > 5); // TODO
+}
+
+float leds_distancia_frontal() { // TODO: hallar curva caracteristica de los sensores
+    if (leds_valor[LED_FDER - A0] + leds_valor[LED_FIZQ - A0] > 800) return 0.01;
+    if (leds_valor[LED_FDER - A0] + leds_valor[LED_FIZQ - A0] > 700) return 0.015;
+    if (leds_valor[LED_FDER - A0] + leds_valor[LED_FIZQ - A0] > 600) return 0.02;
+    if (leds_valor[LED_FDER - A0] + leds_valor[LED_FIZQ - A0] > 500) return 0.035;
+    if (leds_valor[LED_FDER - A0] + leds_valor[LED_FIZQ - A0] > 400) return 0.05;
+    if (leds_valor[LED_FDER - A0] + leds_valor[LED_FIZQ - A0] > 300) return 0.07;
+    if (leds_valor[LED_FDER - A0] + leds_valor[LED_FIZQ - A0] > 200) return 0.08;
+    return 0.10;
 }

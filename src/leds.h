@@ -18,6 +18,7 @@ int16_t leds_get_valor_apagado(int8_t sensor);
 int16_t leds_get_valor_encendido(int8_t sensor);
 int16_t leds_get_valor_d(int8_t sensor);
 int16_t leds_get_desvio_centro();
+float leds_distancia_frontal();
 bool leds_pared_enfrente();
 bool leds_pared_derecha();
 bool leds_pared_izquierda();

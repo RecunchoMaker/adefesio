@@ -2,9 +2,6 @@
 #ifndef __ROBOT_H
 #define __ROBOT_H
 
-#define ROBOT_PARADO 0
-#define ROBOT_EXPLORANDO 1
-
 struct tipo_accion {
     volatile int32_t pasos_objetivo;
     volatile int32_t pasos_hasta_decelerar;
@@ -15,8 +12,8 @@ struct tipo_accion {
     volatile float radio;
 };
 
-typedef enum tipo_orientacion {NORTE, ESTE, SUR, OESTE};
-typedef enum tipo_estado {PARADO, EXPLORANDO};
+enum tipo_orientacion {NORTE, ESTE, SUR, OESTE};
+enum tipo_estado {PARADO, EXPLORANDO};
 
 
 void robot_set_amax(float aceleracion_maxima);
