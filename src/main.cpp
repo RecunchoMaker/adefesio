@@ -69,16 +69,23 @@ void loop() {
     leds_activa();
     robot_inicia_exploracion();
 
-    uint8_t casilla = -1;
+    uint8_t casilla = CASILLA_INICIAL;
 
+    int32_t aux;
+    int32_t aux_casillas = 0;
     while (1) {
-        if (robot_get_casilla() != casilla) {
+        if (robot_get_casilla() != 99) {
+            if (robot_get_casilla() != casilla) {
+                aux_casillas++;
+                //laberinto_print();
+            }
+                
             casilla = robot_get_casilla();
-            laberinto_print();
 
 
+            /*
             Serial.print(encoders_get_posicion_total());
-            Serial.print(" ");
+            Serial.print(" \t");
             Serial.print(leds_get_valor(LED_IZQ));
             Serial.print(" \t");
             Serial.print(leds_get_valor(LED_FIZQ));
@@ -89,9 +96,23 @@ void loop() {
             Serial.print(" \t");
             Serial.print(motores_get_velocidad_lineal_objetivo());
             Serial.print(" \t");
+            Serial.print(robot_get_casilla());
+            Serial.print(" \t");
             Serial.print(robot_get_casilla_offset());
             Serial.print(" \t");
+            aux = ((encoders_get_aux_posicion_left() + encoders_get_aux_posicion_right()) / 2);
+            Serial.print(aux);
+            Serial.print(" \t");
+            Serial.print(aux * LONGITUD_PASO_ENCODER + 0.09, 6);
+            Serial.print(" \t");
+            Serial.print(robot_get_casilla_offset() + aux_casillas * 0.18,6);
+            Serial.print(" \t");
+            Serial.print(aux_casillas);
+            Serial.print(" \t");
+            Serial.print(motores_get_velocidad_lineal_objetivo());
+
             Serial.println();
+            */
         }
     }
     

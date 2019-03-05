@@ -11,6 +11,9 @@
 volatile int16_t encoder_posicion_left = 0;
 volatile int16_t encoder_posicion_right = 0;
 
+volatile int16_t aux_encoder_posicion_left = 0;
+volatile int16_t aux_encoder_posicion_right = 0;
+
 volatile int32_t encoder_posicion_total_left = 0;
 volatile int32_t encoder_posicion_total_right = 0;
 
@@ -90,6 +93,14 @@ uint8_t encoders_get_ticks_sin_actualizar_right(void) {
     return ticks_sin_actualizar_right;
 }
 
+int16_t encoders_get_aux_posicion_left(void) {
+    return aux_encoder_posicion_left;
+}
+
+int16_t encoders_get_aux_posicion_right(void) {
+    return aux_encoder_posicion_right;
+}
+
 int16_t encoders_get_posicion_left(void) {
     return encoder_posicion_left;
 }
@@ -122,12 +133,14 @@ void encoders_ISR_left(void) {
     {
         encoder_posicion_left++;
         encoder_posicion_total_left++;
+        aux_encoder_posicion_left++;
     }
     
     else
     {
         encoder_posicion_left--;
         encoder_posicion_total_left--;
+        aux_encoder_posicion_left--;
     }
 }
 
@@ -143,10 +156,12 @@ void encoders_ISR_right(void) {
     {
         encoder_posicion_right++;
         encoder_posicion_total_right++;
+        aux_encoder_posicion_right++;
     }
     else {
         encoder_posicion_right--;
         encoder_posicion_total_right--;
+        aux_encoder_posicion_right--;
     }
 }
 

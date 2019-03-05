@@ -206,6 +206,11 @@ void motores_actualiza_velocidad() {
             velocidad_lineal_objetivo_left = velocidad_lineal_objetivo;
             velocidad_lineal_objetivo_right = velocidad_lineal_objetivo;
 
+            // Suponemos que estamos en un pasillo
+            potencia_left += 0.0001 * leds_get_desvio_centro();
+            potencia_right -= 0.0001 * leds_get_desvio_centro();
+        
+
             /*
             error_angulo = encoders_get_posicion_total_left() - encoders_get_posicion_total_right();
 
@@ -225,10 +230,6 @@ void motores_actualiza_velocidad() {
         potencia_right += kd_lineal * ((error_lineal_right - error_acumulado_right) / PERIODO_CICLO);
         potencia_right += ki_lineal * error_acumulado_right;
 
-        // Suponemos que estamos en un pasillo
-        potencia_left += 0.0001 * leds_get_desvio_centro();
-        potencia_right -= 0.0001 * leds_get_desvio_centro();
-        
 
         error_acumulado_left = error_lineal_left;
         error_acumulado_right = error_lineal_right;

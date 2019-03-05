@@ -3,6 +3,7 @@
 #define __ROBOT_H
 
 struct tipo_accion {
+    volatile float distancia;
     volatile int32_t pasos_objetivo;
     volatile int32_t pasos_hasta_decelerar;
     volatile float aceleracion;
@@ -13,7 +14,7 @@ struct tipo_accion {
 };
 
 enum tipo_orientacion {NORTE, ESTE, SUR, OESTE};
-enum tipo_estado {PARADO, EXPLORANDO};
+enum tipo_estado {PARADO, EXPLORANDO, GIRA, TEST};
 
 
 void robot_set_amax(float aceleracion_maxima);

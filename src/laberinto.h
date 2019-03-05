@@ -11,7 +11,8 @@
 void laberinto_init();
 void laberinto_inicializa_bordes();
 void laberinto_print();
-void laberinto_pon_paredes(uint8_t casilla, bool izq, bool frente, bool der);
+void laberinto_set_paredes_laterales(uint8_t casilla, bool izq, bool der);
+void laberinto_set_pared_frontal(uint8_t casilla);
 
 
 #endif

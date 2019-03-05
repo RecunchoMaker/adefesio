@@ -14,6 +14,8 @@ void encoders_reset_posicion_total(void);
 void encoders_decrementa_posicion_total(int16_t pasos);
 int16_t encoders_get_posicion_left(void);
 int16_t encoders_get_posicion_right(void);
+int16_t encoders_get_aux_posicion_left(void);
+int16_t encoders_get_aux_posicion_right(void);
 int32_t encoders_get_posicion_total_left(void);
 int32_t encoders_get_posicion_total_right(void);
 int32_t encoders_get_posicion_total(void);

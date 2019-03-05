@@ -9,7 +9,7 @@
 
 typedef struct {
     char paredN : 1;
-    char paredE : 1;
+    char paredO : 1;
     char una_variable;
     char otra_variable;
 } tipo_celda;
@@ -27,15 +27,26 @@ void laberinto_inicializa_bordes() {
     int idx = 0;
     for (idx = 0; idx < (num_columnas + 1)*(num_filas+1) - 1; idx++) {
         celda[idx].paredN = (idx < num_columnas) or (idx >= num_filas * (num_columnas+1));
-        celda[idx].paredE = (idx % CASILLA_SUR == 0 or idx % CASILLA_SUR == num_columnas);
+        celda[idx].paredO = (idx % CASILLA_SUR == 0 or idx % CASILLA_SUR == num_columnas);
     }
 }
 
-void laberinto_pon_paredes(uint8_t casilla, bool izq, bool frente, bool der) {
-    celda[casilla].paredN = frente;
-    celda[casilla].paredE = izq;
-    celda[casilla+CASILLA_ESTE].paredE = der;
-    laberinto_print();
+void laberinto_set_paredes_laterales(uint8_t casilla, bool izq, bool der) {
+    switch (robot_get_orientacion()) {
+        case NORTE: celda[casilla].paredO = izq;
+                    celda[casilla+CASILLA_ESTE].paredO = der;
+                    break;
+        case SUR:   celda[casilla].paredO = der;
+                    celda[casilla+CASILLA_ESTE].paredO = der;
+                    break;
+    }
+}
+
+void laberinto_set_pared_frontal(uint8_t casilla) {
+    switch(robot_get_orientacion()) {
+        case NORTE: celda[casilla].paredN = true;
+                    break;
+    }
 }
 
 void laberinto_print() {
@@ -53,7 +64,7 @@ void laberinto_print() {
             break;
 
         case 1:
-            Serial.print(celda[idx].paredE ? "| " : "  ");
+            Serial.print(celda[idx].paredO ? "| " : "  ");
             if (idx % CASILLA_SUR != num_columnas) {
                 if (idx < 100) Serial.print(" ");
                 if (idx < 10) Serial.print(" ");
@@ -62,7 +73,7 @@ void laberinto_print() {
             }
             break;
         case 2:
-            Serial.print(celda[idx].paredE ? "|   " : "    ");
+            Serial.print(celda[idx].paredO ? "|   " : "    ");
             if (idx == robot_get_casilla()) {
                 switch(robot_get_orientacion()) {
                     case NORTE: Serial.print("A"); break;
