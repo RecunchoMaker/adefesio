@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <laberinto.h>
 #include <settings.h>
+#include <leds.h>
 #include <robot.h>
 
 #define MAX_FILAS 16
@@ -31,13 +32,57 @@ void laberinto_inicializa_bordes() {
     }
 }
 
+bool laberinto_hay_pared_derecha(uint8_t casilla) {
+    switch (robot_get_orientacion()) {
+        case NORTE: return celda[casilla + CASILLA_ESTE].paredO;
+                    break;
+        case ESTE:  return celda[casilla + CASILLA_SUR].paredN;
+                    break;
+        case SUR:   return celda[casilla].paredO;
+                    break;
+        case OESTE: return celda[casilla].paredN;
+                    break;
+    }
+}
+
+bool laberinto_hay_pared_izquierda(uint8_t casilla) {
+    switch (robot_get_orientacion()) {
+        case NORTE: return celda[casilla].paredO;
+                    break;
+        case ESTE:  return celda[casilla].paredN;
+                    break;
+        case SUR:   return celda[casilla + CASILLA_ESTE].paredO;
+                    break;
+        case OESTE: return celda[casilla + CASILLA_SUR].paredN;
+                    break;
+    }
+}
+    
+
 void laberinto_set_paredes_laterales(uint8_t casilla, bool izq, bool der) {
+
+    Serial.println("paredes:");
+            Serial.print(leds_get_valor(LED_IZQ));
+            Serial.print(" \t");
+            Serial.print(leds_get_valor(LED_FIZQ));
+            Serial.print(" \t");
+            Serial.print(leds_get_valor(LED_FDER));
+            Serial.print(" \t");
+            Serial.print(leds_get_valor(LED_DER));
+            Serial.println("");
+
     switch (robot_get_orientacion()) {
         case NORTE: celda[casilla].paredO = izq;
                     celda[casilla+CASILLA_ESTE].paredO = der;
                     break;
+        case ESTE: celda[casilla].paredN = izq;
+                    celda[casilla+CASILLA_SUR].paredN = der;
+                    break;
         case SUR:   celda[casilla].paredO = der;
                     celda[casilla+CASILLA_ESTE].paredO = der;
+                    break;
+        case OESTE: celda[casilla].paredN = der;
+                    celda[casilla+CASILLA_SUR].paredN = izq;
                     break;
     }
 }
@@ -45,6 +90,12 @@ void laberinto_set_paredes_laterales(uint8_t casilla, bool izq, bool der) {
 void laberinto_set_pared_frontal(uint8_t casilla) {
     switch(robot_get_orientacion()) {
         case NORTE: celda[casilla].paredN = true;
+                    break;
+        case ESTE:  celda[casilla + CASILLA_ESTE].paredO = true;
+                    break;
+        case SUR:   celda[casilla + CASILLA_SUR].paredN = true;
+                    break;
+        case OESTE: celda[casilla].paredO = true;
                     break;
     }
 }
@@ -54,6 +105,8 @@ void laberinto_print() {
     int idx = 0;
     uint8_t tipo_linea = 0;
 
+    Serial.print("Orientacion ");
+    Serial.println(robot_get_orientacion());
     while (idx < (num_filas * (num_columnas+1)) or tipo_linea == 0) {
         switch (tipo_linea) {
         case 0: 

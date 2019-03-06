@@ -93,7 +93,7 @@ int16_t leds_get_desvio_centro() {
 }
 
 bool leds_pared_enfrente() {
-    return leds_valor[LED_FDER - A0] + leds_valor[LED_FIZQ - A0] > 100; // TODO
+    return leds_valor[LED_FDER - A0] > 9 or leds_valor[LED_FIZQ - A0] > 9; // TODO
 }
 
 bool leds_pared_izquierda() {

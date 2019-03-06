@@ -32,7 +32,7 @@
 #define ROBOT_VE 0.20
 
 // Velocidad minima antes de parar
-#define ROBOT_V0 0.0
+#define ROBOT_V0 0.1
 
 // TODO: estas medidas deben estar en otro fichero
 #define ROBOT_DIST 0.18
@@ -49,8 +49,12 @@ volatile float vr = ROBOT_VR;
 volatile float vc = ROBOT_VC;
 volatile float ve = ROBOT_VE;
 
+volatile bool sinc_pared;
+
+volatile uint8_t aux_cuenta_acciones = 0;
+
 typedef struct {
-    volatile tipo_estado estado:2;
+    volatile tipo_estado estado:3;
     volatile tipo_orientacion orientacion: 2;
     volatile uint8_t casilla = 0;
     volatile float casilla_offset = 0;
@@ -125,6 +129,12 @@ void _crea_accion(float distancia,
                   float velocidad_maxima, float velocidad_final,
                   float radio) {
 
+    // TODO: fix - si no es una recta comleta reseteamos completamente los encoders
+    if (distancia == ROBOT_DIST) {
+        encoders_decrementa_posicion_total(pasos_recorridos);
+    } else {
+        encoders_reset_posicion_total();
+    }
 
     accion.distancia = distancia;
     accion.aceleracion = aceleracion;
@@ -146,10 +156,9 @@ void _crea_accion(float distancia,
     else
         motores_set_aceleracion_lineal(0);
 
-    encoders_decrementa_posicion_total(pasos_recorridos);
-
     _print_accion(accion);
     timer1_reset_cuenta();
+    sinc_pared = false;
 }
 
 
@@ -161,7 +170,6 @@ void robot_init() {
 
     robot.casilla = CASILLA_INICIAL;
     robot.orientacion = ORIENTACION_INICIAL;
-    robot.casilla_offset = ROBOT_DIST / 2; // empezamos a mitad de casilla;
 
     /*
      * Secuencia ADAAII
@@ -219,27 +227,31 @@ void _incrementa_casilla() {
             robot.casilla += CASILLA_OESTE;
             break;
     }
+    laberinto_set_paredes_laterales(robot.casilla, 
+            leds_pared_izquierda(),
+            leds_pared_derecha()
+            );
+    laberinto_print();
+    sinc_pared = false;
 }
 
 void robot_siguiente_accion() {
 
-    robot.casilla_offset += ( pasos_recorridos * LONGITUD_PASO_ENCODER);
-
-    // control de posicion
-    if (robot.casilla_offset > ROBOT_DIST) {
-        _incrementa_casilla();
-        robot.casilla_offset -= ROBOT_DIST;
-        laberinto_set_paredes_laterales(robot.casilla, 
-                leds_pared_izquierda(),
-                leds_pared_derecha()
-                );
-        laberinto_print();
+    if (pasos_recorridos > 0) {
+        aux_cuenta_acciones++;
     }
+
+    robot.casilla_offset += ( pasos_recorridos * LONGITUD_PASO_ENCODER);
 
     switch (robot.estado) {
         case PARADO:
             motores_parar();
             encoders_reset_posicion_total();
+            break;
+        case EXPLORANDO_INICIAL:
+            _crea_accion(ROBOT_DIST/2, amax, amax, ve, ve, INFINITO);         // inicial
+            robot.casilla_offset = ROBOT_DIST / 2;
+            robot.estado = EXPLORANDO;
             break;
         case EXPLORANDO:
 
@@ -265,34 +277,32 @@ void robot_siguiente_accion() {
 
             // Mano derecha
             if (!leds_pared_derecha()) {
-                Serial.println("pared derecha");
+                 Serial.println("giro derecha");
+                  _incrementa_casilla();
+                 robot.orientacion++;
                 _crea_accion(ROBOT_DISTG , amax, amax, ve, ve, ROBOT_DIST/2);     // derecha
             } else if (!leds_pared_enfrente()) {
-                 _crea_accion(ROBOT_DISTG, amax, amax, ve, ve, INFINITO);
                  Serial.println("continuo");
+                 _crea_accion(ROBOT_DIST, amax, amax, ve, ve, INFINITO);
             } else if (!leds_pared_izquierda()) {
+                  Serial.println("giro izquierda");
+                  _incrementa_casilla();
+                 robot.orientacion--;
                  _crea_accion(ROBOT_DISTG , amax, amax, ve, ve, -ROBOT_DIST/2);    // izquierda
-                  Serial.println("pared izquierda");
             } else {
-                _crea_accion(PI*motores_get_distancia_entre_ruedas()/4, amax, amax , 0.2 , ROBOT_V0, GIRA90); // gira 180g
-                Serial.println("callejon sin salida");
+                Serial.println("callejon sin salida - paro");
+                _crea_accion(ROBOT_DIST/2, amax, afin, ve, ROBOT_V0, INFINITO);         // final
+                robot.orientacion+=2;
+                robot.casilla_offset = 0;
+                robot.estado = VUELTA;
             }
 
             break;
 
-
-            
-        case GIRA:
-            if (!leds_pared_enfrente()) {
-                _crea_accion(0.02, amax, amax, ve, ve, INFINITO);
-                robot.estado = EXPLORANDO;
-            } else {
-                _crea_accion(PI*motores_get_distancia_entre_ruedas()/4, amax, amax , 0.2 , ROBOT_V0, GIRA90); // gira 180g
-                robot.orientacion++; 
-                Serial.print("orientacion ");
-                Serial.print(robot.orientacion);
-                robot.estado = PARADO;
-            }
+        case VUELTA:
+            _crea_accion(PI*motores_get_distancia_entre_ruedas()/2, amax, amax , 0.2, ROBOT_V0, GIRA180); // gira 180g
+            robot.casilla_offset = 0;
+            robot.estado = EXPLORANDO_INICIAL;
             break;
 
         case TEST:
@@ -306,6 +316,8 @@ void robot_siguiente_accion() {
             break;
     }
     pasos_recorridos = 0;
+    if (aux_cuenta_acciones > 3)
+        robot.estado = PARADO;
 }
 
 
@@ -323,14 +335,12 @@ tipo_estado robot_get_estado() {
 
 void robot_inicia_exploracion() {
 
-    robot.estado = EXPLORANDO;
+    robot.estado = EXPLORANDO_INICIAL;
     robot.casilla = CASILLA_INICIAL;
     robot.orientacion = ORIENTACION_INICIAL;
     
     laberinto_set_paredes_laterales(robot.casilla, 
             leds_pared_izquierda(), leds_pared_derecha());
-
-    _crea_accion(ROBOT_DISTG , amax, amax, ve, ve, ROBOT_DIST/2);     // derecha
     robot_siguiente_accion();
 }
 
@@ -339,6 +349,30 @@ float robot_get_casilla_offset() {
 }
 
 void robot_control() {
+
+
+    // control de posicion
+    if (robot.casilla_offset + pasos_recorridos * LONGITUD_PASO_ENCODER > ROBOT_DIST) {
+        _incrementa_casilla();
+        robot.casilla_offset -= ROBOT_DIST;
+    }
+
+    // Sincronizacion con paredes
+    if (!leds_pared_derecha() and laberinto_hay_pared_derecha(robot.casilla) and accion.radio == INFINITO and !sinc_pared) {
+        Serial.println("sinc pared derecha");
+        sinc_pared = true;
+        // TODO: quedan 4 cm para llegar al final de la casilla
+        accion.pasos_objetivo = pasos_recorridos + 0.04 / LONGITUD_PASO_ENCODER;
+    }
+
+    if (!leds_pared_izquierda() and laberinto_hay_pared_izquierda(robot.casilla) and accion.radio == INFINITO and !sinc_pared) {
+        Serial.println("sinc pared derecha");
+        sinc_pared = true;
+        // TODO: quedan 4 cm para llegar al final de la casilla
+        accion.pasos_objetivo = pasos_recorridos + 0.04 / LONGITUD_PASO_ENCODER;
+    }
+
+
 
     if (accion.velocidad_maxima <= 0.0) {
         motores_parar();
