@@ -61,16 +61,6 @@ bool laberinto_hay_pared_izquierda(uint8_t casilla) {
 
 void laberinto_set_paredes_laterales(uint8_t casilla, bool izq, bool der) {
 
-    Serial.println("paredes:");
-            Serial.print(leds_get_valor(LED_IZQ));
-            Serial.print(" \t");
-            Serial.print(leds_get_valor(LED_FIZQ));
-            Serial.print(" \t");
-            Serial.print(leds_get_valor(LED_FDER));
-            Serial.print(" \t");
-            Serial.print(leds_get_valor(LED_DER));
-            Serial.println("");
-
     switch (robot_get_orientacion()) {
         case NORTE: celda[casilla].paredO = izq;
                     celda[casilla+CASILLA_ESTE].paredO = der;
@@ -79,7 +69,7 @@ void laberinto_set_paredes_laterales(uint8_t casilla, bool izq, bool der) {
                     celda[casilla+CASILLA_SUR].paredN = der;
                     break;
         case SUR:   celda[casilla].paredO = der;
-                    celda[casilla+CASILLA_ESTE].paredO = der;
+                    celda[casilla+CASILLA_ESTE].paredO = izq;
                     break;
         case OESTE: celda[casilla].paredN = der;
                     celda[casilla+CASILLA_SUR].paredN = izq;

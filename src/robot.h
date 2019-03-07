@@ -14,7 +14,7 @@ struct tipo_accion {
 };
 
 enum tipo_orientacion {NORTE, ESTE, SUR, OESTE};
-enum tipo_estado {PARADO, EXPLORANDO_INICIAL, EXPLORANDO, VUELTA, TEST};
+enum tipo_estado {PARADO, PARADO_PARA_GIRO, PAUSA_PRE_GIRO, EXPLORANDO_INICIAL, PAUSA_INICIAL, EXPLORANDO, VUELTA, TEST};
 
 
 void robot_set_amax(float aceleracion_maxima);

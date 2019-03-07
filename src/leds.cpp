@@ -86,8 +86,7 @@ int16_t leds_get_desvio_centro() {
     } else if (leds_pared_izquierda()) {
         return leds_valor[LED_IZQ - A0] - 150;
     } else if (leds_pared_derecha()) {
-        // return 30 - leds_valor[LED_DER - A0];
-        return 0;
+        return 150 - leds_valor[LED_DER - A0];
     } else
         return 0;
 }
