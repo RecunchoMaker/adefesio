@@ -3,6 +3,7 @@
 #include <settings.h>
 #include <leds.h>
 #include <robot.h>
+#include <log.h>
 
 #define MAX_FILAS 16
 #define MAX_COLUMNAS 16
@@ -15,9 +16,9 @@ typedef struct {
     char otra_variable;
 } tipo_celda;
 
-char num_filas = LABERINTO_FILAS;
-char num_columnas = LABERINTO_COLUMNAS;
-tipo_celda celda[(MAX_FILAS+1) * (MAX_COLUMNAS+1) - 1];
+static char num_filas = LABERINTO_FILAS;
+static char num_columnas = LABERINTO_COLUMNAS;
+static tipo_celda celda[(MAX_FILAS+1) * (MAX_COLUMNAS+1) - 1];
 
 void laberinto_init() {
 
@@ -61,6 +62,9 @@ bool laberinto_hay_pared_izquierda(uint8_t casilla) {
 
 void laberinto_set_paredes_laterales(uint8_t casilla, bool izq, bool der) {
 
+    log_leds();
+    Serial.println();
+
     switch (robot_get_orientacion()) {
         case NORTE: celda[casilla].paredO = izq;
                     celda[casilla+CASILLA_ESTE].paredO = der;
@@ -77,15 +81,19 @@ void laberinto_set_paredes_laterales(uint8_t casilla, bool izq, bool der) {
     }
 }
 
-void laberinto_set_pared_frontal(uint8_t casilla) {
+void laberinto_set_pared_frontal(uint8_t casilla, bool frontal) {
+
+    log_leds();
+    Serial.println();
+
     switch(robot_get_orientacion()) {
-        case NORTE: celda[casilla].paredN = true;
+        case NORTE: celda[casilla].paredN = frontal;
                     break;
-        case ESTE:  celda[casilla + CASILLA_ESTE].paredO = true;
+        case ESTE:  celda[casilla + CASILLA_ESTE].paredO = frontal;
                     break;
-        case SUR:   celda[casilla + CASILLA_SUR].paredN = true;
+        case SUR:   celda[casilla + CASILLA_SUR].paredN = frontal;
                     break;
-        case OESTE: celda[casilla].paredO = true;
+        case OESTE: celda[casilla].paredO = frontal;
                     break;
     }
 }

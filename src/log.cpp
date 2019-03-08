@@ -1,6 +1,21 @@
 #include <Arduino.h>
 #include <log.h>
 
+#include <leds.h>
+void log_leds() {
+    Serial.print("leds:");
+    Serial.print(leds_get_valor(LED_IZQ));
+    Serial.print("\t");
+    Serial.print(leds_get_valor(LED_FIZQ));
+    Serial.print("\t");
+    Serial.print(leds_get_valor(LED_FDER));
+    Serial.print("\t");
+    Serial.print(leds_get_valor(LED_DER));
+    Serial.print("\t");
+}
+
+
+
 #ifdef ROBOT_LOG_ESTADO
 #include <robot.h>
 #include <motores.h>

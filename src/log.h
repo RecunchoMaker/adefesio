@@ -6,6 +6,9 @@
 #define LOGN(x) Serial.println(x)
 #define LOGFN(x,d) Serial.print(x,d); Serial.println();
 
+#include <leds.h>
+void log_leds();
+
 #ifdef ENCODERS_LOG_ESTADO
 #include <encoders.h>
 #include <motores.h>

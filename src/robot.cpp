@@ -108,9 +108,9 @@ float _distancia_para_decelerar(float vi, float vf, float aceleracion) {
 
 void _print_accion(tipo_accion accion) {
 
-    Serial.print("dist: ");
+    Serial.print("* accion: dist:");
     Serial.print(accion.distancia);
-    Serial.print("accion: acel ");
+    Serial.print(" acel= ");
     Serial.print(accion.aceleracion);
     Serial.print(" vmax="); Serial.print(accion.velocidad_maxima);
     Serial.print(" vfin="); Serial.print(accion.velocidad_final);
@@ -267,7 +267,10 @@ void robot_siguiente_accion() {
                  robot.estado = PAUSA_PRE_GIRO;
                  robot.casilla_offset = 0;
             } else if (!leds_pared_enfrente()) {
-                 Serial.println("continuo");
+                 Serial.println("continuo - leds enfrente: ");
+                 Serial.print(leds_get_valor(LED_FDER));
+                 Serial.print("/");
+                 Serial.print(leds_get_valor(LED_FIZQ));
                  _crea_accion(ROBOT_DIST, amax, amax, ve, ve, INFINITO);
             } else if (!leds_pared_izquierda()) {
                  Serial.println("paro para giro izquierda");
@@ -286,11 +289,13 @@ void robot_siguiente_accion() {
             Serial.println("pausa inicial");
             _crea_accion(0, 0, 0, 0, 0, 0.2); // espera 
             robot.estado = EXPLORANDO_INICIAL;
+            laberinto_print();
             break;
 
         case PAUSA_PRE_GIRO:
             Serial.println("pausa pregiro");
             _crea_accion(0, 0, 0, 0, 0, 0.2); // espera
+            laberinto_set_pared_frontal(robot.casilla, leds_pared_enfrente());
             robot.estado = PARADO_PARA_GIRO;
             break;
 
@@ -393,7 +398,14 @@ void robot_control() {
     }
 
     if ((leds_get_valor(LED_FDER) + leds_get_valor(LED_FIZQ) > 600) and accion.radio == INFINITO) {
-        Serial.println("chocamos!");
+        Serial.println("chocamos! leds:");
+        Serial.print(leds_get_valor(LED_FDER));
+        Serial.print("/");
+        Serial.print(leds_get_valor(LED_FIZQ));
+        Serial.print(", pasos objetivo =");
+        Serial.print(accion.pasos_objetivo);
+        Serial.print(" recorridos =");
+        Serial.println(pasos_recorridos);
         accion.pasos_objetivo = pasos_recorridos;
     }
 

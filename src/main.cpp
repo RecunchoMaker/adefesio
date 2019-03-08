@@ -79,14 +79,7 @@ void loop() {
                 
                 Serial.print(encoders_get_posicion_total());
                 Serial.print(" \t");
-                Serial.print(leds_get_valor(LED_IZQ));
-                Serial.print(" \t");
-                Serial.print(leds_get_valor(LED_FIZQ));
-                Serial.print(" \t");
-                Serial.print(leds_get_valor(LED_FDER));
-                Serial.print(" \t");
-                Serial.print(leds_get_valor(LED_DER));
-                Serial.print(" \t");
+                log_leds();
                 Serial.print(motores_get_velocidad_lineal_objetivo());
                 Serial.print(" \t");
                 Serial.print(robot_get_casilla());
@@ -106,9 +99,6 @@ void loop() {
                 Serial.print(" \t");
                 Serial.print(  (encoders_get_posicion_total_right() - encoders_get_posicion_total_left()) / 2.0,3);
 
-                Serial.print("S:");
-                Serial.print(leds_pared_derecha() ? "D":" ");
-                Serial.print(laberinto_hay_pared_izquierda(robot_get_casilla()) ? "L":" ");
                 Serial.println();
 
             }
