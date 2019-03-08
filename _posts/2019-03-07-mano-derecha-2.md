@@ -32,7 +32,6 @@ ocurre que no se consigue detectar la pared frontal y el robot intenta ejecutar 
 recto de 18cm. Acaba parando bruscamente en un control _ad hoc_ que introducimos, pero no
 controla bien el cambio de casilla y se acaba mapeando mal el laberinto.
 
-commit:
 
 # Montones de Serial.print en las rutinas de interrupción
 
