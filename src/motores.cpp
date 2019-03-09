@@ -186,7 +186,7 @@ void motores_actualiza_velocidad() {
         if (velocidad_lineal_objetivo < 0)
             velocidad_lineal_objetivo = 0; // TODO fix cuando no da tiempo a decelerar
 
-        if (radio == GIRO_IZQUIERDA ) { // caso especial. giro sobre si mismo
+        if (radio == GIRO_IZQUIERDA_TODO ) { // caso especial. giro sobre si mismo
             velocidad_lineal_objetivo_left = -velocidad_lineal_objetivo;
             velocidad_lineal_objetivo_right = velocidad_lineal_objetivo;
             /*
@@ -195,7 +195,7 @@ void motores_actualiza_velocidad() {
             velocidad_lineal_objetivo_left -= error_angulo * kp_angular;
             velocidad_lineal_objetivo_right += error_angulo * kp_angular;
             */
-        } else if (radio == GIRO_DERECHA) {
+        } else if (radio == GIRO_DERECHA_TODO) {
             velocidad_lineal_objetivo_left = velocidad_lineal_objetivo;
             velocidad_lineal_objetivo_right = -velocidad_lineal_objetivo;
 

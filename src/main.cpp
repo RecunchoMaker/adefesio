@@ -74,8 +74,8 @@ void loop() {
     int32_t aux;
     while (1) {
         if (robot_get_casilla() != 99) {
-            if (robot_get_casilla() != casilla) {
-                laberinto_print();
+            if (robot_get_casilla() == 99) {
+                //laberinto_print();
                 
                 Serial.print(encoders_get_posicion_total());
                 Serial.print(" \t");

@@ -2,6 +2,7 @@
 #include <comando.h>
 #include <motores.h>
 #include <robot.h>
+#include <accion.h>
 #include <leds.h>
 
 #define COMANDO_MAX_TAMANO 16
@@ -106,12 +107,12 @@ void _procesa_comando(char *token, char *parametro) {
     _procesa_setter(comando_kd, token, parametro, motores_set_kd_lineal, motores_get_kd_lineal);
     _procesa_setter(comando_ki, token, parametro, motores_set_ki_lineal, motores_get_ki_lineal);
     _procesa_setter(comando_kpa, token, parametro, motores_set_kp_angular, motores_get_kp_angular);
-    _procesa_setter(comando_amax, token, parametro, robot_set_amax, robot_get_amax);
-    _procesa_setter(comando_acur, token, parametro, robot_set_acur, robot_get_acur);
-    _procesa_setter(comando_afin, token, parametro, robot_set_afin, robot_get_afin);
-    _procesa_setter(comando_vc, token, parametro, robot_set_vc, robot_get_vc);
-    _procesa_setter(comando_vr, token, parametro, robot_set_vr, robot_get_vr);
-    _procesa_setter(comando_vr, token, parametro, robot_set_vr, robot_get_vr);
+    _procesa_setter(comando_amax, token, parametro, accion_set_amax, accion_get_amax);
+    _procesa_setter(comando_acur, token, parametro, accion_set_acur, accion_get_acur);
+    _procesa_setter(comando_afin, token, parametro, accion_set_afin, accion_get_afin);
+    _procesa_setter(comando_vc, token, parametro, accion_set_vc, accion_get_vc);
+    _procesa_setter(comando_vr, token, parametro, accion_set_vr, accion_get_vr);
+    _procesa_setter(comando_vr, token, parametro, accion_set_vr, accion_get_vr);
     _procesa_setter(comando_dr, token, parametro, motores_set_distancia_entre_ruedas, motores_get_distancia_entre_ruedas);
 
 }

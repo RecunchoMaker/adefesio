@@ -13,7 +13,7 @@ typedef struct {
     char paredN : 1;
     char paredO : 1;
     char una_variable;
-    char otra_variable;
+    // char otra_variable;
 } tipo_celda;
 
 static char num_filas = LABERINTO_FILAS;
@@ -41,7 +41,7 @@ bool laberinto_hay_pared_derecha(uint8_t casilla) {
                     break;
         case SUR:   return celda[casilla].paredO;
                     break;
-        case OESTE: return celda[casilla].paredN;
+        default: return celda[casilla].paredN;
                     break;
     }
 }
@@ -54,7 +54,7 @@ bool laberinto_hay_pared_izquierda(uint8_t casilla) {
                     break;
         case SUR:   return celda[casilla + CASILLA_ESTE].paredO;
                     break;
-        case OESTE: return celda[casilla + CASILLA_SUR].paredN;
+        default: return celda[casilla + CASILLA_SUR].paredN;
                     break;
     }
 }

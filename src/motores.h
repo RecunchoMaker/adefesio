@@ -12,8 +12,9 @@
 #define MOTOR_RIGHT_IN1 7
 #define MOTOR_RIGHT_IN2 10
 
-#define GIRO_IZQUIERDA 0
-#define GIRO_DERECHA   0.01
+// TODO: fix this
+#define GIRO_IZQUIERDA_TODO 0
+#define GIRO_DERECHA_TODO   0.01
 
 void motores_init(float voltaje);
 

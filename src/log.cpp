@@ -2,6 +2,8 @@
 #include <log.h>
 
 #include <leds.h>
+#include <accion.h>
+
 void log_leds() {
     Serial.print("leds:");
     Serial.print(leds_get_valor(LED_IZQ));
@@ -14,6 +16,20 @@ void log_leds() {
     Serial.print("\t");
 }
 
+void log_accion() {
+    Serial.print("* accion: dist:");
+    Serial.print(accion_get_distancia());
+    Serial.print(" acel= ");
+    Serial.print(accion_get_aceleracion());
+    Serial.print(" vmax="); Serial.print(accion_get_velocidad_maxima());
+    Serial.print(" vfin="); Serial.print(accion_get_velocidad_final());
+    Serial.print(" deceleracion="); Serial.print(accion_get_deceleracion());
+    Serial.print(" pasos_hasta_dec="); Serial.print(accion_get_pasos_hasta_decelerar());
+    Serial.print(" pasos_obj="); Serial.print(accion_get_pasos_objetivo());
+    Serial.print(" r="); Serial.print(accion_get_radio());
+
+    Serial.println();
+}
 
 
 #ifdef ROBOT_LOG_ESTADO

@@ -7,7 +7,10 @@
 #define LOGFN(x,d) Serial.print(x,d); Serial.println();
 
 #include <leds.h>
+#include <accion.h>
+
 void log_leds();
+void log_accion();
 
 #ifdef ENCODERS_LOG_ESTADO
 #include <encoders.h>
