@@ -7,5 +7,5 @@ e investigar os desfíos de programación que aparecen nesta competición.
 
 ## making off
 
-En (adefesio blog)[https://recunchomaker.github.io/adefesio/] estamos facendo un
+En [Adefesio blog](https://recunchomaker.github.io/adefesio/) estamos facendo un
 blog co progreso do proxecto.
