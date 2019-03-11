@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Preparando el entorno con platform.io"
+commit: 15a6eb8b6289bccfdf1a57acf905a54898340cd4
 ---
 Para la programación de arduino vamos a utilizar [platform.io](https://platformio.org). Aunque
 dispone de entornos integrados de desarrollo (IDE) que no hemos probado, nosotros vamos a utilizar únicamente
@@ -113,5 +114,3 @@ Hola mundo
 > platformio.ini
 >
 > monitor_speed = 115200
-
-_commit_: 986422e520c65bc79119adf60770a9d7ef00067d

@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Refactorizando secuencias"
+commit: f76b27c50b3b4dce7bac2755d2a805dd36f5b67a
 ---
 
 Antes de refactorizar el código para crear secuencias de acciones, hemos limpiado un
@@ -86,5 +87,3 @@ funcionar pero parece que no es así.
 
 En cuanto arreglemos eso podremos encontrar mejores valores para el pid, así como definir las constantes
 de aceleración para rectas y curvas, velocidades de entrada y de salida... etc.
-
-commit: f76b27c50b3b4dce7bac2755d2a805dd36f5b67a

@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Normalizar pwm según carga de la batería"
+commit: c1cc5ffbe5dd7a20c7db6dbbb61feb5c7a284a33
 ---
 
 Creemos que el problema de ayer es debido a que estamos proporcionando mucha
@@ -75,5 +76,3 @@ Dejamos una imagen del punto en que nos quedamos y cuando tengamos lista la intr
 parámetros por puerto serie, retomamos la calibración
 
 ![pwm-con-bateria](../assets/2019-01-25-con-pwm-segun-bateria.png)
-
-commit: c1cc5ffbe5dd7a20c7db6dbbb61feb5c7a284a33

@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Introduciendo velocidad angular"
+commit: 04f5f0b3a8327ee1fc02459458359e8d5338479b
 ---
 
 Vamos a intentar introducir un cálculo de la velocidad angular para que el robot
@@ -50,5 +51,3 @@ Así que los siguientes días vamos a dedicarnos a limpiar un poco el código, y
 constantes de conversión para hacer los cálculos en las unidades correctas.
 
 El commit de hoy no aporta nada excepto confusión.
-
-commit: 04f5f0b3a8327ee1fc02459458359e8d5338479b

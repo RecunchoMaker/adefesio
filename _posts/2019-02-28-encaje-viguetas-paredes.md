@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Encaje de viguetas y paredes"
+commit: 1e9f65444a0ce0bb6b0b4e56f856810f0c1ccb80
 ---
 
 Para que encajen las viguetas con las paredes hacemos dos piezas que encajen como
@@ -18,5 +19,3 @@ El fichero de FreeCAD 'encajes-pared-viga-2.fcstd' contiene el diseño de ambas 
 hoja de cálculo asociada están los parámetros que se utilizaron. Es importante jugar con estos
 parmámetros imprimiendo sólo una pieza de cada, para dar con la combinación que mejor se ajusta
 a la configuración de la impresora 3d.
-
-commit: 1e9f65444a0ce0bb6b0b4e56f856810f0c1ccb80

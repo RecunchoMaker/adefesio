@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Interprete de comandos sencillo"
+commit: 54d4e70df3bce10ebc46c71175f4262771ca66bc
 ---
 
 Queremos hacer un intérprete de comandos sencillo y así poder cambiar parámetros
@@ -84,5 +85,3 @@ de esta forma:
 ```
 pio device monitor --echo
 ```
-
-commit: 54d4e70df3bce10ebc46c71175f4262771ca66bc

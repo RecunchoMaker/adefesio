@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Controlando la velocidad - caso 2"
+commit: a2172b0cec67f6e0acb7e21e39b1159ddd2422f1
 ---
 Vamos a intentar a avanzar depurando el cálculo para el casao 2, a ver
 si en el camino conseguimos más información que nos ayude a entender mejor
@@ -170,6 +171,3 @@ Continuaremos mañana con el caso 3.
 Este commit está especialmente _sucio_. Tendríamos tiempo para limpiarlo pero preferimos subirlo así
 precisamente para dejar constancia de las pruebas y la basura temporal que se ha hecho. Una vez acabada
 esta "serie" sobre la velocidad, dejaremos todo más limpio.
-
-commit 8fca3932d4e47dcd2660061ba7228222691b85d6
-

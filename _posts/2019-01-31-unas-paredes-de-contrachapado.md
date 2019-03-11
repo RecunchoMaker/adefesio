@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Unas paredes de contrachapado"
+commit: 1bf82d02042364e8453995611b73d86a43f8fef2
 ---
 
 Hoy nos apetecía cortar algo de madera, así que dejamos el ordenador de lado y
@@ -38,5 +39,3 @@ de lo que hay que hacer para moverse por el laberinto real.
 
 En este commit no hay programación. Sólo las piezas en freecad para aquél que le pueda
 interesar.
-
-commit: 1bf82d02042364e8453995611b73d86a43f8fef2

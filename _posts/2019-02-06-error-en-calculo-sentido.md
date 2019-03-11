@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Error en el cálculo de sentido"
+commit: 3f099690ddd038964c489fa0f6d8488fa79c147f
 ---
 
 Estábamos bastante confusos con los resultados de ayer. Nos parecía poco probable
@@ -78,5 +79,3 @@ Ahora tenemos esto:
 La segunda parte del gráfico muestra el giro a 90 grados, por eso las velocidades están enfrentadas.
 Ahora ya tenemos algo mejor con lo que trabajar. En este punto querríamos haber acabado ayer, pero
 mereció la pena encontrar el error anterior y seguir desde aquí.
-
-commit:

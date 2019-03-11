@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Control de batería"
+commit: d99d457095fdd4a8205ea8b37c5d33dc5bcb06ef
 ---
 
 Las baterías LiPo no deben descargarse más de un cierto umbral, para asegurar

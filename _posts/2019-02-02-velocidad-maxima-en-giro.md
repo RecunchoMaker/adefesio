@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Velocidad maxima en giro"
+commit: 9fff789c758e94ff1b1baf18718fd850ab6273aa
 ---
 
 Ayer dejamos el commit bastante mal y hoy hemos aclarado un poco las
@@ -42,5 +43,3 @@ modos, damos los cálculos por correctos, esperando un ajuste final del pid,
 con todos los movimientos, y definir exactamente de que manera vamos a controlar
 el robot en la interrupción, con todos estos puntos intermedios de cambios
 de aceleraciones.
-
-commit: 9fff789c758e94ff1b1baf18718fd850ab6273aa

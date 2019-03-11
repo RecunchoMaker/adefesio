@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Guardando el laberinto"
+commit: fee8fb6db9f416281ae3cef61b70d6eb5f49c204
 ---
 
 Antes de seguir con los sensores vamos a definir la estructura de datos en la que
@@ -79,5 +80,3 @@ PROGRAM: [====      ]  44.6% (used 13688 bytes from 30720 bytes)
 ```
 
 Algo justos pero parece que tenemos juego. A ver cómo crece según vayamos añadiendo código.
-
-commit: fee8fb6db9f416281ae3cef61b70d6eb5f49c204

@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Control de aceleraciones en el timer"
+commit: 1ab11c71b75e2dd147842c1a08b089065b468e7d
 ---
 
 Tenemos más o menos claros los valores que tenemos que calcular para calcular
@@ -78,5 +79,3 @@ Por ahora sólo ejecutamos un movimiento rectilíneo de 50 cm.
 Sólo lo probamos conectados al USB pero parece que el esquema va bien. En
 posteriores días programaremos los demás movimientos y, por último, intentaremos
 hacer una rutina que traslade el string de tipo `AADAAI` en acciones.
-
-commit: 1ab11c71b75e2dd147842c1a08b089065b468e7d

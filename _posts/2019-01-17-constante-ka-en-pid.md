@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Constante KA en PID"
+commit: 789949f60914809cf79a33322e51beb967b04a55
 ---
 
 Estuvimos leyendo los excelentes [posts](http://brettbeauregard.com/blog/2011/04/improving-the-beginners-pid-introduction/)
@@ -45,5 +46,3 @@ Simplemente cone ste valor, obtenemos la siguiente gráfica.
 Nos interesa que en una primera componente el sistema se aproxime al pwm que estabiliza, y comprobar el cálculo de
 velocidades. Vemos que a medida que aumenta la velocidad, aumenta el ruido en el cálculo. Tenemos que seguir
 investigando sobre esto.
-
-commit: 789949f60914809cf79a33322e51beb967b04a55

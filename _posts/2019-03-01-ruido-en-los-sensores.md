@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Ruido en los sensores"
+commit: f4e301a2d891ccbe27c518de8a35088f1de40a6c
 ---
 
 El código de hoy es prácticamente todo para tirar, aunque quedará en la posteridad
@@ -50,6 +51,3 @@ lo mejor es menor el tiempo en el que los leds se ponen a tope de intensidad que
 en apagarase (parece lógico). Además, estaríamos reduciendo el ciclo de trabajo con led encendido y
 podríamos disminuir la resistencia limitadora para aumentar su intensidad. Habrá que hacer muchas
 más pruebas.
-
-commit: f4e301a2d891ccbe27c518de8a35088f1de40a6c
-

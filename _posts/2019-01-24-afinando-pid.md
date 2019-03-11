@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Afinando el PID"
+commit: ec63f8a61d4dad017551834a79c99b62396d2d7c
 ---
 
 Hoy estuvimos experimentando con el PID, y esta es la historia resumida:
@@ -92,5 +93,3 @@ congruente con la dirección, y nosotros siempre lo guardábamos en positivo.
 Todas estas calibraciones las hemos hecho conectados al USB. Y nos dimos cuenta que ha sido un error. Al
 conectar las baterías (que además tenemos recién cargadas, cerca de los 8v) el robot empieza a moverse a saltos
 lentamente. Mañana tocará hacer lo mismo que hoy, pero esta vez, logeando a través de bluetooth.
-
-commit: ec63f8a61d4dad017551834a79c99b62396d2d7c

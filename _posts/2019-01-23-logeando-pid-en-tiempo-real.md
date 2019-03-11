@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Logeando pid en tiempo real"
+commit: fb0da48067ecf2a12eadecb2fa8c17e63a9dd970
 ---
 
 Disclaimer: no lo conseguimos hacer. Tenemos serias dudas de que el arduino
@@ -53,5 +54,3 @@ KP no llega a superar la velocidad objetivo.
 No podemos seguir, pero aunque (de nuevo) el commit de hoy está un poco sucio (debido a que 
 tampoco sabemos muy bien que queremos hacer), parece que hay una buena base para estudiar
 el comportamiento del pid.
-
-commit: fb0da48067ecf2a12eadecb2fa8c17e63a9dd970

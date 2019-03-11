@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Refactorizando acción"
+commit: 99d484c4cdaeb0793ee75f858f011ad18ab6223f
 ---
 
 El fichero `robot.cpp` se está volviendo un poco grande y tiene demasiadas
@@ -45,5 +46,3 @@ nuevas casillas o o no. Quizá incluso haya que separar las velocidades en su pr
 
 Por hoy lo dejamos aquí. Seguimos teniendo que quitar varias cosas de `robot.cpp`, pero
 empieza a aparecer un poco más claro.
-
-commit: 99d484c4cdaeb0793ee75f858f011ad18ab6223f

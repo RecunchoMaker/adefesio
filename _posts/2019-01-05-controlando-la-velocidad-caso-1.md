@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Controlando la velocidad - caso 1"
+commit: 4228944ba5f4baa09d568fbfbef823b9c4360296
 ---
 Ayer hemos tenido que dejar el commit bastante sucio por falta de tiempo y hemos sacado una
 primera muestar de datos que mostraba algunos resultados un tanto extraños. Vamos a depurar
@@ -224,5 +225,3 @@ caso:1   sin act:0   encoder left: 2   ticks: 8367   0,1 = 7237 15604
 caso:1   sin act:1   encoder left: 2   ticks: 12240   0,1 = 15063 7074 
 caso:1   sin act:0   encoder left: 2   ticks: 8170   0,1 = 5303 13473 
 ```
-
-commit: 4228944ba5f4baa09d568fbfbef823b9c4360296

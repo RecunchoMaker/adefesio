@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "PID básico"
+commit: 26f78cf3df3fae6e5678fbace545951847f6dfdf
 ---
 Tenemos una interrupción de tiempo que nos actualiza una variable con los ticks
 transcurridos entre dos saltos de encoder. Podemos utilzar estos ticks como
@@ -81,5 +82,3 @@ De todos modos, decidimos pararnos aquí porque notamos que necesitamos algún s
 pruebas que vamos haciendo. Para sacar la muestra anterior estuvimos probando distintas constantes Kp y siendo sinceros,
 nos parece un poco caótica esta forma de probar las cosas en con el bucle { cambiar parametros / compilar / ver números }.
 Creemos que va a ser una inversión en tiempo el tener la posibilidad de visualizar gráficamente los resultados.
-
-commit: 26f78cf3df3fae6e5678fbace545951847f6dfdf

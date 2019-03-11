@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Ángulo sólo con pasos y distancia entre ejes"
+commit: 345d7bcf6c6df7b9f347683bec1c67c3cbf8d937
 ---
 
 **Nota:** le hemos cambiado el nombre a la constante _DISTANCIA ENTRE EJES_. Deberia
@@ -50,6 +51,3 @@ ya con la distancia ajustada, y la de ayer sigue fallando, aumentando más lenta
 sobre esto porque nos gustaría aplicar el cálculo del ángulo utilizando la velocidad.
 Pero por el momento lo dejamos así (y empieza a ser una frase recurrente al final de los
 posts).
-
-commit: 345d7bcf6c6df7b9f347683bec1c67c3cbf8d937
-

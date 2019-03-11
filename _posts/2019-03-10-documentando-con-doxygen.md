@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Documentando con Doxygen"
+commit: d4aea5754e183275603fa900b746744a6bcc5b77
 ---
 
 Hemos visto en el código de [bulebule](https://github.com/Bulebots/bulebule) que
@@ -96,5 +97,3 @@ Después de ejecutar el comando `doxygen`, la documentación generada aparece as
 ![doxygen](../assets/2019-03-10-doxygen.png)
 
 Nos gusta como queda. En sucesivos días iremos compaginando la limpieza y documentación del código, procurando no introducir ninguna funcionalidad más.
-
-commit: d4aea5754e183275603fa900b746744a6bcc5b77

@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Encendiendo y apagando"
+commit: 0648f4186211ea8f3da72a8a53592ecf050ac2ea
 ---
 
 Vamos a probar el circuito por partes, pero empezamos con un led normal y una R de 220 ohm, para
@@ -61,5 +62,3 @@ en el timer entre los distintos estados. La frecuencia de lectura de los encoder
 4 ms (por ejemplo en el estado 0), y habra crear una nueva variable `número de estados` para que
 las funciones de cálculo de velocidad en encoders tenga siempre en cuenta que el tiempo ya no es
 TNCT1, si no OCR1A * (número de estados - 1) + TNCT1.
-
-commit: 0648f4186211ea8f3da72a8a53592ecf050ac2ea

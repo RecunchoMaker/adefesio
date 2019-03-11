@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Ultimo retoque a la trayectoria"
+commit: a4822ae3c1d2363eecc1ae344615e500a01c1a23
 ---
 
 Hoy no tenemos mucho tiempo así que vamos a hacer dos cosas simples:
@@ -26,5 +27,3 @@ final a 0.1
 ![completa](../assets/2019-02-09-trayectoria-completa.png)
 
 Aquí tenemos que dejarlo
-
-commit: a4822ae3c1d2363eecc1ae344615e500a01c1a23

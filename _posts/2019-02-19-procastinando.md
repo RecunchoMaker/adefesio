@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Procastinando"
+commit: 2512cc7eebeaf9c3e6f3bf21db87e8889bd3f615
 ---
 
 Nos daba tanta pena de corazón ver lo mal que quedaba lo que habíamos hecho
@@ -39,6 +40,3 @@ Por supuesto, el circuito de "atrás" pesa demasiado y el centro de gravedad est
 completamente retrasado. No nos va a quedar otro remedio que rehacerlo en una
 placa más pequeña. Realmente tenemos espacio, no se muy bien qué estábamos
 pensando cuando empezamos a soldar el arduino en esa placa tan grande.
-
-commit: 2512cc7eebeaf9c3e6f3bf21db87e8889bd3f615
-

@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Velocidad máxima y de nuevo aceleración"
+commit: c5bc060a7ca5af1d50336e489a3a35abce494d34
 ---
 
 Ahora que parece que está lista nueva manera de controlar la potencia de pwm, teniendo en cuenta
@@ -153,5 +154,3 @@ Ahora si! No hemos podido hacer muchas pruebas porque se nos agotó la batería,
 nos falta reprogramar la velocidad angular), con una suave aceleración... todo perfecto. Además, al haber empezado con la batería
 a tope y ahora justo con la batería descargada, también nos sirve de prueba para chequear si nuestros cálculos de pwm son correctos.
 Con la batería baja, el robot mantiene los 0.5 m/s perfectamente sin llegar a la máxima potencia (alrededor de 0.87).
-
-commit: c5bc060a7ca5af1d50336e489a3a35abce494d34

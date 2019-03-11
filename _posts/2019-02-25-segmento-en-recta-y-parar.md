@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Segmento en recta y parar"
+commit: 201a9c32995c9dc04cdfa4f30cdcf30c0340126a
 ---
 
 Intantaremos realimentar el pid con la información de las lecturas de sensores. Vamos
@@ -45,6 +46,3 @@ si continuamos yendo recto o ejecutamos la acción de pararse en mitad de la cas
 
 Todo esto funciona pero no nos gusta nada la pinta que va cogiendo el código. Seguiremos experimentando
 con curvas de 90º y curvas en _U_, pero definitivamente habrá que tirar buena parte del código en `robot.cpp`.
-
-commit: 201a9c32995c9dc04cdfa4f30cdcf30c0340126a
- 

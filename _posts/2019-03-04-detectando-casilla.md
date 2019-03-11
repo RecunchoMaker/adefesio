@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Detectando casilla"
+commit: aafd867de4a276ddb981ad4b8a0f251e59ea9108
 ---
 
 Ahora vamos a intentar saber en que casilla estamos, acumulando los offset al
@@ -41,5 +42,3 @@ Hemos puesto unos cuantas funciones en `leds.cpp`, para calcular las distancias 
 la pared frontal, y también devolver la variación entre los leds laterales cuando nos falta
 alguna pared de referencia para usar en el pid de `motores.cpp`. Todo esto se hizo rápido para hacer esta prueba pero hay
 que reescribirlo.
-
-

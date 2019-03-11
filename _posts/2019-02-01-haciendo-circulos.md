@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Haciendo círculos"
+commit: b128bb591b370c24db0c54e5b625ce9e5413ef41
 ---
 
 Falta la parte que creemos más difícil. Hacer un giro de 90 grados, hacia adelante (no sobre sí mismo).
@@ -64,5 +65,3 @@ la siguiente asignación
 
 Ahora parece funcionar bien, aunque no hace un círculo completo... No sabemos de qué es. Mañana lo miramos
 con calma.
-
-commit: b128bb591b370c24db0c54e5b625ce9e5413ef41

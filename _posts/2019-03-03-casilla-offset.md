@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Casilla offset"
+commit: 4b82f97acadb01a48a986ed972426dcb53c50ca0
 ---
 Antes de encontrarnos el problema de los sensores habíamos introducido unas
 cuantas variables en `robot.cpp`. 
@@ -25,5 +26,3 @@ casilla. Aún falta mucho por programar (teniendo en cuenta orientaciones, curva
 único que hace el commit de hoy es medir esta distancia desde el arranque del robot,
 teniendo encuenta que se empieza desde el centro de una casilla (el offset es igual a 8 cm)
 y únicamente recorremos un pasillo con paredes a ambos lados.
-
-commit: 4b82f97acadb01a48a986ed972426dcb53c50ca0

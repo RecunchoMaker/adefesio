@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Revisitanto velocidad angular"
+commit: 94360462bee9cfb6aae2e0bbf8f1cebffb3525ee
 ---
 
 Ahora que ya tenemos los cálculos en unidades internacionales vamos a introducir
@@ -42,6 +43,3 @@ existir un compromiso entre ruedas anchas (aumentando la adherencia y por lo tan
 máximas) o estrechas (mejorando la presición de los movimientos).
 
 Nos pelearemos con esto más adelante.
-
-commit: 94360462bee9cfb6aae2e0bbf8f1cebffb3525ee
-        

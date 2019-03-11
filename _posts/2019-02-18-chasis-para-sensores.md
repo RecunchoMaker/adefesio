@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Chasis para sensores"
+commit: aed305c1943ba74e5b6550b9143d8b568920f61f
 ---
 
 Para poner los sensores, vamos a diseñar un pequeño chasis "inferior". Lo que
@@ -59,7 +60,3 @@ Esto es lo que ha quedado, haciendo honor a su nombre.
 
 Vamos a dejarlo así y mañana sacaremos cables del arduino a los sensores
 y veremos cómo se mueve esto.
-
-commit: aed305c1943ba74e5b6550b9143d8b568920f61f
-
-

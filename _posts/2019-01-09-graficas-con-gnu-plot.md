@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Gráficas con gnuplot"
+commit: a5c581d19be0cb4e812266c7a6f53379e199df41
 ---
 Hemos decidido parar un poco la programación, que se estaba volviendo un
 poco caótica, y buscar una herramienta para visualizar de forma gráfica
@@ -123,5 +124,3 @@ env_default = nanoatmega328
 
 Así, para compilar con la esa opción activa, simplemente tendremos que hacer
 `pio run -e debug`.
-
-commit: a5c581d19be0cb4e812266c7a6f53379e199df41

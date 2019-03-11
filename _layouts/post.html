@@ -14,3 +14,12 @@ layout: default
   {{ content }}
 </div>
 
+<div id="commit">
+  {% if page.commit %}
+  commit: 
+  <a title="commit en github " href="https://github.com/RecunchoMaker/adefesio/tree/{{ page.commit }}">
+  {{ page.commit }}
+  </a>
+  {% endif %}
+</div>
+

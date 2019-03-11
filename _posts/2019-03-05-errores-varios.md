@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Errores varios"
+commit: 0a50a40dd74b6df2cc3b6d411fc9ba286a69132f
 ---
 
 Intentaremos dejar lo de ayer un poco más limpio y ordenado.
@@ -51,5 +52,3 @@ Por ahora ponemos la aceleración máxima y una velocidad constante de 0.2, pero
 
 Dejamos el commit aquí. Quisimos hacer una implementación rápida del algoritmo de "mano derecha", y ha sido divertido como el
 robot tiraba todas nuestras paredes. Aunque se adivinaba cierta intención. 
-
-commit: 0a50a40dd74b6df2cc3b6d411fc9ba286a69132f

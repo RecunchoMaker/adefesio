@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Principios de aceleracion"
+commit: 8cf83b65b675a3cad75723b1cd0dd5cfb14dc326
 ---
 
 Queremos introducir un pequeño control de la aceleración, debido a que en las pruebas
@@ -27,5 +28,3 @@ mejoras.
 
 El commit de hoy está algo sucio también porque no hemos tenido mucho tiempo y aún no
 está claro si estas funciones son adecuadas para un control de aceleración.
-
-commit: 8cf83b65b675a3cad75723b1cd0dd5cfb14dc326

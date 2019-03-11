@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Mano derecha (1 de...)"
+commit: fd0263fc352d23b887f37d6bf5725ccd0c51d88b
 ---
 
 Ayer no andábamos desencaminados pero se nos habían olvidado un par de detalles: cuando nos encontramos
@@ -33,5 +34,3 @@ y mapear las paredes, habrá que refactorizar un montón de código y extraer lo
 no nos acaba de convencer tener separado el avance de casilla de la acción... habrá que repensar todo esto.
 Pero primero queremos tener el robot recorriendo correctamente todo el laberinto (en exploración) y localizar
 lo necesaro para que funcione bien.
-
-commit: fd0263fc352d23b887f37d6bf5725ccd0c51d88b

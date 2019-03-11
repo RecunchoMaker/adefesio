@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Última pieza (?)"
+commit: 3360d5200d4f966bf42a3d5568e0529bb223b431
 ---
 
 No fuimos capaces de fijar la baquelita superior al chasis. Encontramos una

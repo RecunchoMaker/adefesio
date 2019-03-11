@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Controlando la velocidad - caso 3. Y conclusiones"
+commit: 62d9e7bedb7475f1698fa45ca61228fe00c52347
 ---
 
 El caso 3 se produce cuando hay varios ciclos de timer sin producirse
@@ -113,5 +114,3 @@ ambos saltos debido a las propias características físicas del encoder.
 Al igual que hicimos ayer, también vamos a dejar en este commit código comentado de prueba para
 dejar constancia, pero para los siguientes eliminaremos todas esas variables `last_` del fichero `encoder.cpp`,
 duplicaremos el código para el encoder derecho, y dejaremos todo más limpio.
-
-commit: 62d9e7bedb7475f1698fa45ca61228fe00c52347

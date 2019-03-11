@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Girando sobre si mismo"
+commit: 758633a51c892b12b55160fb6dcfb4718d9c0df5
 ---
 Ya conseguimos mover el robot en línea recta y también con una velocidad angular
 determinada. A ver si conseguimos hacerlo girar sobre si mismo un número determinado
@@ -49,5 +50,3 @@ no parece imfluir mucho.
 Tendremos que hacer más pruebas con gráficos. No entendemos porqué esa variación tan grande. Sabemos
 que los cálculos no son muy precisos pero confiábamos que sucesivos errores pequeños se anularan
 unos a otros. Está claro que no es así.
-
-commit: 758633a51c892b12b55160fb6dcfb4718d9c0df5

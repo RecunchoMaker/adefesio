@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Control de los encoders"
+commit: 55a57a5f09d6af8461ddbbc051d8e4c74f51c2d3
 ---
 Vamos a conectar los encoders a nuestra placa y programar las funciones programadas para leerlos.
 
@@ -103,5 +104,3 @@ pueden provocar eso: distintos rozamientos de cada motor, una pequeña variació
 todos modos, no nos preocupamos por ahora porque el objetivo será controlar el motor atendiendo a su
 velocidad, ya que un valor de pwm no se corresponde exactamente con la velocidad obtenida y tendremos que
 irlo actualizando con un PID.
-
-_commit: 55a57a5f09d6af8461ddbbc051d8e4c74f51c2d3_

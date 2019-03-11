@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "LiPo y chasis"
+commit: 75fcb9697e984afd6b4bed1f2e09eb49045d2d4f
 ---
 ## LiPo
 

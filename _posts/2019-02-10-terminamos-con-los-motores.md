@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Y terminamos con los motores!"
+commit: d0ad87e6089080e5ca51ed46e7f1c228f5838233
 ---
 
 Comenzamos definiendo un setter para la distancia entre las ruedas. Según nuestras
@@ -49,7 +50,3 @@ que no vamos a intentarlo más.
 
 Volveremos a esto cuando tengamos el nuevo diseño, pero antes, (y ya tenemos bastantes ganas)
 empezaremos a mirar cómo funcionan los sensores infrarrojos y de qué manera los vamos a colocar.
-
-commit: d0ad87e6089080e5ca51ed46e7f1c228f5838233
-
-

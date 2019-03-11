@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Ajustando posición de sensores"
+commit: c25da88664ba758c944e481f21340388be823756
 ---
 
 Con el robot conectado al USB movemos un obstáculo por delante para ver la respuesta
@@ -39,5 +40,3 @@ La lectura de sensores nos parece bastante buena dentro de lo que cabe. El robot
 algo desviado a la derecha, respecto a su posición inicial, y por eso esas lecuras muy altas
 al final del recorrido, primero del sensor izquierdo, y luego del derecho, al acabar de hacer
 el giro en redondo.
-
-commit: c25da88664ba758c944e481f21340388be823756

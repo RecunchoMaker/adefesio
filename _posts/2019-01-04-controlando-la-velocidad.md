@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Controlando la velocidad"
+commit: a875a17a3bd8c8ed5471409aed4aa4b3fae982cd
 ---
 Con el timer preparado y los motores funcionando con sus encoders ya podemos 
 empezar a controlar la velocidad de cada motor con un [PID](https://es.wikipedia.org/wiki/Controlador_PID).
@@ -173,7 +174,3 @@ caso:2   sin act:0   encoder left: 1   ticks: 12407   0,1 = 11311 4137
 En principio, los resultados se aproximan a la realidad pero creemos que hay demasiada
 diferencia en el resultado... Lamentablemente, se nos acaba el tiempo por hoy y tendremos
 que dejarlo para otro día.
-
-commit: a875a17a3bd8c8ed5471409aed4aa4b3fae982cd
-
-

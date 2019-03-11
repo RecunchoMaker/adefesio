@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Decelerando"
+commit: 2028b4ce2a1d2a9fa10dff13cf7aacaf7820b9b3
 ---
 Ahora mismo el robot sólo es capaz de acelerar, frenando bruscamente cuando llega a la posición objetivo.
 Necesitamos controlar también la deceleración.
@@ -90,5 +91,3 @@ paro en 0.40422
 Vemos que se pasa algo menos de medio centímetro. En la gráfica del pid vemos que la velocidad
 está siempre por encima del valor deseado. Lo dejamos así porque queremos afinar todo junto, con
 los giros sobre sí mismo, y los giros con radio.
-
-commit: 2028b4ce2a1d2a9fa10dff13cf7aacaf7820b9b3

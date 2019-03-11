@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Timers en Atmega328p"
+commit: 551ae377134996354cb17f5a4548e88097611b1f
 ---
 El siguiente paso que queremos tomar es tener un control sobre la velocidad a la
 que se mueven los motores, es decir, el espacio recorrido por unidad de tiempo.

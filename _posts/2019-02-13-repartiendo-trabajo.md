@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Repartiendo trabajo"
+commit: 4df3dccb7b766426b2e13061b9f6f241cf20d01b
 ---
 
 Vamos entonces a dividir el proceso en cuatro partes, dándole a cada una
@@ -49,5 +50,3 @@ arriba y por abajo) claramente erróneos. Creemos que tiene que ver con esto per
 con los diodos, porque en el movimiento real del robot no se nota diferencia.
 
 ![picos](../assets/2019-02-13-picos.png)
-
-commit: 4df3dccb7b766426b2e13061b9f6f241cf20d01b

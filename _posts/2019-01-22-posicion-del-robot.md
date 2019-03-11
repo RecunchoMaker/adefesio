@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Posición del robot"
+commit: 9c6ba7edb0140db2b2187f926f58d1155463c25e
 ---
 
 Queremos empezar a combinar los movimentos de giro y rectos y afinar
@@ -49,5 +50,3 @@ los 180 grados pero la siguiente recta no es ni mucho menos recta, si no bastant
 torcida... Habrá que estudiarlo con calma. Nos parece que es debido al error
 acumulado, que cuando se cambia de movimiento se opone a la corrección debida. Pero
 antes de resetear este error, mañana intentaremos afinar los parámetros del PID.
-
-commit: 9c6ba7edb0140db2b2187f926f58d1155463c25e

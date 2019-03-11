@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "No hay ruido en los sensores"
+commit: d94ddb624803b5ae916e59fdcedb85f785b67ab3
 ---
 
 El problema de ayer no era tal. Pero al menos nos ha servido para replantear
@@ -25,5 +26,3 @@ en la placa, ahora mismo, nos da muchísima pereza.
 
 Y respecto al ruido... el problema estaba en la alimentación por USB. Al hacer las pruebas
 con batería y logeando por bluetooth, el ruido desapareció.
-
-commit: d94ddb624803b5ae916e59fdcedb85f785b67ab3

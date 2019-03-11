@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Terminología: acciones y secuencias"
+commit: cc6eae78c5a7502d3802fc370f727691bf3e9283
 ---
 
 Teníamos los conceptos un poco difusos y los vamos a concretar:
@@ -65,5 +66,3 @@ lo posible, especificando una velocidad final en la recta en función del siguie
 El robot se mueve "parecido" a nuestro dibujo, aunque los ángulos no están correctos y alguna vez (hoy no miramos gráficas) se pierde
 en los giros a la izquierda. Pero esta parece una buena base para empezar a depurar todos los parámetros (velocidades y constantes
 de pid) todas juntas, sin miedo a que depurando un movimiento estemos estropeando otros.
-
-commit: cc6eae78c5a7502d3802fc370f727691bf3e9283

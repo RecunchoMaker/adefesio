@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Mano derecha (2 de...)"
+commit: cfe346171b2cb92892ae8fca5e030988fa3281b2
 ---
 
 Vamos a desinflar un poco las pretensiones y utilizar únicamente giros en redondo a la
@@ -38,6 +39,3 @@ controla bien el cambio de casilla y se acaba mapeando mal el laberinto.
 Tenemos una cantidad de exagerada de Serial.print en las interrupciones para evaluar lo que
 ocurre... Quizá incluso esten afectando al cálculo de velocidades... Una vez tengamos el mapeo
 listo, decididamente hay que empezar a limpiar sin falta.
-
-commit: cfe346171b2cb92892ae8fca5e030988fa3281b2
-

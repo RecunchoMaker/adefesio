@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Depurando trayectorias"
+commit: 633194c70b7cda7a9ad1fa13f5efdabd5c5e3507
 ---
 
 Antes de empezar unas pequeñas cosas:
@@ -52,5 +53,3 @@ En la gráfica se ven distintos intentos de un segmento de 18cm, con aceleració
 0.5 m/s. Se ve que se llega a la distancia objetivo mucho antes de que la velocidad sea 0 
 (que hemos puesto en la acción como velocidad final). Quizá algún día nos riamos de esto pero
 es que no damos con el problema. Mañana, más acciones.
-
-commit: 633194c70b7cda7a9ad1fa13f5efdabd5c5e3507

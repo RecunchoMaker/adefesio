@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Filtro Kalman"
+commit: c9763df3808933d828b24f324d5a5cc970a2907e
 ---
 
 Ya hemos visto que la velocidad calculada por los encoders no es todo lo precisa que nos gustaría. Vamos
@@ -31,7 +32,3 @@ se requiere para mantenerla.
 Creemos que podemos estar en el camino correcto. Como en la aplicación real el robot va a estar constantemente
 acelerando y frenando, habrá que re-revisitar estas parametrizaciones, cuando pongamos los sensores infrarrojos
 y nos movamos por un laberinto de verdad.
-
-
-
-

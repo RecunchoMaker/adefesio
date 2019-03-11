@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Leyendo el sensor"
+commit: b0bdcefb5d2fa43c91b450caed0d80645b0abd68
 ---
 
 Hoy vamos a ver si conseguimos detectar cosas delante de los diodos, ya conectados
@@ -33,5 +34,3 @@ poner todo en una pequeña baquelita.
 > **Ojo:**
 > Estas pruebas las estamos haciendo con el mismo sketch pero con un arduino uno, que no tiene entrada A6.
 > Así que estos commits, hasta que no hagamos la placa de sensores y la incorporemos al robot, tienen cambiado el pin de batería y la función que controla si está agotada o no, devuelve siempre _false_.
-
-commit: b0bdcefb5d2fa43c91b450caed0d80645b0abd68

@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Mano derecha 3 de 3 y mapeando correctamente"
+commit: 77bad88f9e858bf9f55a821b4836d33e1e458f52
 ---
 
 Ayer nos faltaban un par de pequeños detalles: no estábamos mapeando
@@ -99,5 +100,3 @@ el robot exploraría en la secuencia 20-15-10-5-0-1-6 y en ese momento ya tendr�
 directo a la llegada, ya que nunca bajaría de 12 a 17 ni de 13 a 18, dado que habría casillas más cercanas a las
 que ir. Tenemos muchas ganas de implementar esto para notar cierta "inteligencia" en el movimiento. Pero lo
 primero será lo primero.
-
-commit: 77bad88f9e858bf9f55a821b4836d33e1e458f52

@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Compartir pin de lectura"
+commit: 05ecb4defa9a678152963826006b65016c973658
 ---
 
 En el futuro, nos gustaría poder ponerle a nuestro robotito un par
@@ -112,5 +113,3 @@ lo que correspondería a un LED, las otras medidas se ven afectadas por un peque
 Pero no parece muy grave.
 
 Lo siguiente será poner todo este tinglado en una baquelita, decentemente soldado, y probar in situ.
-
-commit: 05ecb4defa9a678152963826006b65016c973658

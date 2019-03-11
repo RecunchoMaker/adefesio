@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Unidades internacionales"
+commit: 7425f8947062ad675b9e9af7bd5a9e94e41af5dd
 ---
 
 Vamos dar un paso atrás para definir las constantes implicadas en los cálculos utilizando
@@ -104,5 +105,3 @@ interior irá bastante despacio y esto va a ser un problema. Probablemente tenga
 Por ahora no vimos la necesidad de reescribir las funciones que teníamos: se encarga `motores_set_velocidad` de hacer
 el cálculo inicial de ticks_deseados y todo funciona como antes. De todos modos, no descartamos la idea inicial de
 reescribir las funciones.
-
-commit: 7425f8947062ad675b9e9af7bd5a9e94e41af5dd

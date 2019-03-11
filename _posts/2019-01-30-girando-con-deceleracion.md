@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Girando con deceleracion"
+commit: 0bcc0009b5fadbd287b0561b3e05b3e34820bfb9
 ---
 
 Haremos lo mismo que en el caso anterior, pero esta vez teniendo encuenta
@@ -44,5 +45,3 @@ también se utilizaran en el movimiento rectilíneo).
 
 Para mañana, a ver si somos capaces de hacer el movimiento más difícil: un giro suave de
 90 grados.
-
-commit: 0bcc0009b5fadbd287b0561b3e05b3e34820bfb9

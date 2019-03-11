@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Revisitando velocidad"
+commit: 957ce13b70f509fb5cc529421d9ae5307cf43522
 ---
 
 Hemos decidido buscar una manera mejor de controlar la velocidad, y de paso,
@@ -46,5 +47,3 @@ de pwm resulta en un incremento mayor de la velocidad.
 
 Se ven además unos picos aleatorios en los cálculos. Tendremos que ver si podemos eliminar ese ruido (que es significativamente
 grande)
-
-commit: 957ce13b70f509fb5cc529421d9ae5307cf43522

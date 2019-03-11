@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Muchas pruebas y gráficas"
+commit: 5a9be0c84cea948de6c54d72939ea40caf6c1cde
 ---
 Vamos a dedicar un tiempo a hacer distintas pruebas con gráficas, sin
 ningún rumbo fijo, e intentar comprobar si el pid se comporta como debiera.
@@ -73,5 +74,3 @@ hace falta para estudiar la convergencia del pid y afinar el parámetro Kp.
 
 - Hay que buscar un compromiso con la frecuencia del timer, ya que 1ms creemos que, claramente,
 no es conveniente dadas las características de nuestro encoder. Por el momento lo dejamos en 4ms.
-
-commit: 5a9be0c84cea948de6c54d72939ea40caf6c1cde

@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Bugs en robot.cpp"
+commit: 2dae47a50018e50434806bf31b684de52503cd61
 ---
 
 Primero, creamos un nuevo entorno de compilación para evitar los `Serial.print` en los cambios
@@ -74,5 +75,3 @@ _procesa_setter(comando_kp, token, parametro, motores_set_kp_lineal, motores_get
 
 Aún no empezamos a definir las velocidades y aceleraciones máximas! Pero lo vamos a dejar
 para mañana.
-
-commit: 2dae47a50018e50434806bf31b684de52503cd61

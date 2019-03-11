@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Módulo de sensores en KiCad"
+commit: 57397b83716dbf87c15f214aa6e451dfdb70c4f9
 ---
 
 Antes de empezar a soldar sin control, aprovechando que tenemos el esquema
@@ -24,5 +25,3 @@ con KiCad (realmente nula), así que seguro que hay errores o cosas que se deber
 de otra manera. El circuito tampoco es correcto eléctricamente: no hay ni un sólo condensador para
 estabilizar la corriente y probablemente el ruido de los motores interferirá en la lectura.
 Todo esto es más bien una prueba de concepto. Pero a partir de aquí, sólo se puede mejorar.
-
-commit: 57397b83716dbf87c15f214aa6e451dfdb70c4f9

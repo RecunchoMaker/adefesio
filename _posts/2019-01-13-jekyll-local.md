@@ -115,5 +115,3 @@ Sólo nos queda anadir un .gitignore con los temporales que genera el jekyll y s
 $ cat .gitignore
 _site/
 ```
-
-
