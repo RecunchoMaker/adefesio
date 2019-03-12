@@ -176,6 +176,7 @@ void motores_parar() {
     aceleracion_lineal = 0;
     velocidad_lineal_objetivo = 0;
     motores_set_potencia(0,0);
+    encoders_reset_posicion_total();
 }
 
 void motores_actualiza_velocidad() {

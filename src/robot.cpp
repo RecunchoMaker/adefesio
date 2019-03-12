@@ -7,6 +7,7 @@
 #include <timer1.h>
 #include <laberinto.h>
 #include <accion.h>
+#include <log.h>
 
 volatile int32_t pasos_recorridos = 0;
 
@@ -20,7 +21,6 @@ typedef struct {
 } tipo_robot;
 
 volatile tipo_robot robot;
-
 
 
 void robot_init() {
@@ -54,15 +54,17 @@ void _incrementa_casilla() {
             leds_pared_derecha()
             );
     sinc_pared = false;
+
+    Serial.print("cambio a casilla ");
+    Serial.println(robot.casilla);
 }
 
 void robot_siguiente_accion() {
 
+    log_leds();
+
     if (accion_cambio_casilla()) {
         _incrementa_casilla();
-        Serial.print("cambio a casilla ");
-        Serial.println(robot.casilla);
-        laberinto_print();
     }
 
     // TODO: el offset tampoco es lineal en los giros
@@ -70,45 +72,36 @@ void robot_siguiente_accion() {
 
     switch (robot.estado) {
         case PARADO:
+            Serial.println("parado");
             motores_parar();
-            encoders_reset_posicion_total();
             break;
         case EXPLORANDO_INICIAL:
+            Serial.println("explorando inicial");
             accion_ejecuta(ARRANCAR);
             sinc_pared = false;
             robot.casilla_offset = LABERINTO_LONGITUD_CASILLA / 2;
             robot.estado = EXPLORANDO;
             break;
         case EXPLORANDO:
-            Serial.print("continuo - leds enfrente: ");
-            Serial.print(leds_get_valor(LED_FDER));
-            Serial.print("/");
-            Serial.println(leds_get_valor(LED_FIZQ));
-
             if (!leds_pared_derecha()) {
                  Serial.println("pp giro derecha");
-
                  accion_ejecuta(PARAR);
                  sinc_pared = false;
-
                  robot.estado = PAUSA_PRE_GIRO;
                  robot.casilla_offset = 0;
             } else if (!leds_pared_enfrente()) {
+                 Serial.println("continuo");
                  accion_ejecuta(RECTO);
                  sinc_pared = false;
-
-
             } else if (!leds_pared_izquierda()) {
-                 Serial.println("paro para giro izquierda");
+                 Serial.println("pp izquierda");
                  accion_ejecuta(PARAR);
-
                  sinc_pared = false;
                  robot.estado = PAUSA_PRE_GIRO;
                  robot.casilla_offset = 0;
             } else {
-                 Serial.println("callejon sin salida - paro para giro 180");
+                 Serial.println("pp giro 180");
                  accion_ejecuta(PARAR);
-
                  sinc_pared = false;
                  robot.estado = PAUSA_PRE_GIRO;
                  robot.casilla_offset = 0;
@@ -120,11 +113,11 @@ void robot_siguiente_accion() {
             accion_ejecuta(ESPERA);
             sinc_pared = false;
             robot.estado = EXPLORANDO_INICIAL;
-            laberinto_print();
             break;
 
         case PAUSA_PRE_GIRO:
             Serial.println("pausa pregiro");
+            laberinto_print();
             accion_ejecuta(ESPERA);
             sinc_pared = false; 
             laberinto_set_pared_frontal(robot.casilla, leds_pared_enfrente());
@@ -157,8 +150,6 @@ void robot_siguiente_accion() {
             break;
 
     }
-
-
     pasos_recorridos = 0;
 }
 
@@ -193,27 +184,31 @@ float robot_get_casilla_offset() {
 void robot_control() {
 
     // control de posicion
+    /** TODO: esto no se entiende
     if (accion_get_radio()!=GIRO_DERECHA_TODO and accion_get_radio()!=GIRO_IZQUIERDA_TODO and robot.casilla_offset + pasos_recorridos * LONGITUD_PASO_ENCODER > LABERINTO_LONGITUD_CASILLA) {
         Serial.println("Retrocedo offset");
         robot.casilla_offset -= LABERINTO_LONGITUD_CASILLA;
     }
+    */
 
     // Sincronizacion con paredes
     if (!leds_pared_derecha() and laberinto_hay_pared_derecha(robot.casilla) and accion_get_radio() == RADIO_INFINITO and accion_get_distancia() == LABERINTO_LONGITUD_CASILLA and !sinc_pared) {
-        Serial.println("sinc pared derecha");
+        Serial.print("sinc pared derecha en ");
+        Serial.println(pasos_recorridos);
         sinc_pared = true;
         // TODO: quedan 4 cm para llegar al final de la casilla
         accion_set_pasos_objetivo(pasos_recorridos + 0.04 / LONGITUD_PASO_ENCODER);
     }
 
     if (!leds_pared_izquierda() and laberinto_hay_pared_izquierda(robot.casilla) and accion_get_radio() == RADIO_INFINITO and accion_get_distancia() == LABERINTO_LONGITUD_CASILLA and !sinc_pared) {
-        Serial.println("sinc pared derecha");
+        Serial.print("sinc pared izquierda");
+        Serial.println(pasos_recorridos);
         sinc_pared = true;
         // TODO: quedan 4 cm para llegar al final de la casilla
         accion_set_pasos_objetivo(pasos_recorridos + 0.04 / LONGITUD_PASO_ENCODER);
     }
 
-    if ((leds_get_valor(LED_FDER) + leds_get_valor(LED_FIZQ) > 600) and accion_get_radio() == RADIO_INFINITO) {
+    if ((leds_get_valor(LED_FDER) + leds_get_valor(LED_FIZQ) > 500) and accion_get_radio() == RADIO_INFINITO) {
         Serial.println("chocamos! leds:");
         Serial.print(leds_get_valor(LED_FDER));
         Serial.print("/");
