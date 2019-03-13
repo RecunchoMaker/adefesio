@@ -20,6 +20,7 @@
 void log_leds();
 void log_accion();
 void log_motores();
+void log_pasos();
 
 #endif /* ifndef LOG_H
 

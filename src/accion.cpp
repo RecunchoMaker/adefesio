@@ -4,8 +4,8 @@
  * @brief Funciones para el control de acciones completas, que generalmente implican una casilla
  *
  * Una _acción_ se corresponde con una pequeña trayectoria en la que se establece una
- * _velocidad final_ y unas aceleraciones. Una acción suele completar (aunque no necesariamente
- * una casilla completa. Por ejemplo:
+ * _velocidad final_ y unas aceleraciones. Una acción suele completar (aunque no necesariamente)
+ * una casilla. Por ejemplo:
  *
  * - En el arranque (con el robot situado en la mitad de la casilla), arrancar con una aceleración
  *   determinada hasta el final de dicha casilla
@@ -55,26 +55,26 @@
 /// Longitud del arco que se describe en una curva
 #define ACCION_DISTG (2*PI*(LABERINTO_LONGITUD_CASILLA/2)/4)
 
-/// Constante precalculada equivalente a los pasos de encoder necesarios para recorrer 2/3 de una casilla
-#define DOS_TERCIOS_CASILLA (int)((2*LABERINTO_LONGITUD_CASILLA)/(3*LONGITUD_PASO_ENCODER))
+volatile float distancia;               ///< Distancia en metros de la acción actual
+volatile int32_t pasos_objetivo;        ///< Pasos de encoder necesarios para completar la acción actual
+volatile int32_t pasos_hasta_decelerar; ///< Pasos a partir de los cuales hay que empezar a decelerar
+volatile float aceleracion;             ///< Aceleración aplicada en caso de que la velocidad solicitada sea inferior a la actual
+volatile float deceleracion;            ///< Deceleración aplicada a partir de que los pasos de encoder lleguen a pasos_objetivo
+volatile float velocidad_maxima;        ///< Velocidad máxima de la acción
+volatile float velocidad_final;         ///< Velocidad a la que debe terminar la acción
+volatile float accion_radio;            ///< Radio de la acción (RADIO_INFINITO en caso de ser una recta)j
 
+volatile float amax = ACCION_AMAX;      ///< Aceleración máxima, usada en las rectas
+volatile float acur = ACCION_ACUR;      ///< Aceleración de frenada antes de entrar en una curva
+volatile float afin = ACCION_AFIN;      ///< Aceleración de la frenada final en la última casilla
+volatile float vr = ACCION_VR;          ///< Velocidad máxima en recta
+volatile float vc = ACCION_VC;          ///< Velocidad máxima en curba
+volatile float ve = ACCION_VE;          ///< Velocidad máxima en exploración
 
-volatile float distancia;
-volatile int32_t pasos_objetivo;
-volatile int32_t pasos_hasta_decelerar;
-volatile float aceleracion;
-volatile float deceleracion;
-volatile float velocidad_maxima;
-volatile float velocidad_final;
-volatile float accion_radio;
-
-volatile float amax = ACCION_AMAX;
-volatile float acur = ACCION_ACUR;
-volatile float afin = ACCION_AFIN;
-volatile float vr = ACCION_VR;
-volatile float vc = ACCION_VC;
-volatile float ve = ACCION_VE;
-
+//@{
+/**
+ * @name Setters y getters
+ */
 float accion_get_distancia() {
     return distancia;
 }
@@ -96,59 +96,67 @@ float accion_get_radio() {
 int32_t accion_get_pasos_objetivo() {
     return pasos_objetivo;
 }
-
 void accion_set_amax(float aceleracion_maxima) {
     amax = aceleracion_maxima;
 }
-
 float accion_get_amax() {
     return amax;
 }
-
 void accion_set_acur(float aceleracion_entrada_en_curva) {
     acur = aceleracion_entrada_en_curva;
 }
-
 float accion_get_acur() {
     return acur;
 }
-
 void accion_set_afin(float aceleracion_frenada_final) {
     afin = aceleracion_frenada_final;
 }
-
 float accion_get_afin() {
     return afin;
 }
-
 void accion_set_vr(float velocidad_en_recta) {
     vr = velocidad_en_recta;
 }
-
 float accion_get_vr() {
     return vr;
 }
-
 void accion_set_vc(float velocidad_en_curva) {
     vc = velocidad_en_curva;
 }
-
 float accion_get_vc() {
     return vc;
 }
-
 void accion_set_pasos_objetivo(int32_t pasos) {
     pasos_objetivo = pasos;
 }
-
+void accion_set_velocidad_final(int32_t pasos) {
+    pasos_objetivo = pasos;
+}
 int32_t accion_get_pasos_hasta_decelerar() {
     return pasos_hasta_decelerar;
 }
+//@}
+
+
+/**
+ * @brief Calcula la distancia necesaria para decelerar a una velocidad final, dadas la inicial la aceleración
+ */
 
 float _distancia_para_decelerar(float vi, float vf, float aceleracion) {
     return ((0.5 * (vi - vf) * (vi - vf)) + (vf * (vi - vf))) / aceleracion;
 }
 
+
+/**
+ * @brief Calcula las variables necesarias que definen una acción y la inicia
+ *
+ * @param dist distancia que se recorre en la acción
+ * @param acel aceleración a aplicar si la velocidad actual es menor que la velocidad máxima de la acción
+ * @param decel deceleración en caso de que la velocidad final sea menor que la máxima
+ * @param vmax velocidad máxima de la acción
+ * @param vfinal velocidad a la que finaliza la acción
+ * @param radio radio en metros de la acción (en caso de rectas, utilizar RADIO_INFINITO)
+ */
 void accion_set(float dist,
                 float acel, float dece,
                 float vmax, float vfinal,
@@ -177,54 +185,83 @@ void accion_set(float dist,
     else
         motores_set_aceleracion_lineal(0);
 
-    // log_accion();
     timer1_reset_cuenta();
 
-    // TODO: mirar mejor esto
+    /// @todo es realmente necesario resetear los encoders, y si lo es, este es el sitio?
     encoders_reset_posicion_total();
-
 }
 
 
-void accion_ejecuta(char accion) {
+/**
+ * @brief Inicia la acción especificada en el parámetro
+ *
+ * @param accion Tipo de acción a ejectuar
+ */
+void accion_ejecuta(tipo_accion accion) {
     if (accion == ARRANCAR) {
-        Serial.println("* Arranca");
+        Serial.println(F("* Arranca"));
         accion_set(LABERINTO_LONGITUD_CASILLA/2, amax, amax, ve, ve, RADIO_INFINITO);
     } else if (accion ==  PARAR) {
-        //accion_set(LABERINTO_LONGITUD_CASILLA/2, amax, afin, ve, ROBOT_V0, INFINITO)
-        Serial.println("* Para");
+        Serial.println(F("* Para"));
         accion_set(LABERINTO_LONGITUD_CASILLA/2, amax, afin, ve, ACCION_V0, RADIO_INFINITO);
     } else if (accion == RECTO) {
-        Serial.println("* Continua recto");
-        // accion_set(LABERINTO_LONGITUD_CASILLA, amax, amax, ve, ve, INFINITO);
+        Serial.println(F("* Continua recto"));
         accion_set(LABERINTO_LONGITUD_CASILLA, amax, amax, ve, ve, RADIO_INFINITO);
     } else if (accion == ESPERA) {
-        Serial.println("* Pausa");
+        Serial.println(F("* Pausa"));
         accion_set(0, 0, 0, 0, 0, 0.1); // espera 0.2 segundos
     } else if (accion == GIRO_DERECHA) {
-        // accion_set(-PI*motores_get_distancia_entre_ruedas()/4.0, amax, amax , 0.2 , ROBOT_V0, GIRO_DERECHA_TODO); // gira 90
-        Serial.println("* Gira derecha");
+        Serial.println(F("* Gira derecha"));
         accion_set(-PI*motores_get_distancia_entre_ruedas()/4.0, amax, amax, ve, ACCION_V0, GIRO_DERECHA_TODO); // gira 90
     } else if (accion == GIRO_IZQUIERDA) {
-        Serial.println("* Gira izquierda");
+        Serial.println(F("* Gira izquierda"));
         accion_set(PI*motores_get_distancia_entre_ruedas()/4.0, amax, amax, ve , ACCION_V0, GIRO_IZQUIERDA_TODO); // gira 90
     } else if (accion == GIRO_180) {
-        Serial.println("* Gira 180 grados");
-        // accion_set(PI*motores_get_distancia_entre_ruedas()/2.0, amax, amax , 0.2, ROBOT_V0, GIRO_IZQUIERDA_TODO); // gira 180g
+        Serial.println(F("* Gira 180 grados"));
         accion_set(PI*motores_get_distancia_entre_ruedas()/2.0, amax, amax, ve, ACCION_V0, GIRO_IZQUIERDA_TODO); // gira 180g
     } else {
-        Serial.println("No existe accion!");
+        Serial.println(F("No existe accion!"));
     }
 }
 
+
+/**
+ * @brief Cancela una accion
+ *
+ * @param pasos Numero de pasos recorridos en el momento de la llamada
+ *
+ * Se llama a esta función cuando se detecta un evento que implica la cancelación
+ * de la acción en curso. Por ejemplo, cuando se entra en una casilla y no se detecta
+ * pared frontal, se ejecuta la acción correspondiente a avanzar una casilla completa.
+ * Si en el medio de este avance se detecta la pared (debido a que los sensores no
+ * consiguieron detectarla al inicio), se llama a esta función para
+ * cancelar el avance y poder decidir la siguiente acción.
+ *
+ * @todo Es necesario realmente igualar los pasos objetivo?
+ */
+void accion_interrumpe(int32_t pasos) {
+    pasos_objetivo = pasos;
+    velocidad_final = 0;
+}
+
+
+/**
+ * @brief Devuelve si la acción actual implica un cambio de casilla
+ *
+ */
 bool accion_cambio_casilla() {
-    // TODO: valido sólo en exploración
-    Serial.println(DOS_TERCIOS_CASILLA);
+    /// @todo esto sólo parece válido sólo en exploración
+    Serial.println("vfinal = ");
+    Serial.print(velocidad_final);
+
     return (
             // Si vamos rectos y no vamos a frenar la acción implica un cambio de casilla
-            (accion_radio == RADIO_INFINITO and velocidad_final > ACCION_V0 )
+            (accion_radio == RADIO_INFINITO and velocidad_final > ACCION_V0)
+           );
+        /*
         or
             // Si vamos rectos pero frenamos antes de tiempo (al entrar en la casilla no conseguimos detectar la pared frontal)
             (accion_radio == RADIO_INFINITO and pasos_objetivo > DOS_TERCIOS_CASILLA ));
+            */
 
 }

@@ -59,3 +59,13 @@ void log_motores() {
     LOGF(motores_get_angulo_actual_calculado() * 360 / (2*PI),5);
     LOGN(encoders_get_ticks_sin_actualizar_right());
 }
+
+/**
+ * @brief Muestra datos objetivo y recorridos
+ */
+void log_pasos() {
+    Serial.print(F("pasos "));
+    LOG(robot_get_pasos_recorridos());
+    Serial.print(F("/"));
+    LOGN(accion_get_pasos_objetivo());
+}
