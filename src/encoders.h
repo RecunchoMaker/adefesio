@@ -1,3 +1,9 @@
+/**
+ * @file encoders.h
+ *
+ * @brief Cabecera de encoders.cpp
+ */
+
 #ifndef __ENCODERS_H
 #define __ENCODERS_H
 
@@ -9,33 +15,33 @@
 #define ENCODER_RIGHT_C2 8
 
 void encoders_init(void);
+
 void encoders_reset_posicion(void);
 void encoders_reset_posicion_total(void);
 void encoders_decrementa_posicion_total(int16_t pasos);
-int16_t encoders_get_posicion_left(void);
-int16_t encoders_get_posicion_right(void);
-int16_t encoders_get_aux_posicion_left(void);
-int16_t encoders_get_aux_posicion_right(void);
+
 int32_t encoders_get_posicion_total_left(void);
 int32_t encoders_get_posicion_total_right(void);
-int32_t encoders_get_posicion_total(void);
+int32_t encoders_get_posicion_aux_left(void);
+int32_t encoders_get_posicion_aux_right(void);
+
+uint8_t encoders_get_ticks_sin_actualizar_left(void);
+uint8_t encoders_get_ticks_sin_actualizar_right(void);
 uint16_t encoders_get_tcnt1_anterior_right();
 uint16_t encoders_get_ultimo_tcnt1_right();
-void encoders_ISR_left(void);
-void encoders_ISR_right(void);
+
 float encoders_get_velocidad_left(void);
 float encoders_get_velocidad_right(void);
 float encoders_get_ultima_velocidad_left(void);
 float encoders_get_ultima_velocidad_right(void);
-uint8_t encoders_get_ticks_sin_actualizar_left(void);
-uint8_t encoders_get_ticks_sin_actualizar_right(void);
-void encoders_calcula_velocidad();
+
+int32_t encoders_get_posicion_total(void);
 void encoders_set_direccion(bool left, bool right);
 
-#ifdef ENCODERS_LOG_ESTADO
-void encoders_log_estado_cabecera();
-void encoders_log_estado();
-#endif
+void encoders_ISR_left(void);
+void encoders_ISR_right(void);
+
+void encoders_calcula_velocidad();
 
 #endif /* ifndef _ENCODERS_H
 

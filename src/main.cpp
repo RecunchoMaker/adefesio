@@ -86,7 +86,7 @@ void loop() {
                 Serial.print(" \t");
                 Serial.print(robot_get_casilla_offset(),4);
                 Serial.print(" \t");
-                aux = ((encoders_get_aux_posicion_left() + encoders_get_aux_posicion_right()) / 2);
+                aux = ((encoders_get_posicion_aux_left() + encoders_get_posicion_aux_right()) / 2);
                 Serial.print(aux);
                 Serial.print(" \t");
                 Serial.print(aux * LONGITUD_PASO_ENCODER + 0.09, 6);

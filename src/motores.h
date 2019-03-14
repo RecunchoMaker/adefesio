@@ -1,57 +1,62 @@
+/**
+ * @file motores.h
+ *
+ * @brief Cabecera de motores.cpp
+ */
+
 #ifndef __MOTORES_H
 #define __MOTORES_H
 
 #include <encoders.h>
 
-// H-bridge pins
-#define MOTOR_LEFT_PWM 5 
-#define MOTOR_LEFT_IN1 4
-#define MOTOR_LEFT_IN2 9
+//@{
+/**
+ * @name Pins del puente H
+ */
 
-#define MOTOR_RIGHT_PWM 6 
-#define MOTOR_RIGHT_IN1 7
-#define MOTOR_RIGHT_IN2 10
+#define MOTOR_LEFT_PWM 5   ///< Pin digital de salida PWM izquierdo 
+#define MOTOR_LEFT_IN1 4   ///< Pin digital de salida IN1 izquierdo 
+#define MOTOR_LEFT_IN2 9   ///< Pin digital de salida IN1 izquierdo 
+
+#define MOTOR_RIGHT_PWM 6  ///< Pin digital de salida PWM izquierdo 
+#define MOTOR_RIGHT_IN1 7  ///< Pin digital de salida IN1 derecho
+#define MOTOR_RIGHT_IN2 10 ///< Pin digital de salida IN2 derecho
+//@}
 
 // TODO: fix this
 #define GIRO_IZQUIERDA_TODO 0
 #define GIRO_DERECHA_TODO   0.01
 
 void motores_init(float voltaje);
-
-void motores_set_kp_lineal(float kp);
-void motores_set_ki_lineal(float ki);
-void motores_set_kd_lineal(float kd);
-void motores_set_kp_angular(float kd);
-void motores_set_distancia_entre_ruedas(float dr);
-float motores_get_kp_lineal();
-float motores_get_kp_angular();
-float motores_get_ki_lineal();
-float motores_get_kd_lineal();
-float motores_get_distancia_entre_ruedas();
-
-void motores_set_aceleracion_lineal(float aceleracion);
-float motores_get_aceleracion_lineal();
-void motores_set_radio(float r);
-void motores_parar();
-
-void motores_set_maximo_pwm(int16_t pwm);
+void motores_set_potencia(float left, float right);
 void motores_set_pwm_left(int16_t right);
 void motores_set_pwm_right(int16_t left);
-void motores_set_potencia(float left, float right);
-int16_t motores_get_pwm_left();
-int16_t motores_get_pwm_right();
-void motores_set_ticks(int32_t left, int32_t right);
-uint32_t motores_get_ticks_left();
-uint32_t motores_get_ticks_right();
-void motores_set_velocidad_lineal_objetivo(float velocidad);
+void motores_parar();
+void motores_actualiza_velocidad();
+
+float motores_get_kp_lineal();
+void motores_set_kp_lineal(float kp);
+float motores_get_ki_lineal();
+void motores_set_ki_lineal(float ki);
+float motores_get_kd_lineal();
+void motores_set_kd_lineal(float kd);
 float motores_get_velocidad_lineal_objetivo();
 float motores_get_velocidad_lineal_objetivo_left();
 float motores_get_velocidad_lineal_objetivo_right();
-void motores_actualiza_velocidad();
-void motores_actualiza_angulo();
-double motores_get_angulo_actual();
-double motores_get_angulo_actual_calculado();
-void motores_set_angulo_actual(double angulo);
+void motores_set_velocidad_lineal_objetivo(float velocidad);
+
+int16_t motores_get_pwm_left();
+int16_t motores_get_pwm_right();
+
+void motores_set_maximo_pwm(int16_t pwm);
+float motores_get_velocidad_angular_objetivo();
+float motores_get_distancia_entre_ruedas();
+void motores_set_distancia_entre_ruedas(float dr);
+
+float motores_get_aceleracion_lineal();
+void motores_set_aceleracion_lineal(float aceleracion);
+
+void motores_set_radio(float r);
 
 #endif /* ifndef MOTORES_H
 

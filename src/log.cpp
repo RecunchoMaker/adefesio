@@ -55,8 +55,6 @@ void log_motores() {
     LOG(encoders_get_posicion_total_left());
     LOG(encoders_get_posicion_total_right());
     LOGF(motores_get_velocidad_lineal_objetivo(),5);
-    LOGF(motores_get_angulo_actual() * 360 / (2*PI),5);
-    LOGF(motores_get_angulo_actual_calculado() * 360 / (2*PI),5);
     LOGN(encoders_get_ticks_sin_actualizar_right());
 }
 

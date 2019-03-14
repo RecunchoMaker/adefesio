@@ -81,7 +81,6 @@ char const *comando_go = "go";   ///< comando especial para permitir la espera d
 char const *comando_kp = "kp";       ///< set constante KP del pid
 char const *comando_kd = "kd";       ///< set KD
 char const *comando_ki = "ki";       ///< set KI
-char const *comando_kpa = "kpa";     ///< set KP angular
 char const *comando_amax = "amax";   ///< set aceleracion maxima
 char const *comando_acur = "acur";   ///< set aceleracion para entrada en curvas
 char const *comando_afin = "afin";   ///< set deceleracion final
@@ -180,7 +179,6 @@ void _procesa_comando(char *token, char *parametro) {
     _procesa_setter(comando_kp, token, parametro, motores_set_kp_lineal, motores_get_kp_lineal);
     _procesa_setter(comando_kd, token, parametro, motores_set_kd_lineal, motores_get_kd_lineal);
     _procesa_setter(comando_ki, token, parametro, motores_set_ki_lineal, motores_get_ki_lineal);
-    _procesa_setter(comando_kpa, token, parametro, motores_set_kp_angular, motores_get_kp_angular);
     _procesa_setter(comando_amax, token, parametro, accion_set_amax, accion_get_amax);
     _procesa_setter(comando_acur, token, parametro, accion_set_acur, accion_get_acur);
     _procesa_setter(comando_afin, token, parametro, accion_set_afin, accion_get_afin);
