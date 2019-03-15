@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Documentando motores.cpp y encoders.cpp"
-commit: c158f688ae44fde1948b3e00d70c7e3b041f8ea8
+commit: 29e16c375aeb38c895c4e364577304136022c93c
 ---
 
 Hoy no hay mucho nuevo. Simplemente documentar estos dos ficheros, y
