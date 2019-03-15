@@ -114,7 +114,7 @@ void leds_actualiza_valor(int8_t led) {
 
     leds_lectura0 = analogRead(LED_SENSOR);
     leds_enciende(led);
-    delayMicroseconds(50);
+    delayMicroseconds(100);
     leds_lectura1 = analogRead(LED_SENSOR);
     leds_apaga(led);
 
@@ -176,7 +176,7 @@ int16_t leds_get_desvio_centro() {
     if (leds_pared_izquierda() and leds_pared_derecha()) {
         return leds_valor[LED_IZQ - A0] - leds_valor[LED_DER - A0];
     } else if (leds_pared_izquierda()) {
-        return leds_valor[LED_IZQ - A0] - 150;
+        return leds_valor[LED_IZQ - A0] - 230;
     } else if (leds_pared_derecha()) {
         return 150 - leds_valor[LED_DER - A0];
     } else
@@ -192,7 +192,7 @@ int16_t leds_get_desvio_centro() {
  * @todo Establecer el valor umbral de otra manera
  */
 bool leds_pared_enfrente() {
-    return leds_valor[LED_FDER - A0] > 9 or leds_valor[LED_FIZQ - A0] > 9;
+    return leds_valor[LED_FDER - A0] > 10 and leds_valor[LED_FIZQ - A0] > 10;
 }
 
 
@@ -206,7 +206,7 @@ bool leds_pared_enfrente() {
  *
  */
 bool leds_pared_izquierda() {
-    return (leds_valor[LED_IZQ - A0] > 5);
+    return (leds_valor[LED_IZQ - A0] > 30);
 }
 
 
@@ -219,7 +219,7 @@ bool leds_pared_izquierda() {
  * @todo Establecer el valor umbral de otra manera
  */
 bool leds_pared_derecha() {
-    return (leds_valor[LED_DER - A0] > 5);
+    return (leds_valor[LED_DER - A0] > 20);
 }
 
 

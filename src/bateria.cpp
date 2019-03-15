@@ -94,6 +94,7 @@ bool _bateria_agotada() {
  */
 void bateria_watchdog() {
     if (_bateria_agotada()) {
+        cli();
         Serial.println("Bateria agotada!");
         while (1) {
             digitalWrite(BATERIA_LED_PIN, HIGH);

@@ -251,17 +251,9 @@ void accion_interrumpe(int32_t pasos) {
  */
 bool accion_cambio_casilla() {
     /// @todo esto sólo parece válido sólo en exploración
-    Serial.println("vfinal = ");
-    Serial.print(velocidad_final);
-
     return (
             // Si vamos rectos y no vamos a frenar la acción implica un cambio de casilla
             (accion_radio == RADIO_INFINITO and velocidad_final > ACCION_V0)
            );
-        /*
-        or
-            // Si vamos rectos pero frenamos antes de tiempo (al entrar en la casilla no conseguimos detectar la pared frontal)
-            (accion_radio == RADIO_INFINITO and pasos_objetivo > DOS_TERCIOS_CASILLA ));
-            */
 
 }

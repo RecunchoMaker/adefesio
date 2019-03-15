@@ -62,12 +62,24 @@
 /**
  * @name Configuración del laberinto
  */
-#define LABERINTO_FILAS 5 ///< Número de filas
+/*
+#define LABERINTO_FILAS 15 ///< Número de filas
+#define LABERINTO_COLUMNAS 15 ///< Número de columnas
+#define CASILLA_INICIAL 224 ///< Número de casilla en la que se posiciona el robot al inicio de la exploración
+#define CASILLA_SOLUCION 14
+*/
+#define LABERINTO_FILAS 5    ///< Número de filas
 #define LABERINTO_COLUMNAS 4 ///< Número de columnas
-#define CASILLA_INICIAL 20 ///< Número de casilla en la que se posiciona el robot al inicio de la exploración
+///< Número de casilla en la que se posiciona el robot al inicio de la exploración. Por defecto ultima fila primera columna
+#define CASILLA_INICIAL ((LABERINTO_FILAS-1) * (LABERINTO_COLUMNAS + 1))
+///< Casilla solución. Por defecto primera fila ultima columna.
+#define CASILLA_SOLUCION (LABERINTO_COLUMNAS-1)  
 #define ORIENTACION_INICIAL NORTE ///< Orientación del robot al inicio de la exploración
 #define LABERINTO_LONGITUD_CASILLA 0.18 //< Longitud en metros de cada casilla
 //@}
+
+
+#define FLOOD_FILL
 
 #endif /* ifndef SETTINGS_H
 

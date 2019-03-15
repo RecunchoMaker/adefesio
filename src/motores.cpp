@@ -270,8 +270,8 @@ void motores_actualiza_velocidad() {
 
             // Suponemos que estamos en un pasillo
             /// @todo establecer constante P para desvio de leds
-            potencia_left += 0.0001 * leds_get_desvio_centro();
-            potencia_right -= 0.0001 * leds_get_desvio_centro();
+            potencia_left += 0.00006 * leds_get_desvio_centro();
+            potencia_right -= 0.00006 * leds_get_desvio_centro();
         }
 
         error_lineal_left = encoders_get_ultima_velocidad_left() - velocidad_lineal_objetivo_left;

@@ -10,6 +10,7 @@
 #include <robot.h>
 #include <leds.h>
 #include <laberinto.h>
+#include <flood.h>
 
 ISR (TIMER1_COMPA_vect) {
 
@@ -51,6 +52,8 @@ void setup() {
     timer1_init(PERIODO_TIMER, 1);
     robot_init();
     laberinto_init();
+    flood_init(CASILLA_INICIAL, CASILLA_SOLUCION);
+    laberinto_print();
 
     sei();
 }
@@ -62,6 +65,7 @@ void loop() {
 
     while (!comando_get_go()) {
         comando_lee_serial();
+        log_leds();
     }
     Serial.println("GO!");
 
@@ -69,10 +73,17 @@ void loop() {
     leds_activa();
     robot_inicia_exploracion();
 
-    uint8_t casilla = CASILLA_INICIAL;
+    uint8_t casilla = 0;
 
     int32_t aux;
+
     while (1) {
+
+        if (robot_get_estado() == EXPLORANDO_INICIAL and casilla != robot_get_casilla()) {
+            casilla = robot_get_casilla();
+            laberinto_print();
+        }
+
         if (robot_get_casilla() != 99) {
             if (robot_get_casilla() == 99) {
                 //laberinto_print();
@@ -85,9 +96,6 @@ void loop() {
                 Serial.print(robot_get_casilla());
                 Serial.print(" \t");
                 Serial.print(robot_get_casilla_offset(),4);
-                Serial.print(" \t");
-                aux = ((encoders_get_posicion_aux_left() + encoders_get_posicion_aux_right()) / 2);
-                Serial.print(aux);
                 Serial.print(" \t");
                 Serial.print(aux * LONGITUD_PASO_ENCODER + 0.09, 6);
                 Serial.print(" \t");
@@ -105,7 +113,6 @@ void loop() {
 
         }
 
-            casilla = robot_get_casilla();
     }
     
     motores_set_potencia(0.0, 0);
