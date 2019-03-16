@@ -25,6 +25,7 @@
 void leds_init();
 void leds_activa();
 void leds_desactiva();
+bool leds_get_leds_activados();
 void leds_enciende(int8_t led);
 void leds_apaga(int8_t led);
 void leds_actualiza_valor(int8_t sensor);

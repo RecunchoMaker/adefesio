@@ -90,6 +90,7 @@ char const *comando_dr = "dr";       ///< set distancia entre ruedas
 
 char const *comando_l1 = "l1";       ///< activar leds
 char const *comando_l0 = "l0";       ///< desactivar leds
+
 //@}
 
 

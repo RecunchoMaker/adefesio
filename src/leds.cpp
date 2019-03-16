@@ -76,6 +76,14 @@ void leds_desactiva() {
 
 
 /**
+ * @brief Devuelve el el estado del sistema de leds (activado/desactivado)
+ */
+bool leds_get_leds_activados() {
+    return leds_activados;
+}
+
+
+/**
  * @brief Enciende el led indicado si el sistema está activado
  */
 void leds_enciende(int8_t led) {

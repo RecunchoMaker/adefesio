@@ -68,14 +68,10 @@ void _incrementa_casilla() {
     laberinto_set_pared_frontal(robot.casilla, leds_pared_enfrente());
     sinc_pared = false;
 
-    Serial.print(F("cambio a casilla "));
-    Serial.println(robot.casilla);
-    log_leds();
+    log_cambio_casilla();
 }
 
 void robot_siguiente_accion() {
-
-    log_leds();
 
     if (accion_cambio_casilla()) {
         _incrementa_casilla();
@@ -150,7 +146,6 @@ void robot_siguiente_accion() {
 
     if (robot.casilla == CASILLA_INICIAL and robot.orientacion == ORIENTACION_INICIAL and robot.estado==ORIENTACION_INICIAL) {
         robot.estado = PARADO;
-        Serial.println("fin exploracion?");
     }
 }
 

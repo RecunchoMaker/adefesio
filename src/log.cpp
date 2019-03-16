@@ -59,11 +59,41 @@ void log_motores() {
 }
 
 /**
- * @brief Muestra datos objetivo y recorridos
+ * @brief Muestra datos de pasos objetivo y recorridos
  */
 void log_pasos() {
     Serial.print(F("pasos "));
     LOG(robot_get_pasos_recorridos());
     Serial.print(F("/"));
     LOGN(accion_get_pasos_objetivo());
+}
+
+/**
+ * @brief Muestra casilla/pasos recorridos/leds
+ *
+ * @note Expresión regular para filtrar log: egrep "^#1.[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+$" | cut -b 4-
+ */
+void log_casilla_pasos_leds() {
+    Serial.print(F("#1 "));
+    Serial.print(robot_get_casilla());
+    Serial.print(F("\t"));
+    Serial.print(robot_get_pasos_recorridos());
+    Serial.print(F("\t"));
+    Serial.print(leds_get_valor(LED_IZQ));
+    Serial.print("\t");
+    Serial.print(leds_get_valor(LED_FIZQ));
+    Serial.print("\t");
+    Serial.print(leds_get_valor(LED_FDER));
+    Serial.print("\t");
+    Serial.println(leds_get_valor(LED_DER));
+}
+
+
+/**
+ * @brief Logea cambio de casilla y leds
+ */
+void log_cambio_casilla() {
+    Serial.print(F("cambio a casilla "));
+    Serial.println(robot_get_casilla());
+    log_leds();
 }
