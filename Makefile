@@ -16,13 +16,13 @@ uploadbt:
 monitor:
 	pio device monitor --port $(USBPORT)
 
-$(PORT):
+$(BTPORT):
 	@echo "No existe port. Creando bind"
-	sudo rfcomm bind /dev/rfcomm0 $(BTADDR)
+	sudo rfcomm bind $(BTPORT) $(BTADDR)
 	sleep 1
 
-monitortee: $(PORT)
-	pio device monitor --port /dev/rfcomm0 | tee $(LOGFILE)
+monitortee: $(BTPORT)
+	pio device monitor --port $(BTPORT) | tee $(LOGFILE)
 
 doc:
 	doxygen

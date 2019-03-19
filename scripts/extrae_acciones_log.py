@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import sys
 import argparse
 
 def parse_options():
@@ -32,32 +33,46 @@ def parse_options():
         default=False)
 
     parser.add_argument(
-        '-v', '--verbose',
-        action='store_true',
-        help='muestra ciertos mensajes de informacion',
+        '-q', '--quiet',
+        action='store_false',
+        help='no muestra mensajes de info por stderr',
         default=False)
 
     parser.add_argument(
         'FICHERO',
         nargs='?',
         help='fichero a parsear, por defecto: %(default)s',
-        default='/tmp/data.dat')
+        default='/tmp/datos.dat')
 
 
     args = parser.parse_args()
 
+    # Sin parametros, se extrae todo
+    args.todos = (not args.recto and not args.arrancar and \
+                  not args.parar and not args.giro)
     return args
 
 
-""" Devuelve True si una linea tiene 6 elementos enteros en los margenes correctos"""
+""" Devuelve True si una linea tiene el numero de elementos correctos """
 def es_linea_correcta(linea):
 
-    v = linea.rstrip('\n').split("\t")
-    if len(v) <> 6:
+    # Es un log?
+    linea = linea.split(' ')
+
+    if len(linea)<>2:
         return False
 
+    if linea[0] <> '#1':
+        return False
+
+    # Tiene el numero de valores correcto?
+    linea = linea[1].split('\t')
+    if len(linea) <> 6:
+        return False
+
+    # Son todos los valores enteros?
     try:
-        v = map(int,v)
+        linea = map(int,linea)
     except:
         return False
 
@@ -66,18 +81,18 @@ def es_linea_correcta(linea):
 
 """ Formatea una linea correcta como lista """
 def formatea(linea):
-    return map(int, linea.rstrip('\n').split("\t"))
+    return map(int, linea.split(" ")[1].split('\t'))
 
 
 """ Devuelve una lista con las lineas correctas del fichero de entrada """
 def extraer_lineas_correctas(fichero):
     lineas = []
     with open(fichero, 'r') as f:
-        l = f.readline()
+        l = f.readline().rstrip('\n').rstrip('\r')
         while l:
             if es_linea_correcta(l):
                 lineas.append(formatea(l))
-            l = f.readline()
+            l = f.readline().rstrip('\n').rstrip('\r')
 
     return lineas
 
@@ -142,24 +157,30 @@ def main():
     args = parse_options()
 
     lineas = extraer_lineas_correctas(args.FICHERO)
-    if args.verbose:
-        print(str(len(lineas)) + " lineas corrrectas en " + args.FICHERO)
+    if not args.quiet:
+        sys.stderr.write("%d lineas correctas en '%s'\n" %
+                         (len(lineas), args.FICHERO))
 
-    acciones = extraer_acciones(lineas)
-    if args.verbose:
-        print(str(len(acciones)) + " acciones en " + args.FICHERO)
+    if lineas:
+        acciones = extraer_acciones(lineas)
+        cuenta = 0
+        for a in acciones:
+            cuenta = cuenta + 1
+            if (args.todos):
+                log(a)
+            else:
+                if accion_es_recto(a) and args.recto:
+                    log(a)
+                if accion_es_arrancar(a) and args.arrancar:
+                    log(a)
+                if accion_es_parar(a) and args.parar:
+                    log(a)
+                if accion_es_giro(a) and args.giro:
+                    log(a)
+        if not args.quiet:
+            sys.stderr.write("%d acciones en '%s'\n" %
+                             (len(acciones),args.FICHERO))
 
-    cuenta = 0
-    for a in acciones:
-        cuenta = cuenta + 1
-        if accion_es_recto(a) and args.recto:
-            log(a)
-        if accion_es_arrancar(a) and args.arrancar:
-            log(a)
-        if accion_es_parar(a) and args.parar:
-            log(a)
-        if accion_es_giro(a) and args.giro:
-            log(a)
 
 if __name__ == "__main__":
     main()

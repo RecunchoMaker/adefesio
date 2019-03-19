@@ -32,6 +32,13 @@ volatile int16_t leds_valor_encendido[4];
 /// Valor diferencial entre la actual y la anterior lectura de leds
 volatile int16_t leds_valor_d[4];
 
+/// Valor de la lectura de led apagado
+volatile int16_t leds_lectura0;
+
+/// Valor de la lectura de led encendido
+volatile int16_t leds_lectura1;
+
+
 
 /**
  * @brief Inicializa pins y establece el sistema de leds como desactivado
@@ -117,17 +124,29 @@ void leds_apaga(int8_t led) {
  */
 void leds_actualiza_valor(int8_t led) {
 
-    static int16_t leds_lectura0;
-    static int16_t leds_lectura1;
-
     leds_lectura0 = analogRead(LED_SENSOR);
     leds_enciende(led);
-    delayMicroseconds(100);
+    delayMicroseconds(150); // 100
     leds_lectura1 = analogRead(LED_SENSOR);
     leds_apaga(led);
 
     leds_valor_d[led - A0] = leds_lectura0 - leds_lectura1 - leds_valor[led - A0];
     leds_valor[led - A0] = leds_lectura0 - leds_lectura1;
+    /*
+    switch(led) {
+        case LED_DER:
+            leds_valor[led - A0] = leds_lectura1;
+            break;
+        case LED_IZQ:
+            leds_valor[led - A0] = leds_lectura0;
+            break;
+        default:
+            leds_valor[led - A0] = leds_lectura0 - leds_lectura1;
+            break;
+    }
+    */
+
+
     leds_valor_encendido[led - A0] = leds_lectura1;
     leds_valor_apagado[led - A0] = leds_lectura0;
 }

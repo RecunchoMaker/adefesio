@@ -23,7 +23,25 @@ void log_leds() {
     Serial.print("\t");
     Serial.print(leds_get_valor(LED_FDER));
     Serial.print("\t");
-    Serial.println(leds_get_valor(LED_DER));
+    Serial.print(leds_get_valor(LED_DER));
+
+    Serial.print("\tencendido:");
+    Serial.print(leds_get_valor_encendido(LED_IZQ));
+    Serial.print("\t");
+    Serial.print(leds_get_valor_encendido(LED_FIZQ));
+    Serial.print("\t");
+    Serial.print(leds_get_valor_encendido(LED_FDER));
+    Serial.print("\t");
+    Serial.print(leds_get_valor_encendido(LED_DER));
+
+    Serial.print("\tapagado:");
+    Serial.print(leds_get_valor_apagado(LED_IZQ));
+    Serial.print("\t");
+    Serial.print(leds_get_valor_apagado(LED_FIZQ));
+    Serial.print("\t");
+    Serial.print(leds_get_valor_apagado(LED_FDER));
+    Serial.print("\t");
+    Serial.println(leds_get_valor_apagado(LED_DER));
 }
 
 /**
