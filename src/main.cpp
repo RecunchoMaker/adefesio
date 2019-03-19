@@ -57,7 +57,6 @@ ISR (TIMER1_COMPA_vect) {
 void setup() {
 
     Serial.begin(115200);
-    cli();
 
     bateria_init();
     motores_init(bateria_get_voltaje());
@@ -70,6 +69,9 @@ void setup() {
     laberinto_init();
     flood_init(CASILLA_INICIAL, CASILLA_SOLUCION);
     laberinto_print();
+
+    pinMode(A5, INPUT_PULLUP);
+    pinMode(A6, INPUT_PULLUP);
 
     sei();
 }

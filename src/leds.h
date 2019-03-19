@@ -23,6 +23,7 @@
 #define LED_SENSOR A4
 
 void leds_init();
+void leds_check();
 void leds_activa();
 void leds_desactiva();
 bool leds_get_leds_activados();

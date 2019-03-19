@@ -11,6 +11,7 @@
 #include <motores.h>
 #include <encoders.h>
 #include <laberinto.h>
+#include <bateria.h>
 
 /**
  * @brief Muestra en una línea la diferencia de valores de sensor con led encedido/apagado
@@ -103,7 +104,9 @@ void log_casilla_pasos_leds() {
     Serial.print("\t");
     Serial.print(leds_get_valor(LED_FDER));
     Serial.print("\t");
-    Serial.println(leds_get_valor(LED_DER));
+    Serial.print(leds_get_valor(LED_DER));
+    Serial.print("\t");
+    Serial.println(bateria_get_voltaje());
 }
 
 

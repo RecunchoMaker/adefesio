@@ -53,6 +53,9 @@ void leds_init() {
 
     pinMode(LED_SENSOR, INPUT);
 
+    leds_check();
+
+
     leds_apaga(LED_IZQ);
     leds_apaga(LED_DER);
     leds_apaga(LED_FIZQ);
@@ -61,6 +64,31 @@ void leds_init() {
     leds_activados = false;
 }
 
+/**
+ * @brief Comprueba que los leds funcionan correctamente
+ *
+ * A veces los leds presentan unos valores muy bajos. Esta rutina
+ * intenta comprobar si los márgenes son correctos, y si no lo son
+ * entran en un bucle infinito
+ */
+void leds_check() {
+
+   leds_activados = true;
+   leds_actualiza_valor(LED_IZQ);
+   delayMicroseconds(500);
+   leds_actualiza_valor(LED_DER);
+
+   while (leds_get_valor(LED_IZQ) < 200 and leds_get_valor(LED_DER) < 200) {
+       Serial.print(leds_get_valor(LED_IZQ));
+       Serial.print(" ");
+       Serial.println(leds_get_valor(LED_DER));
+       leds_actualiza_valor(LED_IZQ);
+       delayMicroseconds(500);
+       leds_actualiza_valor(LED_DER);
+       delay(500);
+   }
+
+}
 
 /**
  * @brief Establece el sistema de leds como activado

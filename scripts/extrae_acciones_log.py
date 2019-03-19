@@ -56,6 +56,8 @@ def parse_options():
 """ Devuelve True si una linea tiene el numero de elementos correctos """
 def es_linea_correcta(linea):
 
+    linea = linea.rstrip('\r').rstrip('\n')
+
     # Es un log?
     linea = linea.split(' ')
 
@@ -67,12 +69,18 @@ def es_linea_correcta(linea):
 
     # Tiene el numero de valores correcto?
     linea = linea[1].split('\t')
-    if len(linea) <> 6:
+    if len(linea) <> 7:
         return False
 
     # Son todos los valores enteros?
     try:
-        linea = map(int,linea)
+        linea = [int(linea[0]),
+                 int(linea[1]),
+                 int(linea[2]),
+                 int(linea[3]),
+                 int(linea[4]),
+                 int(linea[5]),
+                 float(linea[6])]
     except:
         return False
 
@@ -81,18 +89,26 @@ def es_linea_correcta(linea):
 
 """ Formatea una linea correcta como lista """
 def formatea(linea):
-    return map(int, linea.split(" ")[1].split('\t'))
+    l = linea.split(" ")[1].split('\t')
+    return [int(l[0]),
+            int(l[1]),
+            int(l[2]),
+            int(l[3]),
+            int(l[4]),
+            int(l[5]),
+            float(l[6])]
 
 
 """ Devuelve una lista con las lineas correctas del fichero de entrada """
 def extraer_lineas_correctas(fichero):
     lineas = []
     with open(fichero, 'r') as f:
-        l = f.readline().rstrip('\n').rstrip('\r')
+        #l = f.readline().rstrip('\n').rstrip('\r')
+        l = f.readline()
         while l:
             if es_linea_correcta(l):
                 lineas.append(formatea(l))
-            l = f.readline().rstrip('\n').rstrip('\r')
+            l = f.readline()
 
     return lineas
 
@@ -150,7 +166,7 @@ def accion_es_giro(accion):
 """ Devuelve una accion en lista formateada como el log original """
 def log(accion):
     for a in accion:
-        print "%d\t%d\t%d\t%d\t%d\t%d" % (a[0],a[1],a[2],a[3],a[4],a[5])
+        print "%d\t%d\t%d\t%d\t%d\t%d\t%0.2f" % (a[0],a[1],a[2],a[3],a[4],a[5],a[6])
 
 
 def main():

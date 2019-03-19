@@ -218,6 +218,7 @@ void robot_control() {
 
     if ((leds_get_valor(LED_FDER) + leds_get_valor(LED_FIZQ) > 1000) and accion_get_radio() == RADIO_INFINITO) {
         Serial.println(F("chocamos! leds:"));
+        //robot.estado = PARADO;
         log_leds();
         log_pasos();
         accion_interrumpe(pasos_recorridos);
