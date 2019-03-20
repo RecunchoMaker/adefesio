@@ -29,6 +29,7 @@
 #include <settings.h>
 #include <motores.h>
 #include <timer1.h>
+#include <leds.h>
 #include <log.h>
 
 /// Aceleracion maxima por defecto, usada en las rectas
@@ -47,7 +48,10 @@
 #define ACCION_VC 0.30
 
 /// Velocidad máxima en exploracion
-#define ACCION_VE 0.20
+#define ACCION_VE 0.30
+
+/// Velocidad máxima giro en redonddo 
+#define ACCION_VG 0.20
 
 /// Velocidad minima antes de parar
 #define ACCION_V0 0.1
@@ -70,6 +74,7 @@ volatile float afin = ACCION_AFIN;      ///< Aceleración de la frenada final en
 volatile float vr = ACCION_VR;          ///< Velocidad máxima en recta
 volatile float vc = ACCION_VC;          ///< Velocidad máxima en curba
 volatile float ve = ACCION_VE;          ///< Velocidad máxima en exploración
+volatile float vg = ACCION_VG;          ///< Velocidad máxima giro en redondo
 
 //@{
 /**
@@ -125,6 +130,12 @@ void accion_set_vc(float velocidad_en_curva) {
 }
 float accion_get_vc() {
     return vc;
+}
+void accion_set_ve(float velocidad_en_exploracion) {
+    ve = velocidad_en_exploracion;
+}
+float accion_get_ve() {
+    return ve;
 }
 void accion_set_pasos_objetivo(int32_t pasos) {
     pasos_objetivo = pasos;
@@ -187,6 +198,8 @@ void accion_set(float dist,
 
     timer1_reset_cuenta();
 
+    Serial.print("po: ");
+    Serial.println(pasos_objetivo);
     /// @todo es realmente necesario resetear los encoders, y si lo es, este es el sitio?
     encoders_reset_posicion_total();
 }
@@ -203,22 +216,27 @@ void accion_ejecuta(tipo_accion accion) {
         accion_set(LABERINTO_LONGITUD_CASILLA/2, amax, amax, ve, ve, RADIO_INFINITO);
     } else if (accion ==  PARAR) {
         Serial.println(F("* Para"));
-        accion_set(LABERINTO_LONGITUD_CASILLA/2, amax, afin, ve, ACCION_V0, RADIO_INFINITO);
+        /// @todo Introduzco correccion ad-hoc si la pared es demasiado cercvana
+        if (leds_pared_enfrente()) {
+        accion_set(LABERINTO_LONGITUD_CASILLA/2 - ((leds_get_valor(LED_FIZQ) + leds_get_valor(LED_FDER)) * LONGITUD_PASO_ENCODER / 2), amax, afin, ve, ACCION_V0, RADIO_INFINITO);
+        } else {
+          accion_set(LABERINTO_LONGITUD_CASILLA/2, amax, afin, ve, ACCION_V0, RADIO_INFINITO);
+        }
     } else if (accion == RECTO) {
         Serial.println(F("* Continua recto"));
         accion_set(LABERINTO_LONGITUD_CASILLA, amax, amax, ve, ve, RADIO_INFINITO);
     } else if (accion == ESPERA) {
         Serial.println(F("* Pausa"));
-        accion_set(0, 0, 0, 0, 0, 0.1); // espera 0.2 segundos
+        accion_set(0, 0, 0, 0, 0, 0.05); // espera 0.05 segundos
     } else if (accion == GIRO_DERECHA) {
         Serial.println(F("* Gira derecha"));
-        accion_set(-PI*motores_get_distancia_entre_ruedas()/4.0, amax, amax, ve, ACCION_V0, GIRO_DERECHA_TODO); // gira 90
+        accion_set(-PI*motores_get_distancia_entre_ruedas()/4.0, amax, amax, vg, ACCION_V0, GIRO_DERECHA_TODO); // gira 90
     } else if (accion == GIRO_IZQUIERDA) {
         Serial.println(F("* Gira izquierda"));
-        accion_set(PI*motores_get_distancia_entre_ruedas()/4.0, amax, amax, ve , ACCION_V0, GIRO_IZQUIERDA_TODO); // gira 90
+        accion_set(PI*motores_get_distancia_entre_ruedas()/4.0, amax, amax, vg , ACCION_V0, GIRO_IZQUIERDA_TODO); // gira 90
     } else if (accion == GIRO_180) {
         Serial.println(F("* Gira 180 grados"));
-        accion_set(PI*motores_get_distancia_entre_ruedas()/2.0, amax, amax, ve, ACCION_V0, GIRO_IZQUIERDA_TODO); // gira 180g
+        accion_set(PI*motores_get_distancia_entre_ruedas()/2.0, amax, amax, vg, ACCION_V0, GIRO_IZQUIERDA_TODO); // gira 180g
     } else {
         Serial.println(F("No existe accion!"));
     }

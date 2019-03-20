@@ -105,8 +105,7 @@ void log_casilla_pasos_leds() {
     Serial.print(leds_get_valor(LED_FDER));
     Serial.print("\t");
     Serial.print(leds_get_valor(LED_DER));
-    Serial.print("\t");
-    Serial.println(bateria_get_voltaje());
+    Serial.println();
 }
 
 

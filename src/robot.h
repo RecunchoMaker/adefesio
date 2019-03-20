@@ -27,6 +27,7 @@ float robot_get_casilla_offset();
 tipo_estado robot_get_estado();
 tipo_orientacion robot_get_orientacion();
 int32_t robot_get_pasos_recorridos();
+int16_t robot_get_desvio_centro();
 
 float _distancia_para_decelerar(float velocidad, float aceleracion);
 

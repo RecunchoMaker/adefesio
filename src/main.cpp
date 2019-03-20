@@ -16,7 +16,6 @@ volatile int8_t led = LED_FIZQ;
 ISR (TIMER1_COMPA_vect) {
 
     switch (timer1_get_estado()) {
-        /*
         case 0: 
                 leds_actualiza_valor(LED_FDER);
                 break;
@@ -30,21 +29,6 @@ ISR (TIMER1_COMPA_vect) {
                 leds_actualiza_valor(LED_FIZQ);
                 encoders_calcula_velocidad();
                 encoders_reset_posicion();
-                motores_actualiza_velocidad();
-                robot_control();
-                break;
-                */
-        case 0: 
-                leds_actualiza_valor(led);
-                break;
-        case 1: 
-                if (led == LED_FDER) led = LED_FIZQ; else led++;
-                break;
-        case 2: 
-                encoders_calcula_velocidad();
-                encoders_reset_posicion();
-                break;
-        case 3: 
                 motores_actualiza_velocidad();
                 robot_control();
                 break;

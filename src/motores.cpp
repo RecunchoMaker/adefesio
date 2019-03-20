@@ -8,15 +8,18 @@
 #include <settings.h>
 #include <motores.h>
 #include <leds.h>
+#include <robot.h>
 #include <timer1.h>
 
 /// Distancia entre las ruedas, en metros
 volatile float distancia_entre_ruedas = DISTANCIA_ENTRE_RUEDAS;
 
-volatile float kp_lineal = KP_LINEAL; ///< Parámetro KP para pid de velocidad lineal
-volatile float kd_lineal = KD_LINEAL; ///< Parámetro KD para pid de velocidad lineal
-volatile float ki_lineal = KI_LINEAL; ///< Parámetro KI para pid de velocidad lineal
+volatile float kp_lineal = KP_LINEAL; ///< Parámetro P para pid de velocidad lineal
+volatile float kd_lineal = KD_LINEAL; ///< Parámetro D para pid de velocidad lineal
+volatile float ki_lineal = KI_LINEAL; ///< Parámetro I para pid de velocidad lineal
 
+volatile float kp_pasillo = KP_PASILLO; ///< Parametro P para corrección entre pasillos
+volatile float ki_pasillo = KI_PASILLO; ///< Parametro I para corrección entre pasillos
 //@{
 /// @name Variables para control de pwm
 
@@ -66,6 +69,12 @@ void motores_set_ki_lineal(float ki) { ki_lineal = ki; }
 
 float motores_get_kd_lineal()  { return kd_lineal; }
 void motores_set_kd_lineal(float kd) { kd_lineal = kd; }
+
+float motores_get_kp_pasillo()  { return kp_pasillo; }
+void motores_set_kp_pasillo(float kp) { kp_pasillo = kp; }
+
+float motores_get_ki_pasillo()  { return ki_pasillo; }
+void motores_set_ki_pasillo(float kp) { ki_pasillo = kp; }
 
 float motores_get_velocidad_lineal_objetivo() {
     return velocidad_lineal_objetivo;
@@ -269,9 +278,11 @@ void motores_actualiza_velocidad() {
             velocidad_lineal_objetivo_right = velocidad_lineal_objetivo;
 
             // Suponemos que estamos en un pasillo
-            /// @todo establecer constante P para desvio de leds
-            potencia_left += 0.00006 * leds_get_desvio_centro();
-            potencia_right -= 0.00006 * leds_get_desvio_centro();
+            
+            potencia_left += kp_pasillo * robot_get_desvio_centro();
+            potencia_right -= kp_pasillo * robot_get_desvio_centro();
+
+
         }
 
         error_lineal_left = encoders_get_ultima_velocidad_left() - velocidad_lineal_objetivo_left;

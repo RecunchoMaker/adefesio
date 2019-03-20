@@ -32,12 +32,8 @@ volatile int16_t leds_valor_encendido[4];
 /// Valor diferencial entre la actual y la anterior lectura de leds
 volatile int16_t leds_valor_d[4];
 
-/// Valor de la lectura de led apagado
-volatile int16_t leds_lectura0;
-
-/// Valor de la lectura de led encendido
-volatile int16_t leds_lectura1;
-
+/// Valor medio de los diodos laterales en la casilla inicial
+volatile int16_t leds_valor_medio;
 
 
 /**
@@ -53,42 +49,28 @@ void leds_init() {
 
     pinMode(LED_SENSOR, INPUT);
 
-    leds_check();
-
+    leds_activa();
+    sei();
+    leds_calibra();
+    cli();
+    leds_desactiva();
 
     leds_apaga(LED_IZQ);
     leds_apaga(LED_DER);
     leds_apaga(LED_FIZQ);
     leds_apaga(LED_FDER);
-
-    leds_activados = false;
 }
+
 
 /**
- * @brief Comprueba que los leds funcionan correctamente
- *
- * A veces los leds presentan unos valores muy bajos. Esta rutina
- * intenta comprobar si los márgenes son correctos, y si no lo son
- * entran en un bucle infinito
+ * @brief Intenta calibrar los valores de los diodos en función de la lectura en la casilla inicial
  */
-void leds_check() {
-
-   leds_activados = true;
-   leds_actualiza_valor(LED_IZQ);
-   delayMicroseconds(500);
-   leds_actualiza_valor(LED_DER);
-
-   while (leds_get_valor(LED_IZQ) < 200 and leds_get_valor(LED_DER) < 200) {
-       Serial.print(leds_get_valor(LED_IZQ));
-       Serial.print(" ");
-       Serial.println(leds_get_valor(LED_DER));
-       leds_actualiza_valor(LED_IZQ);
-       delayMicroseconds(500);
-       leds_actualiza_valor(LED_DER);
-       delay(500);
-   }
-
+void leds_calibra() {
+    leds_valor_medio = (leds_get_valor(LED_IZQ) + leds_get_valor(LED_DER)) / 2;
+    Serial.print("valor medio leds: ");
+    Serial.println(leds_valor_medio);
 }
+
 
 /**
  * @brief Establece el sistema de leds como activado
@@ -152,29 +134,17 @@ void leds_apaga(int8_t led) {
  */
 void leds_actualiza_valor(int8_t led) {
 
+    static int16_t leds_lectura0;
+    static int16_t leds_lectura1;
+
     leds_lectura0 = analogRead(LED_SENSOR);
     leds_enciende(led);
-    delayMicroseconds(150); // 100
+    delayMicroseconds(100);
     leds_lectura1 = analogRead(LED_SENSOR);
     leds_apaga(led);
 
     leds_valor_d[led - A0] = leds_lectura0 - leds_lectura1 - leds_valor[led - A0];
     leds_valor[led - A0] = leds_lectura0 - leds_lectura1;
-    /*
-    switch(led) {
-        case LED_DER:
-            leds_valor[led - A0] = leds_lectura1;
-            break;
-        case LED_IZQ:
-            leds_valor[led - A0] = leds_lectura0;
-            break;
-        default:
-            leds_valor[led - A0] = leds_lectura0 - leds_lectura1;
-            break;
-    }
-    */
-
-
     leds_valor_encendido[led - A0] = leds_lectura1;
     leds_valor_apagado[led - A0] = leds_lectura0;
 }
@@ -222,23 +192,6 @@ int16_t leds_get_valor_d(int8_t led) {
 
 
 /**
- * @brief Devuelve una estimación del desvío de la posición del robot respecto al centro
- *
- * @note Sólo se debe usar cuando en una trayectoria recta
- *
- */
-int16_t leds_get_desvio_centro() {
-    if (leds_pared_izquierda() and leds_pared_derecha()) {
-        return leds_valor[LED_IZQ - A0] - leds_valor[LED_DER - A0];
-    } else if (leds_pared_izquierda()) {
-        return leds_valor[LED_IZQ - A0] - 230;
-    } else if (leds_pared_derecha()) {
-        return 150 - leds_valor[LED_DER - A0];
-    } else
-        return 0;
-}
-
-/**
  * @brief Devuelve si existe una pared enfrente
  *
  * Establece que existe una pared si alguna lectura de los leds que apuntan al frente
@@ -247,7 +200,7 @@ int16_t leds_get_desvio_centro() {
  * @todo Establecer el valor umbral de otra manera
  */
 bool leds_pared_enfrente() {
-    return leds_valor[LED_FDER - A0] > 10 and leds_valor[LED_FIZQ - A0] > 10;
+    return leds_valor[LED_FDER - A0] > 15 and leds_valor[LED_FIZQ - A0] > 15;
 }
 
 
@@ -275,6 +228,22 @@ bool leds_pared_izquierda() {
  */
 bool leds_pared_derecha() {
     return (leds_valor[LED_DER - A0] > 20);
+}
+
+
+/**
+ * @brief Devuelve el desvio a la derecha en funcion del valor medio de la calibracion
+ */
+int16_t leds_get_desvio_derecho() {
+    return (leds_valor_medio - leds_valor[LED_DER - A0]);
+}
+
+
+/**
+ * @brief Devuelve el desvio a la izquierda en funcion del valor medio de la calibracion
+ */
+int16_t leds_get_desvio_izquierdo() {
+    return (leds_valor[LED_IZQ - A0] - leds_valor_medio);
 }
 
 

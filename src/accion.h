@@ -42,6 +42,8 @@ void accion_set_vr(float velocidad_en_recta);
 float accion_get_vr();
 void accion_set_vc(float velocidad_en_curva);
 float accion_get_vc();
+void accion_set_ve(float velocidad_en_exploracion);
+float accion_get_ve();
 
 void accion_set(float distancia,
                 float aceleracion, float deceleracion,

@@ -23,7 +23,7 @@
 #define LED_SENSOR A4
 
 void leds_init();
-void leds_check();
+void leds_calibra();
 void leds_activa();
 void leds_desactiva();
 bool leds_get_leds_activados();
@@ -34,7 +34,9 @@ int16_t leds_get_valor(int8_t sensor);
 int16_t leds_get_valor_apagado(int8_t sensor);
 int16_t leds_get_valor_encendido(int8_t sensor);
 int16_t leds_get_valor_d(int8_t sensor);
-int16_t leds_get_desvio_centro();
+int16_t leds_get_desvio_izquierdo();
+int16_t leds_get_desvio_derecho();
+
 float leds_distancia_frontal();
 bool leds_pared_enfrente();
 bool leds_pared_derecha();

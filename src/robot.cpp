@@ -181,6 +181,29 @@ float robot_get_casilla_offset() {
     return robot.casilla_offset;
 }
 
+
+/**
+ * @brief Devuelve una estimacion del desvio al centro
+ *
+ * Usa los leds laterales, el progreso de la accion actual y las paredes
+ * del laberinto para estimar una desviación al centro.
+ *
+ * Lo usa motores_actualiza_velocidad() para corregir la desviación
+ *
+ */
+int16_t robot_get_desvio_centro() {
+    int16_t desvio = 0;
+
+    // Al principio de un movimiento en recta, se utilizan las paredes disponibles
+    // solo si estamos al principio de la casilla
+    if (robot.estado == EXPLORANDO) {
+        if (laberinto_hay_pared_derecha(robot.casilla)) desvio += leds_get_desvio_derecho();
+        if (laberinto_hay_pared_izquierda(robot.casilla)) desvio += leds_get_desvio_izquierdo();
+    }
+
+    return desvio;
+}
+
 void robot_control() {
 
     // control de posicion
@@ -191,6 +214,7 @@ void robot_control() {
     }
     */
     // log_pasos();
+    
 
     // Sincronizacion con paredes
     if (!leds_pared_derecha() and laberinto_hay_pared_derecha(robot.casilla) and accion_get_radio() == RADIO_INFINITO and accion_get_distancia() == LABERINTO_LONGITUD_CASILLA and !sinc_pared) {
@@ -218,10 +242,13 @@ void robot_control() {
 
     if ((leds_get_valor(LED_FDER) + leds_get_valor(LED_FIZQ) > 1000) and accion_get_radio() == RADIO_INFINITO) {
         Serial.println(F("chocamos! leds:"));
-        //robot.estado = PARADO;
         log_leds();
         log_pasos();
         accion_interrumpe(pasos_recorridos);
+        if (pasos_recorridos < 100) {
+            ///@todo parada de emergencia si pongo las manos delante
+            robot.estado = PARADO;
+        }
     }
 
 

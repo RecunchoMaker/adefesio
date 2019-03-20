@@ -53,9 +53,12 @@
  *
  * @todo Establecer constantes para los demás pid
  */
-#define KP_LINEAL -0.6 ///< Constante KP para pid de velocidad lineal
-#define KD_LINEAL -0.0 ///< Constante KD para pid de velocidad lineal
-#define KI_LINEAL -0.0 ///< Constante KI para pid de velocidad lineal
+#define KP_LINEAL -0.6 ///< Constante P por defecto para pid de velocidad lineal
+#define KD_LINEAL -0.0 ///< Constante D por defecto para pid de velocidad lineal
+#define KI_LINEAL -0.0 ///< Constante I por defecto para pid de velocidad lineal
+
+#define KP_PASILLO 0.00008 ///< Constante por defecto P para corrección entre pasillos
+#define KI_PASILLO 0.1 ///< Constante por defecto D para corrección entre pasillos
 //@}
 
 //@{
