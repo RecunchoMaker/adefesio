@@ -66,6 +66,9 @@ void leds_init() {
  * @brief Intenta calibrar los valores de los diodos en función de la lectura en la casilla inicial
  */
 void leds_calibra() {
+    leds_actualiza_valor(LED_IZQ);
+    delayMicroseconds(30000);
+    leds_actualiza_valor(LED_DER);
     leds_valor_medio = (leds_get_valor(LED_IZQ) + leds_get_valor(LED_DER)) / 2;
     Serial.print("valor medio leds: ");
     Serial.println(leds_valor_medio);
@@ -200,7 +203,7 @@ int16_t leds_get_valor_d(int8_t led) {
  * @todo Establecer el valor umbral de otra manera
  */
 bool leds_pared_enfrente() {
-    return leds_valor[LED_FDER - A0] > 15 and leds_valor[LED_FIZQ - A0] > 15;
+    return leds_valor[LED_FDER - A0] > 10 and leds_valor[LED_FIZQ - A0] > 10;
 }
 
 

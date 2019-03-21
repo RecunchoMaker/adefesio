@@ -113,6 +113,7 @@ void robot_siguiente_accion() {
         case PAUSA_INICIAL:
             Serial.println(F("pausa inicial"));
             accion_ejecuta(ESPERA);
+            laberinto_print();
             robot.estado = EXPLORANDO_INICIAL;
             break;
 
@@ -124,12 +125,12 @@ void robot_siguiente_accion() {
             break;
 
         case PARADO_PARA_GIRO:
-            if (!laberinto_get_pared_derecha(robot.casilla)) {
+            if (!laberinto_hay_pared_derecha(robot.casilla)) {
                 Serial.println(F("giro derecha"));
                 accion_ejecuta(GIRO_DERECHA);
                 robot.orientacion++;
                 robot.estado = PAUSA_INICIAL;
-            } else if (!laberinto_get_pared_izquierda(robot.casilla)) {
+            } else if (!laberinto_hay_pared_izquierda(robot.casilla)) {
                 Serial.println(F("giro izquierda"));
                 accion_ejecuta(GIRO_IZQUIERDA);
                 robot.orientacion--;

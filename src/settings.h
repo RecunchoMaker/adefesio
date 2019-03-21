@@ -74,7 +74,7 @@
 #define LABERINTO_FILAS 5    ///< Número de filas
 #define LABERINTO_COLUMNAS 4 ///< Número de columnas
 ///< Número de casilla en la que se posiciona el robot al inicio de la exploración. Por defecto ultima fila primera columna
-#define CASILLA_INICIAL ((LABERINTO_FILAS-1) * (LABERINTO_COLUMNAS + 1))
+#define CASILLA_INICIAL (LABERINTO_FILAS * LABERINTO_COLUMNAS - LABERINTO_COLUMNAS)
 ///< Casilla solución. Por defecto primera fila ultima columna.
 #define CASILLA_SOLUCION (LABERINTO_COLUMNAS-1)  
 #define ORIENTACION_INICIAL NORTE ///< Orientación del robot al inicio de la exploración

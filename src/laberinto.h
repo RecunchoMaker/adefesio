@@ -1,11 +1,19 @@
+/**
+ * @file laberinto.h
+ *
+ * @brief Cabecera de laberinto.cpp
+ *
+ */
 #ifndef __LABERINTO_H
 #define __LABERINTO_H
 
 #include <Arduino.h>
 #include <settings.h>
 
-#define CASILLA_NORTE (-LABERINTO_COLUMNAS - 1)
-#define CASILLA_SUR (LABERINTO_COLUMNAS + 1)
+
+
+#define CASILLA_NORTE -LABERINTO_COLUMNAS
+#define CASILLA_SUR LABERINTO_COLUMNAS
 #define CASILLA_ESTE 1
 #define CASILLA_OESTE -1
 
@@ -27,9 +35,6 @@ bool laberinto_hay_pared_oeste(uint8_t casilla);
 
 void laberinto_set_visitada(uint8_t casilla);
 void laberinto_get_visitada(uint8_t casilla);
-
-bool laberinto_get_pared_izquierda(uint8_t casilla);
-bool laberinto_get_pared_derecha(uint8_t casilla);
 
 uint8_t laberinto_get_filas();
 uint8_t laberinto_get_columnas();

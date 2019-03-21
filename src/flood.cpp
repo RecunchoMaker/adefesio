@@ -20,7 +20,7 @@ typedef struct {
 volatile tipo_vecinos flood_vecinos; ///< Almacena los vecinos de una casilla
 
 /// Array de distancias de manhatan de cada casilla hasta la casilla solución
-volatile uint8_t flood_distancia[(MAX_FILAS+1) * (MAX_COLUMNAS+1) - 1];
+volatile uint8_t flood_distancia[MAX_FILAS * MAX_COLUMNAS];
 
 
 /**
@@ -34,12 +34,12 @@ void flood_init(uint8_t origen, uint8_t solucion) {
     Serial.print(laberinto_get_filas());
     Serial.print(" x ");
     Serial.println(laberinto_get_columnas());
-    for (idx = 0; idx < (laberinto_get_columnas() + 1)*(laberinto_get_filas() + 1) - 1; idx++) {
-        flood_distancia[idx] = abs ( idx / (laberinto_get_columnas() + 1) -
-                                     solucion / (laberinto_get_columnas() + 1))
+    for (idx = 0; idx < laberinto_get_columnas() * laberinto_get_filas(); idx++) {
+        flood_distancia[idx] = abs ( idx / laberinto_get_columnas()) -
+                                     solucion / laberinto_get_columnas()
                                +
-                               abs ( idx % (laberinto_get_columnas() + 1) -
-                                     solucion % (laberinto_get_columnas() + 1));
+                               abs ( idx % laberinto_get_columnas() -
+                                     solucion % laberinto_get_columnas() );
     }
 
 }
@@ -137,10 +137,8 @@ bool flood_recalcula() {
     uint8_t minimo = 0;
     bool hay_pendientes = false;
 
-    for (uint8_t idx = 0; idx < (laberinto_get_columnas() + 1)*(laberinto_get_filas()) - 1; idx++) {
+    for (uint8_t idx = 0; idx < laberinto_get_columnas() * laberinto_get_filas(); idx++) {
 
-        if ((idx + 1) % (laberinto_get_columnas()+1) == 0)
-            continue; // columna dummy
         if (flood_distancia[idx] == 0) // es la solucion
             continue;
 

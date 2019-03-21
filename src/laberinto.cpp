@@ -1,3 +1,11 @@
+/**
+ * @file laberinto.cpp
+ *
+ * @brief Almacenamiento y tratamiento del laberinto
+ *
+ * El laberinto se guarda en un array plano de filas x columnas.
+ *
+ */
 #include <Arduino.h>
 #include <laberinto.h>
 #include <leds.h>
@@ -5,9 +13,24 @@
 #include <log.h>
 #include <flood.h>
 
-volatile uint8_t num_filas = LABERINTO_FILAS;
-volatile uint8_t num_columnas = LABERINTO_COLUMNAS;
+//@{
+/**
+ * @name variables que almacenan el numero de filas y columnas del laberinto actual
+ */
 
+volatile uint8_t num_filas = LABERINTO_FILAS;       ///< numero de filas
+volatile uint8_t num_columnas = LABERINTO_COLUMNAS; ///< numero de columnas
+//@}
+
+/**
+ * @brief Estructura que representa una única casilla en el laberinto
+ *
+ * - paredN: Es 1 si en la celda se detectó una pared al Norte
+ * - paredO: Es 1 si en la celda se detecó una pared al Oeste
+ * - visitada: Es 1 si la celda ha sido visitada en la exploración
+ * - flood: distancia (cartesiana) hacia la solución del laberinto, teniendo en cuenta las paredes 
+ *   detectadas hasta el momento
+ */
 typedef struct {
     volatile char paredN : 1;
     volatile char paredO : 1;
@@ -15,7 +38,8 @@ typedef struct {
     volatile uint8_t flood;
 } tipo_celda;
 
-volatile tipo_celda celda[(MAX_FILAS+1) * (MAX_COLUMNAS+1) - 1];
+/// Array que contiene todas las celdas del laberinto
+volatile tipo_celda celda[MAX_FILAS * MAX_COLUMNAS];
 
 
 void laberinto_init() {
@@ -25,9 +49,9 @@ void laberinto_init() {
 
 void laberinto_inicializa_valores() {
     int idx = 0;
-    for (idx = 0; idx < (num_columnas + 1)*(num_filas+1) - 1; idx++) {
-        celda[idx].paredN = (idx < num_columnas) or (idx >= num_filas * (num_columnas+1));
-        celda[idx].paredO = (idx % CASILLA_SUR == 0 or idx % CASILLA_SUR == num_columnas);
+    for (idx = 0; idx < num_columnas * num_filas; idx++) {
+        celda[idx].paredN = idx < num_columnas;
+        celda[idx].paredO = idx % num_columnas == 0;
         celda[idx].visitada = 0;
     }
 }
@@ -42,9 +66,9 @@ void laberinto_get_visitada(uint8_t casilla) {
 
 bool laberinto_hay_pared_derecha(uint8_t casilla) {
     switch (robot_get_orientacion()) {
-        case NORTE: return celda[casilla + CASILLA_ESTE].paredO;
+        case NORTE: return casilla % num_columnas == num_columnas - 1 or celda[casilla + CASILLA_ESTE].paredO;
                     break;
-        case ESTE:  return celda[casilla + CASILLA_SUR].paredN;
+        case ESTE:  return casilla < num_columnas or celda[casilla + CASILLA_SUR].paredN;
                     break;
         case SUR:   return celda[casilla].paredO;
                     break;
@@ -59,9 +83,9 @@ bool laberinto_hay_pared_izquierda(uint8_t casilla) {
                     break;
         case ESTE:  return celda[casilla].paredN;
                     break;
-        case SUR:   return celda[casilla + CASILLA_ESTE].paredO;
+        case SUR:   return casilla % num_columnas == num_columnas -1 or celda[casilla + CASILLA_ESTE].paredO;
                     break;
-        default: return celda[casilla + CASILLA_SUR].paredN;
+        default: return casilla < num_columnas or celda[casilla + CASILLA_SUR].paredN;
                     break;
     }
 }
@@ -72,32 +96,6 @@ uint8_t laberinto_get_filas() {
     
 uint8_t laberinto_get_columnas() {
     return num_columnas;
-}
-
-bool laberinto_get_pared_izquierda(uint8_t casilla) {
-    switch (robot_get_orientacion()) {
-        case NORTE: return celda[casilla].paredO;
-                    break;
-        case ESTE:  return celda[casilla].paredN;
-                    break;
-        case SUR:   return celda[casilla+CASILLA_ESTE].paredO;
-                    break;
-        case OESTE: return celda[casilla+CASILLA_SUR].paredN;
-                    break;
-    }
-}
-
-bool laberinto_get_pared_derecha(uint8_t casilla) {
-    switch (robot_get_orientacion()) {
-        case NORTE: return celda[casilla+CASILLA_ESTE].paredO;
-                    break;
-        case ESTE:  return celda[casilla+CASILLA_SUR].paredN;
-                    break;
-        case SUR:   return celda[casilla].paredO;
-                    break;
-        case OESTE: return celda[casilla].paredN;
-                    break;
-    }
 }
 
 
@@ -112,16 +110,16 @@ void laberinto_set_paredes_laterales(uint8_t casilla, bool izq, bool der) {
     Serial.println(der);
     switch (robot_get_orientacion()) {
         case NORTE: celda[casilla].paredO = izq;
-                    celda[casilla+CASILLA_ESTE].paredO = der;
+                    if (casilla % num_columnas != num_columnas-1) celda[casilla+CASILLA_ESTE].paredO = der;
                     break;
         case ESTE: celda[casilla].paredN = izq;
-                    celda[casilla+CASILLA_SUR].paredN = der;
+                    if (casilla > num_columnas) celda[casilla+CASILLA_SUR].paredN = der;
                     break;
         case SUR:   celda[casilla].paredO = der;
-                    celda[casilla+CASILLA_ESTE].paredO = izq;
+                    if (casilla % num_columnas != num_columnas-1) celda[casilla+CASILLA_ESTE].paredO = izq;
                     break;
         case OESTE: celda[casilla].paredN = der;
-                    celda[casilla+CASILLA_SUR].paredN = izq;
+                    if (casilla > num_columnas) celda[casilla+CASILLA_SUR].paredN = izq;
                     break;
     }
 }
@@ -138,15 +136,19 @@ void laberinto_set_pared_frontal(uint8_t casilla, bool frontal) {
     switch(robot_get_orientacion()) {
         case NORTE: celda[casilla].paredN = frontal;
                     break;
-        case ESTE:  celda[casilla + CASILLA_ESTE].paredO = frontal;
+        case ESTE:  if (casilla % num_columnas != num_columnas - 1) celda[casilla + CASILLA_ESTE].paredO = frontal;
                     break;
-        case SUR:   celda[casilla + CASILLA_SUR].paredN = frontal;
+        case SUR:   if (casilla > num_columnas) celda[casilla + CASILLA_SUR].paredN = frontal;
                     break;
         case OESTE: celda[casilla].paredO = frontal;
                     break;
     }
 }
 
+
+/**
+ * @brief Envia al puerto serie una representación gráfica del laberinto
+ */
 void laberinto_print() {
 
     int idx = 0;
@@ -154,24 +156,27 @@ void laberinto_print() {
 
     Serial.print("Orientacion ");
     Serial.println(robot_get_orientacion());
-    while (idx < (num_filas * (num_columnas+1)) or tipo_linea == 0) {
+
+
+
+
+    while (idx < num_filas * num_columnas) {
+
         switch (tipo_linea) {
         case 0: 
-            if (idx % CASILLA_SUR != num_columnas)
-                Serial.print(celda[idx].paredN ? "+-----" : "+     ");
-            else
-                Serial.print("+");
+            Serial.print(celda[idx].paredN ? "+-----" : "+     ");
+            if (idx % num_columnas == num_columnas - 1)
+                Serial.print("+\n");
             break;
-
         case 1:
             Serial.print(celda[idx].paredO ? "|" : " ");
             Serial.print(celda[idx].visitada ? "." : " ");
-            if (idx % CASILLA_SUR != num_columnas) {
-                if (flood_get_distancia(idx)< 100) Serial.print(" ");
-                if (flood_get_distancia(idx)< 10) Serial.print(" ");
-                Serial.print(flood_get_distancia(idx));
-                Serial.print(" ");
-            }
+            if (flood_get_distancia(idx)< 100) Serial.print(" ");
+            if (flood_get_distancia(idx)< 10) Serial.print(" ");
+            Serial.print(flood_get_distancia(idx));
+            Serial.print(" ");
+            if (idx % num_columnas == num_columnas - 1)
+                Serial.print("|\n");
             break;
         case 2:
             Serial.print(celda[idx].paredO ? "| " : "  ");
@@ -185,31 +190,34 @@ void laberinto_print() {
                 }
                 Serial.print(" ");
             } else {
-                Serial.print("    ");
-                //if (idx< 100) Serial.print(" ");
-                //if (idx< 10) Serial.print(" ");
-                //Serial.print(idx);
-                //Serial.print(" ");
+                //Serial.print("    ");
+                if (idx< 100) Serial.print(" ");
+                if (idx< 10) Serial.print(" ");
+                Serial.print(idx);
+                Serial.print(" ");
             }
+
+            if (idx % num_columnas == num_columnas - 1)
+                Serial.print("|\n");
             break;
         }
 
         idx++;
 
-        if (idx % CASILLA_SUR == 0) {
-            Serial.println();
+        if (idx % num_columnas == 0) {
             tipo_linea++;
             if (tipo_linea <= 2) {
-                idx -= CASILLA_SUR;
+                // repito las casillas con otra linea
+                idx -= num_columnas;
             } else {
                 tipo_linea = 0;
             }
         }
     }
-
-    Serial.println();
-
-
+    // Ultima linea
+    for (idx = 0; idx < num_columnas; idx++)
+        Serial.print("+-----");
+    Serial.println("+");
 }
 
 
@@ -218,11 +226,11 @@ bool laberinto_hay_pared_norte(uint8_t casilla) {
 }
 
 bool laberinto_hay_pared_sur(uint8_t casilla) {
-    return celda[casilla + CASILLA_SUR].paredN;
+    return casilla > num_columnas or celda[casilla + CASILLA_SUR].paredN;
 }
 
 bool laberinto_hay_pared_este(uint8_t casilla) {
-    return celda[casilla + CASILLA_ESTE].paredO;
+    return casilla % num_columnas == num_columnas - 1 or celda[casilla + CASILLA_ESTE].paredO;
 }
 bool laberinto_hay_pared_oeste(uint8_t casilla) {
     return celda[casilla].paredO;
