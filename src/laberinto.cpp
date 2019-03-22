@@ -54,6 +54,14 @@ void laberinto_inicializa_valores() {
         celda[idx].paredO = idx % num_columnas == 0;
         celda[idx].visitada = 0;
     }
+
+    // Anadir fila dummy
+    if (num_filas < MAX_FILAS) {
+        celda[num_filas*num_columnas].paredO = 1;
+        for (idx = 0; idx < num_columnas; idx++) {
+            celda[idx + num_filas*num_columnas].paredN = 1;
+        }
+    }
 }
 
 void laberinto_set_visitada(uint8_t casilla) {
@@ -66,13 +74,13 @@ void laberinto_get_visitada(uint8_t casilla) {
 
 bool laberinto_hay_pared_derecha(uint8_t casilla) {
     switch (robot_get_orientacion()) {
-        case NORTE: return casilla % num_columnas == num_columnas - 1 or celda[casilla + CASILLA_ESTE].paredO;
+        case NORTE: return celda[casilla + CASILLA_ESTE].paredO;
                     break;
-        case ESTE:  return casilla < num_columnas or celda[casilla + CASILLA_SUR].paredN;
+        case ESTE:  return celda[casilla + CASILLA_SUR].paredN;
                     break;
         case SUR:   return celda[casilla].paredO;
                     break;
-        default: return celda[casilla].paredN;
+        default:    return celda[casilla].paredN;
                     break;
     }
 }
@@ -83,9 +91,9 @@ bool laberinto_hay_pared_izquierda(uint8_t casilla) {
                     break;
         case ESTE:  return celda[casilla].paredN;
                     break;
-        case SUR:   return casilla % num_columnas == num_columnas -1 or celda[casilla + CASILLA_ESTE].paredO;
+        case SUR:   return celda[casilla + CASILLA_ESTE].paredO;
                     break;
-        default: return casilla < num_columnas or celda[casilla + CASILLA_SUR].paredN;
+        default:    return celda[casilla + CASILLA_SUR].paredN;
                     break;
     }
 }
@@ -110,16 +118,16 @@ void laberinto_set_paredes_laterales(uint8_t casilla, bool izq, bool der) {
     Serial.println(der);
     switch (robot_get_orientacion()) {
         case NORTE: celda[casilla].paredO = izq;
-                    if (casilla % num_columnas != num_columnas-1) celda[casilla+CASILLA_ESTE].paredO = der;
+                    celda[casilla+CASILLA_ESTE].paredO = der;
                     break;
         case ESTE: celda[casilla].paredN = izq;
-                    if (casilla > num_columnas) celda[casilla+CASILLA_SUR].paredN = der;
+                    celda[casilla+CASILLA_SUR].paredN = der;
                     break;
         case SUR:   celda[casilla].paredO = der;
-                    if (casilla % num_columnas != num_columnas-1) celda[casilla+CASILLA_ESTE].paredO = izq;
+                    celda[casilla+CASILLA_ESTE].paredO = izq;
                     break;
         case OESTE: celda[casilla].paredN = der;
-                    if (casilla > num_columnas) celda[casilla+CASILLA_SUR].paredN = izq;
+                    celda[casilla+CASILLA_SUR].paredN = izq;
                     break;
     }
 }
@@ -136,9 +144,9 @@ void laberinto_set_pared_frontal(uint8_t casilla, bool frontal) {
     switch(robot_get_orientacion()) {
         case NORTE: celda[casilla].paredN = frontal;
                     break;
-        case ESTE:  if (casilla % num_columnas != num_columnas - 1) celda[casilla + CASILLA_ESTE].paredO = frontal;
+        case ESTE:  celda[casilla + CASILLA_ESTE].paredO = frontal;
                     break;
-        case SUR:   if (casilla > num_columnas) celda[casilla + CASILLA_SUR].paredN = frontal;
+        case SUR:   celda[casilla + CASILLA_SUR].paredN = frontal;
                     break;
         case OESTE: celda[casilla].paredO = frontal;
                     break;
@@ -226,12 +234,13 @@ bool laberinto_hay_pared_norte(uint8_t casilla) {
 }
 
 bool laberinto_hay_pared_sur(uint8_t casilla) {
-    return casilla > num_columnas or celda[casilla + CASILLA_SUR].paredN;
+    return celda[casilla + CASILLA_SUR].paredN;
 }
 
 bool laberinto_hay_pared_este(uint8_t casilla) {
-    return casilla % num_columnas == num_columnas - 1 or celda[casilla + CASILLA_ESTE].paredO;
+    return celda[casilla + CASILLA_ESTE].paredO;
 }
+
 bool laberinto_hay_pared_oeste(uint8_t casilla) {
     return celda[casilla].paredO;
 }

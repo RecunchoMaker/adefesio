@@ -61,6 +61,7 @@ void _incrementa_casilla() {
             robot.casilla += CASILLA_OESTE;
             break;
     }
+
     laberinto_set_paredes_laterales(robot.casilla, 
             leds_pared_izquierda(),
             leds_pared_derecha()
