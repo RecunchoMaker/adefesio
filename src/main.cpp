@@ -11,6 +11,7 @@
 #include <leds.h>
 #include <laberinto.h>
 #include <flood.h>
+#include <camino.h>
 
 volatile int8_t led = LED_FIZQ;
 ISR (TIMER1_COMPA_vect) {
@@ -52,6 +53,7 @@ void setup() {
     robot_init();
     laberinto_init();
     flood_init(CASILLA_INICIAL, CASILLA_SOLUCION);
+    camino_init(CASILLA_INICIAL, ORIENTACION_INICIAL);
     laberinto_print();
 
     pinMode(A5, INPUT_PULLUP);

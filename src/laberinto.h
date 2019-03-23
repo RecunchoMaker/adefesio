@@ -9,16 +9,17 @@
 
 #include <Arduino.h>
 #include <settings.h>
-
-
-
-#define CASILLA_NORTE -LABERINTO_COLUMNAS
-#define CASILLA_SUR LABERINTO_COLUMNAS
-#define CASILLA_ESTE 1
-#define CASILLA_OESTE -1
+#include <camino.h>
 
 #define MAX_FILAS 16
 #define MAX_COLUMNAS 16
+
+/// Array que contiene los distintos incrementos asociados a direcciones N,E,S y O
+const int8_t incremento[4] = {-LABERINTO_COLUMNAS,
+                               1,
+                               LABERINTO_FILAS,
+                               -1};
+
 
 void laberinto_init();
 void laberinto_inicializa_valores();
@@ -34,7 +35,10 @@ bool laberinto_hay_pared_este(uint8_t casilla);
 bool laberinto_hay_pared_oeste(uint8_t casilla);
 
 void laberinto_set_visitada(uint8_t casilla);
-void laberinto_get_visitada(uint8_t casilla);
+char laberinto_get_visitada(uint8_t casilla);
+tipo_paso laberinto_get_paso(uint8_t casilla);
+
+void laberinto_set_paso(uint8_t casilla, tipo_paso paso);
 
 uint8_t laberinto_get_filas();
 uint8_t laberinto_get_columnas();

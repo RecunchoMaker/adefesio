@@ -23,6 +23,7 @@ void log_motores();
 void log_pasos();
 void log_casilla_pasos_leds();
 void log_cambio_casilla();
+void log_camino();
 
 #endif /* ifndef LOG_H
 

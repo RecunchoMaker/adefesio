@@ -47,20 +47,7 @@ void _incrementa_casilla() {
 
     laberinto_set_visitada(robot.casilla);
 
-    switch (robot.orientacion) {
-        case NORTE:
-            robot.casilla += CASILLA_NORTE;
-            break;
-        case SUR:
-            robot.casilla += CASILLA_SUR;
-            break;
-        case ESTE:
-            robot.casilla += CASILLA_ESTE;
-            break;
-        case OESTE:
-            robot.casilla += CASILLA_OESTE;
-            break;
-    }
+    robot.casilla += incremento[robot.orientacion];
 
     laberinto_set_paredes_laterales(robot.casilla, 
             leds_pared_izquierda(),

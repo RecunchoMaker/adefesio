@@ -12,6 +12,7 @@
 #include <encoders.h>
 #include <laberinto.h>
 #include <bateria.h>
+#include <camino.h>
 
 /**
  * @brief Muestra en una línea la diferencia de valores de sensor con led encedido/apagado
@@ -117,3 +118,20 @@ void log_cambio_casilla() {
     Serial.println(robot_get_casilla());
     log_leds();
 }
+
+
+/**
+ * @brief Imprime lista de casillas de un camino desde el origen
+ */
+void log_camino() {
+
+    Serial.print("camino: ");
+    camino_empieza();
+	while (!camino_es_fin()) {
+		Serial.print(camino_get_casilla_actual());
+		Serial.print(", ");
+		camino_siguiente_casilla();
+	}
+    Serial.println(camino_get_casilla_actual());
+}
+

@@ -11,6 +11,7 @@
 #include <leds.h>
 #include <robot.h>
 #include <log.h>
+#include <camino.h>
 #include <flood.h>
 
 //@{
@@ -28,6 +29,7 @@ volatile uint8_t num_columnas = LABERINTO_COLUMNAS; ///< numero de columnas
  * - paredN: Es 1 si en la celda se detectó una pared al Norte
  * - paredO: Es 1 si en la celda se detecó una pared al Oeste
  * - visitada: Es 1 si la celda ha sido visitada en la exploración
+ * - paso: Guarda el paso correspondiente en el caso de que la celda pertenezca a un camino
  * - flood: distancia (cartesiana) hacia la solución del laberinto, teniendo en cuenta las paredes 
  *   detectadas hasta el momento
  */
@@ -35,11 +37,14 @@ typedef struct {
     volatile char paredN : 1;
     volatile char paredO : 1;
     volatile char visitada: 1;
+    volatile tipo_paso paso: 2;
     volatile uint8_t flood;
 } tipo_celda;
 
 /// Array que contiene todas las celdas del laberinto
 volatile tipo_celda celda[MAX_FILAS * MAX_COLUMNAS];
+
+
 
 
 void laberinto_init() {
@@ -68,15 +73,25 @@ void laberinto_set_visitada(uint8_t casilla) {
     celda[casilla].visitada = true;
 }
 
-void laberinto_get_visitada(uint8_t casilla) {
+char laberinto_get_visitada(uint8_t casilla) {
     return celda[casilla].visitada;
 }
 
+void laberinto_set_paso(uint8_t casilla, tipo_paso paso) {
+    celda[casilla].paso = paso;
+}
+
+
+tipo_paso laberinto_get_paso(uint8_t casilla) {
+    return celda[casilla].paso;
+}
+
+
 bool laberinto_hay_pared_derecha(uint8_t casilla) {
     switch (robot_get_orientacion()) {
-        case NORTE: return celda[casilla + CASILLA_ESTE].paredO;
+        case NORTE: return celda[casilla + incremento[ESTE]].paredO;
                     break;
-        case ESTE:  return celda[casilla + CASILLA_SUR].paredN;
+        case ESTE:  return celda[casilla + incremento[SUR]].paredN;
                     break;
         case SUR:   return celda[casilla].paredO;
                     break;
@@ -91,9 +106,9 @@ bool laberinto_hay_pared_izquierda(uint8_t casilla) {
                     break;
         case ESTE:  return celda[casilla].paredN;
                     break;
-        case SUR:   return celda[casilla + CASILLA_ESTE].paredO;
+        case SUR:   return celda[casilla + incremento[ESTE]].paredO;
                     break;
-        default:    return celda[casilla + CASILLA_SUR].paredN;
+        default:    return celda[casilla + incremento[SUR]].paredN;
                     break;
     }
 }
@@ -118,16 +133,16 @@ void laberinto_set_paredes_laterales(uint8_t casilla, bool izq, bool der) {
     Serial.println(der);
     switch (robot_get_orientacion()) {
         case NORTE: celda[casilla].paredO = izq;
-                    celda[casilla+CASILLA_ESTE].paredO = der;
+                    celda[casilla+incremento[ESTE]].paredO = der;
                     break;
         case ESTE: celda[casilla].paredN = izq;
-                    celda[casilla+CASILLA_SUR].paredN = der;
+                    celda[casilla+incremento[SUR]].paredN = der;
                     break;
         case SUR:   celda[casilla].paredO = der;
-                    celda[casilla+CASILLA_ESTE].paredO = izq;
+                    celda[casilla+incremento[OESTE]].paredO = izq;
                     break;
         case OESTE: celda[casilla].paredN = der;
-                    celda[casilla+CASILLA_SUR].paredN = izq;
+                    celda[casilla+incremento[SUR]].paredN = izq;
                     break;
     }
 }
@@ -144,9 +159,9 @@ void laberinto_set_pared_frontal(uint8_t casilla, bool frontal) {
     switch(robot_get_orientacion()) {
         case NORTE: celda[casilla].paredN = frontal;
                     break;
-        case ESTE:  celda[casilla + CASILLA_ESTE].paredO = frontal;
+        case ESTE:  celda[casilla + incremento[ESTE]].paredO = frontal;
                     break;
-        case SUR:   celda[casilla + CASILLA_SUR].paredN = frontal;
+        case SUR:   celda[casilla + incremento[SUR]].paredN = frontal;
                     break;
         case OESTE: celda[casilla].paredO = frontal;
                     break;
@@ -187,7 +202,16 @@ void laberinto_print() {
                 Serial.print("|\n");
             break;
         case 2:
-            Serial.print(celda[idx].paredO ? "| " : "  ");
+            Serial.print(celda[idx].paredO ? "|" : " ");
+            if (celda[idx].paso == PASO_RECTO)
+                Serial.print("r");
+            else if (celda[idx].paso == PASO_DER)
+                Serial.print("d");
+            else if (celda[idx].paso == PASO_IZQ)
+                Serial.print("i");
+            else if (celda[idx].paso == PASO_STOP)
+                Serial.print("x");
+
             if (idx == robot_get_casilla()) {
                 Serial.print("  ");
                 switch(robot_get_orientacion()) {
@@ -234,11 +258,11 @@ bool laberinto_hay_pared_norte(uint8_t casilla) {
 }
 
 bool laberinto_hay_pared_sur(uint8_t casilla) {
-    return celda[casilla + CASILLA_SUR].paredN;
+    return celda[casilla + incremento[SUR]].paredN;
 }
 
 bool laberinto_hay_pared_este(uint8_t casilla) {
-    return celda[casilla + CASILLA_ESTE].paredO;
+    return celda[casilla + incremento[ESTE]].paredO;
 }
 
 bool laberinto_hay_pared_oeste(uint8_t casilla) {

@@ -7,6 +7,7 @@
 
 #include <Arduino.h>
 #include <laberinto.h>
+#include <robot.h>
 
 /**
  * brief Estructura para almacenar los vecinos de una casilla
@@ -61,13 +62,13 @@ void flood_encuentra_vecinos(uint8_t casilla) {
 
     flood_vecinos.tamano = 0;
     if (!laberinto_hay_pared_norte(casilla))
-        flood_vecinos.casilla[flood_vecinos.tamano++] = casilla + CASILLA_NORTE;
+        flood_vecinos.casilla[flood_vecinos.tamano++] = casilla + incremento[NORTE];
     if (!laberinto_hay_pared_sur(casilla))
-        flood_vecinos.casilla[flood_vecinos.tamano++] = casilla + CASILLA_SUR;
+        flood_vecinos.casilla[flood_vecinos.tamano++] = casilla + incremento[SUR];
     if (!laberinto_hay_pared_este(casilla))
-        flood_vecinos.casilla[flood_vecinos.tamano++] = casilla + CASILLA_ESTE;
+        flood_vecinos.casilla[flood_vecinos.tamano++] = casilla + incremento[ESTE];
     if (!laberinto_hay_pared_oeste(casilla))
-        flood_vecinos.casilla[flood_vecinos.tamano++] = casilla + CASILLA_OESTE;
+        flood_vecinos.casilla[flood_vecinos.tamano++] = casilla + incremento[OESTE];
 
     /*
     Serial.print("vecinos de ");
