@@ -44,6 +44,7 @@
 #include <motores.h>
 #include <robot.h>
 #include <leds.h>
+#include <camino.h>
 
 /// Máxima longitud permitida para un comando
 #define COMANDO_MAX_TAMANO 16
@@ -92,6 +93,10 @@ char const *comando_dr = "dr";       ///< set distancia entre ruedas
 
 char const *comando_l1 = "l1";       ///< activar leds
 char const *comando_l0 = "l0";       ///< desactivar leds
+
+char const *comando_pr = "pr";       ///< anadir PASO_RECTO a camino
+char const *comando_pd = "pd";       ///< anadir PASO_DER a camino
+char const *comando_pi = "pi";       ///< anadir PASO_IZQ a camino
 
 //@}
 
@@ -166,6 +171,9 @@ void _procesa_comando(char *token) {
     _procesa_comando_simple(comando_l0, token, leds_desactiva);
     _procesa_comando_simple(comando_l1, token, leds_activa);
     _procesa_comando_simple(comando_go, token, comando_set_go);
+    _procesa_comando_simple(comando_pr, token, camino_anadir_paso_recto);
+    _procesa_comando_simple(comando_pd, token, camino_anadir_paso_der);
+    _procesa_comando_simple(comando_pi, token, camino_anadir_paso_izq);
 }
 
 

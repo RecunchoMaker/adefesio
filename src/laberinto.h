@@ -17,7 +17,7 @@
 /// Array que contiene los distintos incrementos asociados a direcciones N,E,S y O
 const int8_t incremento[4] = {-LABERINTO_COLUMNAS,
                                1,
-                               LABERINTO_FILAS,
+                               LABERINTO_COLUMNAS,
                                -1};
 
 

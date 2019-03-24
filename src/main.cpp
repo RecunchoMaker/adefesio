@@ -53,7 +53,7 @@ void setup() {
     robot_init();
     laberinto_init();
     flood_init(CASILLA_INICIAL, CASILLA_SOLUCION);
-    camino_init(CASILLA_INICIAL, ORIENTACION_INICIAL);
+    camino_init();
     laberinto_print();
 
     pinMode(A5, INPUT_PULLUP);
@@ -66,20 +66,25 @@ void loop() {
 
     comando_prompt();
 
+    robot_init();
+    camino_init();
+
     while (!comando_get_go()) {
         comando_lee_serial();
         if (leds_get_leds_activados()) {
             log_leds();
         }
     }
-    leds_activa();
 
+    leds_activa();
+    /*
     while((leds_get_valor(LED_DER) < 200 and
         leds_get_valor(LED_IZQ) < 200)) {
             log_leds();
             while(timer1_get_cuenta() < 1000);
             timer1_reset_cuenta();
     }
+    */
 
     Serial.println("GO!");
 
@@ -89,7 +94,7 @@ void loop() {
 
     int32_t aux;
 
-    while (1) {
+    while (robot_get_estado() != PARADO) {
 
         log_casilla_pasos_leds();
 

@@ -3,7 +3,7 @@
 #define __ROBOT_H
 
 enum tipo_orientacion {NORTE, ESTE, SUR, OESTE};
-enum tipo_estado {PARADO, PARADO_PARA_GIRO, PAUSA_PRE_GIRO, EXPLORANDO_INICIAL, PAUSA_INICIAL, EXPLORANDO};
+enum tipo_estado {PARADO, ESPERANDO, DECIDE, AVANZANDO, FIN};
 
 
 void robot_set_amax(float aceleracion_maxima);

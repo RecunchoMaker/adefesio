@@ -19,9 +19,8 @@
  *
  * @todo Actualmente sólo estan consideradas las acciones necesarias para la exploración
  */
-enum tipo_accion {ARRANCAR, PARAR, RECTO, ESPERA,
-                  CURVA_DERECHA, CURVA_IZQUIERDA,
-                  GIRO_DERECHA, GIRO_IZQUIERDA, GIRO_180};
+enum tipo_accion {ARRANCA, PARA, AVANZA, ESPERA,
+                  GIRA_DER, GIRA_IZQ, GIRA_180};
 
 float accion_get_distancia();
 float accion_get_aceleracion();

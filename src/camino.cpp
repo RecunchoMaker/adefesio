@@ -14,6 +14,9 @@
 #include <Arduino.h>
 #include <camino.h>
 #include <laberinto.h>
+#include <robot.h>
+#include <settings.h>
+#include <log.h>
 
 
 uint8_t camino_casilla_origen;
@@ -22,7 +25,18 @@ uint8_t camino_casilla_actual;
 uint8_t camino_orientacion_actual;
 
 /**
+ * @brief Inicializa un camino en la celda inicial
+ */
+void camino_init() {
+    camino_init(CASILLA_INICIAL, ORIENTACION_INICIAL);
+}
+
+
+/**
  * @brief Inicializa un camino, en un origen y una orientacion
+ *
+ * @param origen casilla inicial del camino
+ * @param origen orientacion inicial del camino
  */
 void camino_init(uint8_t origen, uint8_t orientacion) {
     camino_casilla_origen = origen;
@@ -99,13 +113,37 @@ void camino_anadir_paso(tipo_paso paso) {
     if (paso == PASO_IZQ) camino_orientacion_actual--;
     else if (paso == PASO_DER) camino_orientacion_actual++;
     camino_orientacion_actual = camino_orientacion_actual % 4;
+    Serial.print("orientacion actual");
+    Serial.println(camino_orientacion_actual);
 
-    Serial.print("paso = ");
-    Serial.print(paso);
-    Serial.print(" y paso de ");
-    Serial.print(camino_casilla_actual);
     camino_casilla_actual += incremento[camino_orientacion_actual];
-    Serial.print(" a ");
-    Serial.println(camino_casilla_actual);
     laberinto_set_paso(camino_casilla_actual, PASO_STOP);
+}
+
+
+/**
+ * @brief Anade paso recto
+ */
+void camino_anadir_paso_recto() {
+    camino_anadir_paso(PASO_RECTO);
+    laberinto_print();
+    log_camino();
+}
+
+/**
+ * @brief Anade paso izq
+ */
+void camino_anadir_paso_izq() {
+    camino_anadir_paso(PASO_IZQ);
+    laberinto_print();
+    log_camino();
+}
+
+/**
+ * @brief Anade paso der 
+ */
+void camino_anadir_paso_der() {
+    camino_anadir_paso(PASO_DER);
+    laberinto_print();
+    log_camino();
 }

@@ -33,8 +33,23 @@ void robot_init() {
 
     robot.casilla = CASILLA_INICIAL;
     robot.orientacion = ORIENTACION_INICIAL;
+    robot.estado = PARADO;
 
 } 
+
+
+void robot_inicia_exploracion() {
+
+    robot.estado = DECIDE;
+    robot.casilla = CASILLA_INICIAL;
+    robot.orientacion = ORIENTACION_INICIAL;
+    
+    laberinto_set_paredes_laterales(robot.casilla, 
+            leds_pared_izquierda(), leds_pared_derecha());
+
+    robot_siguiente_accion();
+}
+
 
 /**
  * @brief Incrementa la casilla actual en función de la orientacion
@@ -59,7 +74,75 @@ void _incrementa_casilla() {
     log_cambio_casilla();
 }
 
+
 void robot_siguiente_accion() {
+
+    /// @todo control del incremento de casilla... double check esto
+    /*
+    if (accion_cambio_casilla()) {
+        _incrementa_casilla();
+    }
+    */
+    if (robot.estado == AVANZANDO) {
+        _incrementa_casilla();
+    }
+
+    int8_t paso = laberinto_get_paso(robot.casilla);
+
+    if (robot.estado == PARADO) {
+        motores_parar();
+    } else if (robot.estado == ESPERANDO) {
+        Serial.println("E-ESPERANDO");
+        accion_ejecuta(ESPERA);
+        robot.estado = DECIDE;
+    } else if (robot.estado == DECIDE) {
+        Serial.println("E-DECIDE");
+        switch (paso) {
+            case PASO_RECTO: accion_ejecuta(ARRANCA);
+                             Serial.println("ARRANCA");
+                             robot.estado = AVANZANDO;
+                             break;
+            case PASO_DER:   accion_ejecuta(GIRA_DER);
+                             Serial.println("GIRA_DER");
+                             robot.estado = ESPERANDO;
+                             robot.orientacion++;
+                             laberinto_set_paso(robot.casilla, PASO_RECTO);
+                             break;
+            case PASO_IZQ:   accion_ejecuta(GIRA_IZQ);
+                             Serial.println("GIRA_IZQ");
+                             robot.estado = ESPERANDO;
+                             robot.orientacion--;
+                             laberinto_set_paso(robot.casilla, PASO_RECTO);
+                             break;
+            case PASO_STOP:  accion_ejecuta(GIRA_180);
+                             Serial.println("GIRA_180");
+                             robot.estado = FIN;
+                             robot.orientacion--;
+                             robot.orientacion--;
+                             break;
+        }
+    } else if (robot.estado == AVANZANDO) {
+        Serial.println("E-AVANZANDO");
+        if (paso == PASO_RECTO) {
+            accion_ejecuta(AVANZA);
+            Serial.println("AVANZA");
+            robot.estado = AVANZANDO;
+        } else {
+            accion_ejecuta(PARA);
+            Serial.println("PARA");
+            robot.estado = ESPERANDO;
+        }
+    } else if (robot.estado == FIN) {
+        Serial.println("E-FIN");
+        accion_ejecuta(ESPERA);
+        robot.estado = PARADO;
+    }
+
+}
+
+/*
+
+void robot_siguiente_accion2() {
 
     if (accion_cambio_casilla()) {
         _incrementa_casilla();
@@ -137,6 +220,7 @@ void robot_siguiente_accion() {
         robot.estado = PARADO;
     }
 }
+*/
 
 int32_t robot_get_pasos_recorridos() {
     return pasos_recorridos;
@@ -152,18 +236,6 @@ tipo_orientacion robot_get_orientacion() {
 
 tipo_estado robot_get_estado() {
     return robot.estado;
-}
-
-void robot_inicia_exploracion() {
-
-    robot.estado = PAUSA_INICIAL;
-    robot.casilla = CASILLA_INICIAL;
-    robot.orientacion = ORIENTACION_INICIAL;
-    
-    laberinto_set_paredes_laterales(robot.casilla, 
-            leds_pared_izquierda(), leds_pared_derecha());
-
-    robot_siguiente_accion();
 }
 
 float robot_get_casilla_offset() {
@@ -185,7 +257,7 @@ int16_t robot_get_desvio_centro() {
 
     // Al principio de un movimiento en recta, se utilizan las paredes disponibles
     // solo si estamos al principio de la casilla
-    if (robot.estado == EXPLORANDO) {
+    if (robot.estado == AVANZANDO) {
         if (laberinto_hay_pared_derecha(robot.casilla)) desvio += leds_get_desvio_derecho();
         if (laberinto_hay_pared_izquierda(robot.casilla)) desvio += leds_get_desvio_izquierdo();
     }

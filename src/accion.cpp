@@ -198,8 +198,10 @@ void accion_set(float dist,
 
     timer1_reset_cuenta();
 
-    Serial.print("po: ");
-    Serial.println(pasos_objetivo);
+    if (pasos_objetivo > 0) {
+        Serial.print("po: ");
+        Serial.println(pasos_objetivo);
+    }
     /// @todo es realmente necesario resetear los encoders, y si lo es, este es el sitio?
     encoders_reset_posicion_total();
 }
@@ -211,30 +213,29 @@ void accion_set(float dist,
  * @param accion Tipo de acción a ejectuar
  */
 void accion_ejecuta(tipo_accion accion) {
-    if (accion == ARRANCAR) {
+    if (accion == ARRANCA) {
         Serial.println(F("* Arranca"));
         accion_set(LABERINTO_LONGITUD_CASILLA/2, amax, amax, ve, ve, RADIO_INFINITO);
-    } else if (accion ==  PARAR) {
-        Serial.println(F("* Para"));
+    } else if (accion ==  PARA) {
         /// @todo Introduzco correccion ad-hoc si la pared es demasiado cercvana
         if (leds_pared_enfrente()) {
         accion_set(LABERINTO_LONGITUD_CASILLA/2 - ((leds_get_valor(LED_FIZQ) + leds_get_valor(LED_FDER)) * LONGITUD_PASO_ENCODER / 2), amax, afin, ve, ACCION_V0, RADIO_INFINITO);
         } else {
           accion_set(LABERINTO_LONGITUD_CASILLA/2, amax, afin, ve, ACCION_V0, RADIO_INFINITO);
         }
-    } else if (accion == RECTO) {
+    } else if (accion == AVANZA) {
         Serial.println(F("* Continua recto"));
         accion_set(LABERINTO_LONGITUD_CASILLA, amax, amax, ve, ve, RADIO_INFINITO);
     } else if (accion == ESPERA) {
         Serial.println(F("* Pausa"));
         accion_set(0, 0, 0, 0, 0, 0.05); // espera 0.05 segundos
-    } else if (accion == GIRO_DERECHA) {
+    } else if (accion == GIRA_DER) {
         Serial.println(F("* Gira derecha"));
         accion_set(-PI*motores_get_distancia_entre_ruedas()/4.0, amax, amax, vg, ACCION_V0, GIRO_DERECHA_TODO); // gira 90
-    } else if (accion == GIRO_IZQUIERDA) {
+    } else if (accion == GIRA_IZQ) {
         Serial.println(F("* Gira izquierda"));
         accion_set(PI*motores_get_distancia_entre_ruedas()/4.0, amax, amax, vg , ACCION_V0, GIRO_IZQUIERDA_TODO); // gira 90
-    } else if (accion == GIRO_180) {
+    } else if (accion == GIRA_180) {
         Serial.println(F("* Gira 180 grados"));
         accion_set(PI*motores_get_distancia_entre_ruedas()/2.0, amax, amax, vg, ACCION_V0, GIRO_IZQUIERDA_TODO); // gira 180g
     } else {
