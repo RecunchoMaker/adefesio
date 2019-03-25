@@ -16,7 +16,7 @@
 #define RADIO_RUEDAS 0.021692
 
 /// Distancia entre las ruedas, en metros
-#define DISTANCIA_ENTRE_RUEDAS (0.063753)
+#define DISTANCIA_ENTRE_RUEDAS (0.065753)
 //@}
 
 //@{
@@ -57,7 +57,7 @@
 #define KD_LINEAL -0.0 ///< Constante D por defecto para pid de velocidad lineal
 #define KI_LINEAL -0.0 ///< Constante I por defecto para pid de velocidad lineal
 
-#define KP_PASILLO 0.00008 ///< Constante por defecto P para corrección entre pasillos
+#define KP_PASILLO 0.00007 ///< Constante por defecto P para corrección entre pasillos
 #define KI_PASILLO 0.1 ///< Constante por defecto D para corrección entre pasillos
 //@}
 
@@ -74,10 +74,11 @@
 #define LABERINTO_FILAS 3    ///< Número de filas
 #define LABERINTO_COLUMNAS 4 ///< Número de columnas
 ///< Número de casilla en la que se posiciona el robot al inicio de la exploración. Por defecto ultima fila primera columna
-#define CASILLA_INICIAL (LABERINTO_FILAS * LABERINTO_COLUMNAS - LABERINTO_COLUMNAS)
+//#define CASILLA_INICIAL (LABERINTO_FILAS * LABERINTO_COLUMNAS - LABERINTO_COLUMNAS)
+#define CASILLA_INICIAL 7
 ///< Casilla solución. Por defecto primera fila ultima columna.
 #define CASILLA_SOLUCION (LABERINTO_COLUMNAS-1)  
-#define ORIENTACION_INICIAL NORTE ///< Orientación del robot al inicio de la exploración
+#define ORIENTACION_INICIAL OESTE ///< Orientación del robot al inicio de la exploración
 #define LABERINTO_LONGITUD_CASILLA 0.18 //< Longitud en metros de cada casilla
 //@}
 

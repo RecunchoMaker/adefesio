@@ -24,6 +24,7 @@
 
 void leds_init();
 void leds_calibra();
+void leds_recalibra();
 void leds_activa();
 void leds_desactiva();
 bool leds_get_leds_activados();
@@ -36,6 +37,7 @@ int16_t leds_get_valor_encendido(int8_t sensor);
 int16_t leds_get_valor_d(int8_t sensor);
 int16_t leds_get_desvio_izquierdo();
 int16_t leds_get_desvio_derecho();
+int16_t leds_get_valor_medio();
 
 float leds_distancia_frontal();
 bool leds_pared_enfrente();

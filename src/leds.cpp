@@ -32,7 +32,7 @@ volatile int16_t leds_valor_encendido[4];
 /// Valor diferencial entre la actual y la anterior lectura de leds
 volatile int16_t leds_valor_d[4];
 
-/// Valor medio de los diodos laterales en la casilla inicial
+/// Valor de los diodos que se corresponde con el valor devuelto en el centro de un pasillo
 volatile int16_t leds_valor_medio;
 
 
@@ -74,6 +74,14 @@ void leds_calibra() {
     Serial.println(leds_valor_medio);
 }
 
+
+/**
+ * @brief Intenta actualizar el valor medio que define el centro del pasillo
+ */
+void leds_recalibra() {
+    if (leds_pared_derecha() and leds_pared_izquierda() and abs(leds_get_valor(LED_IZQ)-leds_get_valor(LED_DER)) < 10)
+        leds_valor_medio = (leds_get_valor(LED_IZQ) + leds_get_valor(LED_DER)) / 2;
+}
 
 /**
  * @brief Establece el sistema de leds como activado
@@ -250,6 +258,12 @@ int16_t leds_get_desvio_izquierdo() {
 }
 
 
+/**
+ * @brief Devuelve el vlor medio
+ */
+int16_t leds_get_valor_medio() {
+    return leds_valor_medio;
+}
 /**
  * @brief Devuelve un valor estimado hasta una pared frontal
  *

@@ -264,14 +264,26 @@ void motores_actualiza_velocidad() {
             // El radio es una constante especial para indicar giro sobre sí mismo
             velocidad_lineal_objetivo_left = -velocidad_lineal_objetivo;
             velocidad_lineal_objetivo_right = velocidad_lineal_objetivo;
+
+            // Corrección para igualar los pasos
+            potencia_left -= 0.001 * (encoders_get_posicion_total_left() + encoders_get_posicion_total_right());
+            potencia_right += 0.001 *(encoders_get_posicion_total_left() + encoders_get_posicion_total_right());
+
         } else if (radio == GIRO_DERECHA_TODO) {
             // El radio es una constante especial para indicar giro sobre sí mismo
             velocidad_lineal_objetivo_left = velocidad_lineal_objetivo;
             velocidad_lineal_objetivo_right = -velocidad_lineal_objetivo;
+
+            // Corrección para igualar los pasos
+            potencia_left += 0.001 * (encoders_get_posicion_total_left() + encoders_get_posicion_total_right());
+            potencia_right -= 0.001 *(encoders_get_posicion_total_left() + encoders_get_posicion_total_right());
+
         } else if (radio < 1) { 
+            // Giro en redondo
             velocidad_angular_objetivo = velocidad_lineal_objetivo / radio;
             velocidad_lineal_objetivo_left = velocidad_angular_objetivo * (radio + distancia_entre_ruedas/2);
             velocidad_lineal_objetivo_right = velocidad_angular_objetivo * (radio - distancia_entre_ruedas/2);
+
         } else {
             // suponemos que un radio a 1m es siempre una recta
             velocidad_lineal_objetivo_left = velocidad_lineal_objetivo;

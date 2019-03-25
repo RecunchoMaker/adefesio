@@ -1,6 +1,6 @@
 PIO := pio run
 LOGFILE := /tmp/datos.dat
-BTADDR := 98:D3:32:10:90:95
+BTADDR := 98:D3:34:90:B6:1D
 BTPORT := /dev/rfcomm0
 USBPORT := /dev/ttyUSB0
 

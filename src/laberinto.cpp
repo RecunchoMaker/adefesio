@@ -124,13 +124,6 @@ uint8_t laberinto_get_columnas() {
 
 void laberinto_set_paredes_laterales(uint8_t casilla, bool izq, bool der) {
 
-    Serial.print("laterales ");
-    Serial.print(casilla);
-    Serial.print("(");
-    Serial.print(robot_get_orientacion());
-    Serial.print("): ");
-    Serial.print(izq);
-    Serial.println(der);
     switch (robot_get_orientacion()) {
         case NORTE: celda[casilla].paredO = izq;
                     celda[casilla+incremento[ESTE]].paredO = der;

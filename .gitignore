@@ -5,3 +5,4 @@
 *.stl
 docs/html
 scripts/.ropeproject
+.ropeproject

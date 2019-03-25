@@ -68,15 +68,23 @@ void loop() {
 
     robot_init();
     camino_init();
-
+    leds_activa();
     while (!comando_get_go()) {
         comando_lee_serial();
+        /*
         if (leds_get_leds_activados()) {
-            log_leds();
+            log_casilla_pasos_leds();
         }
-    }
+        */
+        laberinto_set_paredes_laterales(robot_get_casilla(),
+                leds_pared_izquierda(), leds_pared_derecha());
+        leds_recalibra();
+        if (leds_get_valor_medio() > 0)
+            digitalWrite(BATERIA_LED_PIN, HIGH);
 
-    leds_activa();
+    }
+    digitalWrite(BATERIA_LED_PIN, LOW);
+
     /*
     while((leds_get_valor(LED_DER) < 200 and
         leds_get_valor(LED_IZQ) < 200)) {
@@ -86,13 +94,11 @@ void loop() {
     }
     */
 
-    Serial.println("GO!");
+    delayMicroseconds(32000); // un margen para actualizar los leds
 
+    cli();
     robot_inicia_exploracion();
-
-    uint8_t casilla = 0;
-
-    int32_t aux;
+    sei();
 
     while (robot_get_estado() != PARADO) {
 
@@ -100,7 +106,7 @@ void loop() {
 
     }
     
-    motores_set_potencia(0.0, 0);
     leds_desactiva();
+    laberinto_print();
     Serial.println("fin");
 }

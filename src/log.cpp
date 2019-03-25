@@ -89,7 +89,7 @@ void log_pasos() {
 }
 
 /**
- * @brief Muestra casilla/pasos recorridos/leds
+ * @brief Muestra casilla/pasos recorridos/leds y desvios
  *
  * @note Expresión regular para filtrar log: egrep "^#1.[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+$" | cut -b 4-
  */
@@ -106,6 +106,10 @@ void log_casilla_pasos_leds() {
     Serial.print(leds_get_valor(LED_FDER));
     Serial.print("\t");
     Serial.print(leds_get_valor(LED_DER));
+    Serial.print("\t");
+    Serial.print(leds_get_valor_medio());
+    Serial.print("\t");
+    Serial.print(robot_get_desvio_centro());
     Serial.println();
 }
 
