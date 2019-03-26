@@ -69,6 +69,16 @@ void loop() {
     robot_init();
     camino_init();
     leds_activa();
+
+    while (!comando_get_go()) {
+        comando_lee_serial();
+    }
+    while (true) {
+        log_casilla_pasos_leds();
+        timer1_reset_cuenta();
+        while(timer1_get_cuenta() < 1000);
+    }
+
     while (!comando_get_go()) {
         comando_lee_serial();
         /*

@@ -90,10 +90,6 @@ void _incrementa_casilla() {
 
 
 void robot_siguiente_accion() {
-    if (robot.estado == DECIDE) {
-        Serial.println(F("OSTIA PUTA"));
-    }
-
     /// @todo control del incremento de casilla... double check esto
     /*
     if (accion_cambio_casilla()) {
