@@ -74,9 +74,9 @@ void loop() {
         comando_lee_serial();
     }
     while (true) {
-        log_casilla_pasos_leds();
+        Serial.println(leds_get_distancia(LED_DER));
         timer1_reset_cuenta();
-        while(timer1_get_cuenta() < 1000);
+        while(timer1_get_cuenta() < 100);
     }
 
     while (!comando_get_go()) {

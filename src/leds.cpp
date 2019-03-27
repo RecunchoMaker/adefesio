@@ -35,6 +35,14 @@ volatile int16_t leds_valor_d[4];
 /// Valor de los diodos que se corresponde con el valor devuelto en el centro de un pasillo
 volatile int16_t leds_valor_medio;
 
+// Constantes generadas por leds_obtener_matriz_segmentos.py
+#define LEDS_BITS_INDICE_MUESTRA 6
+#define LEDS_ESPACIO_MUESTRA 64
+/// Constantes para interpolar la distancia a partir de las lecturas analógicas
+const uint8_t leds_segmentos[17] = { \
+     199 , 97 , 69 , 54 , 44 , 37 , 32 , 27 ,  \
+     24 , 21 , 18 , 15 , 13 , 11 , 8 , 2 ,  \
+     0 };
 
 /**
  * @brief Inicializa pins y establece el sistema de leds como desactivado
@@ -265,17 +273,15 @@ int16_t leds_get_valor_medio() {
     return leds_valor_medio;
 }
 /**
- * @brief Devuelve un valor estimado hasta una pared frontal
- *
- * @todo Evaluar curva característica de respuesta
+ * @brief Devuelve un valor estimado en mm a partir de la lectura analogica
  */
-float leds_distancia_frontal() {
-    if (leds_valor[LED_FDER - A0] + leds_valor[LED_FIZQ - A0] > 800) return 0.01;
-    if (leds_valor[LED_FDER - A0] + leds_valor[LED_FIZQ - A0] > 700) return 0.015;
-    if (leds_valor[LED_FDER - A0] + leds_valor[LED_FIZQ - A0] > 600) return 0.02;
-    if (leds_valor[LED_FDER - A0] + leds_valor[LED_FIZQ - A0] > 500) return 0.035;
-    if (leds_valor[LED_FDER - A0] + leds_valor[LED_FIZQ - A0] > 400) return 0.05;
-    if (leds_valor[LED_FDER - A0] + leds_valor[LED_FIZQ - A0] > 300) return 0.07;
-    if (leds_valor[LED_FDER - A0] + leds_valor[LED_FIZQ - A0] > 200) return 0.08;
-    return 0.10;
+float leds_get_distancia(int8_t led) {
+    
+    int16_t lectura = leds_valor[led - A0];
+    int8_t indice = leds_valor[led - A0] >> LEDS_BITS_INDICE_MUESTRA;
+    float pendiente = (float) (leds_segmentos[indice+1] - leds_segmentos[indice]) / LEDS_ESPACIO_MUESTRA;
+    int16_t espacio = (1 << LEDS_BITS_INDICE_MUESTRA) * indice;
+
+    return (float) leds_segmentos[indice] + pendiente * (lectura - espacio);
+
 }

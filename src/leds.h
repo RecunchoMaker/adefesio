@@ -39,7 +39,7 @@ int16_t leds_get_desvio_izquierdo();
 int16_t leds_get_desvio_derecho();
 int16_t leds_get_valor_medio();
 
-float leds_distancia_frontal();
+float leds_get_distancia(int8_t led);
 bool leds_pared_enfrente();
 bool leds_pared_derecha();
 bool leds_pared_izquierda();
