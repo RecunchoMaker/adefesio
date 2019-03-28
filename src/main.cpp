@@ -68,42 +68,22 @@ void loop() {
 
     robot_init();
     camino_init();
-    leds_activa();
+
+
+    float dd = 0.00034;
+    float vv = 0.30;
+    Serial.print("calculo: ");
+    Serial.println(dd * PERIODO_CICLO / vv, 9);
+    Serial.println((dd / vv ) * PERIODO_CICLO, 9);
 
     while (!comando_get_go()) {
         comando_lee_serial();
-    }
-    while (true) {
-        Serial.println(leds_get_distancia(LED_DER));
-        timer1_reset_cuenta();
-        while(timer1_get_cuenta() < 100);
-    }
-
-    while (!comando_get_go()) {
-        comando_lee_serial();
-        /*
         if (leds_get_leds_activados()) {
             log_casilla_pasos_leds();
         }
-        */
-        laberinto_set_paredes_laterales(robot_get_casilla(),
-                leds_pared_izquierda(), leds_pared_derecha());
-        leds_recalibra();
-        if (leds_get_valor_medio() > 0)
-            digitalWrite(BATERIA_LED_PIN, HIGH);
-
     }
-    digitalWrite(BATERIA_LED_PIN, LOW);
 
-    /*
-    while((leds_get_valor(LED_DER) < 200 and
-        leds_get_valor(LED_IZQ) < 200)) {
-            log_leds();
-            while(timer1_get_cuenta() < 1000);
-            timer1_reset_cuenta();
-    }
-    */
-
+    leds_activa();
     delayMicroseconds(32000); // un margen para actualizar los leds
 
     cli();
@@ -112,7 +92,8 @@ void loop() {
 
     while (robot_get_estado() != PARADO) {
 
-        log_casilla_pasos_leds();
+        //log_casilla_pasos_leds();
+        log_variables_trayectoria();
 
     }
     

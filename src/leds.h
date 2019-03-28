@@ -34,12 +34,14 @@ void leds_actualiza_valor(int8_t sensor);
 int16_t leds_get_valor(int8_t sensor);
 int16_t leds_get_valor_apagado(int8_t sensor);
 int16_t leds_get_valor_encendido(int8_t sensor);
-int16_t leds_get_valor_d(int8_t sensor);
+float leds_get_distancia_d(int8_t sensor);
+float leds_get_distancia(int8_t sensor);
+float leds_get_distancia_kalman(int8_t sensor);
 int16_t leds_get_desvio_izquierdo();
 int16_t leds_get_desvio_derecho();
 int16_t leds_get_valor_medio();
 
-float leds_get_distancia(int8_t led);
+float leds_interpola_distancia(int16_t lectura);
 bool leds_pared_enfrente();
 bool leds_pared_derecha();
 bool leds_pared_izquierda();

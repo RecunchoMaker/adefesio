@@ -109,7 +109,7 @@ void log_casilla_pasos_leds() {
     Serial.print("\t");
     Serial.print(leds_get_valor_medio());
     Serial.print("\t");
-    Serial.print(robot_get_desvio_centro());
+    Serial.print(robot_get_desvio_centro(), 9);
     Serial.println();
 }
 
@@ -139,3 +139,31 @@ void log_camino() {
     Serial.println(camino_get_casilla_actual());
 }
 
+/**
+ * @brief Imprime variables relacionadas con el ajuste de trayectoria en rectas
+ */
+void log_variables_trayectoria() {
+    Serial.print(F("#2 "));
+    /*
+    Serial.print(robot_get_casilla());
+    Serial.print(F("\t"));
+    Serial.print(robot_get_pasos_recorridos());
+    Serial.print(F("\t"));
+    */
+    Serial.print(leds_get_distancia_kalman(LED_IZQ), 5);
+    Serial.print("\t");
+    Serial.print(leds_get_distancia_d(LED_IZQ), 5);
+    Serial.print("\t");
+    Serial.print(robot_get_desvio_centro(), 9);
+    Serial.print("\t");
+    Serial.print(motores_get_angulo(), 9);
+    Serial.print("\t");
+    Serial.print(motores_get_velocidad_lineal_objetivo_left(), 9);
+    Serial.print("\t");
+    Serial.print(motores_get_velocidad_lineal_objetivo_right(), 9);
+    Serial.print("\t");
+    Serial.print(motores_get_radio_aux(), 9);
+    Serial.println();
+
+
+}

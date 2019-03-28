@@ -17,6 +17,8 @@
 #include <Arduino.h>
 #include <leds.h>
 
+#define KALMAN_GAIN 0.3
+
 /// Flag que controla si la secuencia de encendido de leds está activa
 volatile bool leds_activados = false;
 
@@ -29,8 +31,14 @@ volatile int16_t leds_valor_apagado[4];
 /// Contiene para cada led el valor del sensor cuando el led está encendido. Sólo a efectos de depuración.
 volatile int16_t leds_valor_encendido[4];
 
-/// Valor diferencial entre la actual y la anterior lectura de leds
-volatile int16_t leds_valor_d[4];
+/// Contiene el valor de la distancia en mm de la última lectura
+volatile float leds_distancia[4];
+
+/// Valor diferencial en mm entre la actual y la anterior lectura de leds
+volatile float leds_distancia_d[4];
+
+/// Valor acumulado de la distancia para el filtro kalman
+volatile float leds_distancia_kalman[4];
 
 /// Valor de los diodos que se corresponde con el valor devuelto en el centro de un pasillo
 volatile int16_t leds_valor_medio;
@@ -162,10 +170,16 @@ void leds_actualiza_valor(int8_t led) {
     leds_lectura1 = analogRead(LED_SENSOR);
     leds_apaga(led);
 
-    leds_valor_d[led - A0] = leds_lectura0 - leds_lectura1 - leds_valor[led - A0];
     leds_valor[led - A0] = leds_lectura0 - leds_lectura1;
     leds_valor_encendido[led - A0] = leds_lectura1;
     leds_valor_apagado[led - A0] = leds_lectura0;
+
+    float distancia_anterior = leds_distancia_kalman[led - A0];
+    leds_distancia[led - A0] = leds_interpola_distancia(leds_valor[led-A0]);
+
+    leds_distancia_kalman[led- A0] = KALMAN_GAIN * leds_distancia[led - A0] + (1-KALMAN_GAIN) * distancia_anterior;
+
+    leds_distancia_d[led - A0] = leds_distancia_kalman[led - A0] - distancia_anterior;
 }
 
 /**
@@ -200,13 +214,34 @@ int16_t leds_get_valor_encendido(int8_t led) {
 
 
 /**
- * @brief Devuelve el valor diferencial entre la actual y la anterior lectura de leds
+ * @brief Devuelve la distancia en mm del led
  *
  * @param led pin digital del led consultado
  *
  */
-int16_t leds_get_valor_d(int8_t led) {
-    return leds_valor_d[led-A0];
+float leds_get_distancia(int8_t led) {
+    return leds_distancia[led-A0];
+}
+
+
+/**
+ * @brief Devuelve la distancia en mm del led después de aplicar el filtro Kalman
+ *
+ * @param led pin digital del led consultado
+ *
+ */
+float leds_get_distancia_kalman(int8_t led) {
+    return leds_distancia_kalman[led-A0];
+}
+
+/**
+ * @brief Devuelve el valor diferencial en mm entre la actual lectura y la anterior
+ *
+ * @param led pin digital del led consultado
+ *
+ */
+float leds_get_distancia_d(int8_t led) {
+    return leds_distancia_d[led-A0];
 }
 
 
@@ -273,15 +308,14 @@ int16_t leds_get_valor_medio() {
     return leds_valor_medio;
 }
 /**
- * @brief Devuelve un valor estimado en mm a partir de la lectura analogica
+ * @brief Devuelve un valor estimado en mm a partir de una lectura del ADC
  */
-float leds_get_distancia(int8_t led) {
+float leds_interpola_distancia(int16_t lectura) {
     
-    int16_t lectura = leds_valor[led - A0];
-    int8_t indice = leds_valor[led - A0] >> LEDS_BITS_INDICE_MUESTRA;
+    int8_t indice = lectura >> LEDS_BITS_INDICE_MUESTRA;
     float pendiente = (float) (leds_segmentos[indice+1] - leds_segmentos[indice]) / LEDS_ESPACIO_MUESTRA;
     int16_t espacio = (1 << LEDS_BITS_INDICE_MUESTRA) * indice;
 
-    return (float) leds_segmentos[indice] + pendiente * (lectura - espacio);
+    return 0.001 * (leds_segmentos[indice] + pendiente * (lectura - espacio));
 
 }

@@ -32,6 +32,9 @@ volatile tipo_robot robot;
 
 volatile uint8_t mejor_casilla; ///< Mejor casilla calculada desde la posición actual
 
+volatile float desvio; ///< auxilar;
+
+
 void robot_init() {
     
     encoders_reset_posicion_total();
@@ -265,8 +268,7 @@ float robot_get_casilla_offset() {
  * Lo usa motores_actualiza_velocidad() para corregir la desviación
  *
  */
-int16_t robot_get_desvio_centro() {
-    int16_t desvio = 0;
+float robot_get_desvio_centro() {
 
     // Al principio de un movimiento en recta, se utilizan las paredes disponibles
     // solo si estamos al principio de la casilla
@@ -275,9 +277,16 @@ int16_t robot_get_desvio_centro() {
            desvio = 0;
         } else { 
         // <-- inicio casilla --><-- mitad casilla --><-- final casilla -->
-           leds_recalibra();
-           if (laberinto_hay_pared_derecha(robot.casilla)) desvio += leds_get_desvio_derecho();
-           if (laberinto_hay_pared_izquierda(robot.casilla)) desvio += leds_get_desvio_izquierdo();
+            desvio = laberinto_hay_pared_izquierda(robot.casilla) ? 
+                leds_get_distancia_d(LED_IZQ) / (PERIODO_CICLO * motores_get_velocidad_lineal_objetivo())
+                : 0;
+            //float tan_angulo_der = laberinto_hay_pared_derecha(robot.casilla) ? 
+            //    leds_get_distancia_d(LED_DER) / (motores_get_velocidad_lineal_objetivo() * PERIODO_CICLO)
+            //    : 0;
+            //Serial.println(leds_get_distancia_d(LED_IZQ),8);
+            //Serial.println(tan_angulo_izq, 6);
+
+            //desvio = tan_angulo_der - tan_angulo_izq;
         }
     }
 
@@ -378,5 +387,18 @@ void robot_control() {
 
 
     }
+
+    ///@todo
+    /*
+    if (leds_get_distancia(LED_IZQ) > 0.1 or leds_get_distancia(LED_DER) > 0.1) {
+        Serial.println("emergencia!");
+        log_leds();
+        Serial.println(leds_get_distancia(LED_IZQ));
+        Serial.println(leds_get_distancia(LED_DER));
+        robot.estado = PARADO;
+        motores_parar();
+    }
+    */
+    
 
 }

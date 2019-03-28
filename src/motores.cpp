@@ -47,6 +47,7 @@ volatile float velocidad_angular_objetivo = 0;
 
 /// Rado de giro
 volatile float radio = 99999; // evita division por 0 en el init
+volatile float radio_aux = 99999; // var temporal para correccion de angulo en pasillos
 
 
 //@{
@@ -56,6 +57,8 @@ volatile float error_lineal_right = 0;
 
 volatile float error_acumulado_left = 0;
 volatile float error_acumulado_right = 0;
+
+volatile float angulo = 0;
 //@}
 
 
@@ -78,6 +81,12 @@ void motores_set_ki_pasillo(float kp) { ki_pasillo = kp; }
 
 float motores_get_velocidad_lineal_objetivo() {
     return velocidad_lineal_objetivo;
+}
+float motores_get_radio_aux() {
+    return radio_aux;
+}
+float motores_get_angulo() {
+    return angulo;
 }
 void motores_set_velocidad_lineal_objetivo(float velocidad) {
     velocidad_lineal_objetivo = velocidad;
@@ -286,14 +295,26 @@ void motores_actualiza_velocidad() {
 
         } else {
             // suponemos que un radio a 1m es siempre una recta
-            velocidad_lineal_objetivo_left = velocidad_lineal_objetivo;
-            velocidad_lineal_objetivo_right = velocidad_lineal_objetivo;
-
-            // Suponemos que estamos en un pasillo
             
-            potencia_left += kp_pasillo * robot_get_desvio_centro();
-            potencia_right -= kp_pasillo * robot_get_desvio_centro();
+            angulo = (0.0 - robot_get_desvio_centro());
+            if (angulo > 0.3) angulo = 0.3;
+            if (angulo < -0.3) angulo = -0.3;
+            //    Serial.print("a: ");
+            //Serial.print(angulo, 8);
 
+            if (angulo != 0.0) {
+                radio_aux = 0.1 / angulo; // convergemos a 10 cm
+
+                velocidad_angular_objetivo = radio_aux == 0 ? 0 : velocidad_lineal_objetivo / radio_aux;
+
+                velocidad_lineal_objetivo_left = velocidad_angular_objetivo * (radio_aux + distancia_entre_ruedas/2);
+                velocidad_lineal_objetivo_right = velocidad_angular_objetivo * (radio_aux - distancia_entre_ruedas/2);
+
+            } else {
+
+                velocidad_lineal_objetivo_left = velocidad_lineal_objetivo;
+                velocidad_lineal_objetivo_right = velocidad_lineal_objetivo;
+            }
 
         }
 
