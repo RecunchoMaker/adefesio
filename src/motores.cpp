@@ -296,14 +296,14 @@ void motores_actualiza_velocidad() {
         } else {
             // suponemos que un radio a 1m es siempre una recta
             
-            angulo = (0.0 - robot_get_desvio_centro());
-            if (angulo > 0.3) angulo = 0.3;
-            if (angulo < -0.3) angulo = -0.3;
+            angulo = robot_get_desvio_centro();
+            //if (angulo > 0.3) angulo = 0.3;
+            //if (angulo < -0.3) angulo = -0.3;
             //    Serial.print("a: ");
             //Serial.print(angulo, 8);
 
             if (angulo != 0.0) {
-                radio_aux = 0.1 / angulo; // convergemos a 10 cm
+                radio_aux = 0.2 / angulo; // convergemos a 10 cm
 
                 velocidad_angular_objetivo = radio_aux == 0 ? 0 : velocidad_lineal_objetivo / radio_aux;
 

@@ -167,7 +167,7 @@ void laberinto_set_pared_frontal(uint8_t casilla, bool frontal) {
  */
 void laberinto_print() {
 
-    int idx = 0;
+    uint8_t idx = 0;
     uint8_t tipo_linea = 0;
 
     Serial.print("Orientacion ");

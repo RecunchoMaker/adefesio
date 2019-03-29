@@ -1,67 +1,28 @@
+/**
+ * @file timer1.cpp
+ *
+ * @brief Control del TIMER1 de arduino
+ *
+ * Se utiliza el TIMER1 en modo CTC
+ *
+ * @see https://recunchomaker.github.io/adefesio/timers-en-atmega328p
+ * @see http://www.avrbeginners.net/architecture/timers/timers.html
+ * @see https://sites.google.com/site/qeewiki/books/avr-guide/timers-on-the-atmega328
+ */
 #include <Arduino.h>
 #include <timer1.h>
+#include <settings.h>
 
 volatile uint32_t timer_cuenta;
 volatile int8_t timer_estado;
 
+/**
+ * @brief Inicializa los registros necesarios para la interrupción de tiempo
+ *
+ * @param period periodo del timer en segundos
+ * @param prescaler constante de preescalado del timer (1,8, 256 o 1024)
+ */
 void timer1_init(float period, uint16_t prescaler) {
-
-    /*
-     * http://www.avrbeginners.net/architecture/timers/timers.html#timsk_tifr
-     * https://sites.google.com/site/qeewiki/books/avr-guide/timers-on-the-atmega328
-     *
-     ********************************************************************
-     * TCCR1A
-     ********************************************************************
-     * bit       7      6      5      4      3      2      1      0
-     *        COM1A1 COM1A0 COM1B1 COM1B0    -      -    PWM11  PWM12
-     *
-     *        COM1A: Compare Output Mode : controla si y como el Compare
-     *               Output pin se conecta al timer 1
-     *           0      0    Disconnect Pin OC1 from Timer/Counter 1
-     *           0      1    Toggle OC1 on compare match
-     *           1      0    Clear OC1 on compare match
-     *           1      1    Set OC1 on compare match
-     ********************************************************************
-     * TCCR1B
-     ********************************************************************
-     * bit       7      6      5      4      3      2      1      0
-     *        ICNC1   ICES1    -    WGM13  WGM12  CS12   CS11   CS10
-     *
-     * Modos
-     * WGM13 WGM12 WGM11 WGM10
-     *   0     1     0     0     Modo 4: CTC con OCR1A 
-     *   1     1     0     0     Modo 12: CTC con ICR1
-     *        
-     * Preescalers
-     * CSn2 CSn1 CSn0
-     *   0    0    0   No clock source
-     *   0    0    1   clk/1 (no preescale)
-     *   0    1    0   clk/8
-     *   0    1    1   clk/64
-     *   1    0    0   clk/256
-     *   1    0    1   clk/1024
-     *   1    1    0   fuente reloj externa (falling)
-     *   1    1    1   fuente reloj externa (rising)
-     *
-     ********************************************************************
-     * TIMSK (Timer/Counter Interrupt Mask Register)
-     ********************************************************************
-     * bit       7      6      5      4      3      2      1      0
-     *                       ICIE1    -      -    OCIE1B OCIE1A TOIE0
-     *
-     ********************************************************************
-     * OCR1 (Output Compare Register)
-     ********************************************************************
-     * The Output Compare register can be used to generate an
-     * Interrupt after the number of clock ticks written to it.
-     * It is permanently compared to TCNT1. When both match, the
-     * compare match interrupt is triggered. If the time between
-     * interrupts is supposed to be equal every time, the CTC bit
-     * has to be set (TCCR1B). It is a 16-bit register
-     * OCRn =  [ (clock_speed / Prescaler_value) * Desired_time_in_Seconds ] - 1
-     *      =  [ 16000000 * periodo / preescalado ] 1
-     */
 
     // borramos registro de control timer1 (TimerCounter Control Register)
     TCCR1A = 0;
@@ -101,20 +62,40 @@ void timer1_init(float period, uint16_t prescaler) {
     timer_estado = 0;
 }
 
-void timer1_incrementa_cuenta() {
-    timer_cuenta++;
-    timer_estado++;
-    if (timer_estado == 4) timer_estado = 0;
-}
 
-void timer1_reset_cuenta() {
-    timer_cuenta=0;
-}
-
+/**
+ * @brief Getter de timer_cuenta
+ */
 uint32_t timer1_get_cuenta() {
     return timer_cuenta;
 }
 
+
+/**
+ * @brief Getter de timer_estado
+ */
 int8_t timer1_get_estado() {
     return timer_estado;
+}
+
+
+/**
+ * @brief Resetea la cuenta de entradas en la interrupción
+ */
+void timer1_reset_cuenta() {
+    timer_cuenta=0;
+}
+
+
+/**
+ * @brief Incrementa el contador de entradas en la interrupción y gestiona el estado
+ *
+ * Es necesario incluir esta función en la rutina de interrupción del timer, para
+ * poder llevar la cuenta de las veces que se ha entrado (desde el último reseteo).
+ * También gestiona un número estado secuencial cíclico entre 0 y NUMERO_ESTADOS-1
+ */
+void timer1_incrementa_cuenta() {
+    timer_cuenta++;
+    timer_estado++;
+    if (timer_estado == NUMERO_ESTADOS) timer_estado = 0;
 }

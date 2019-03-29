@@ -40,9 +40,6 @@ volatile float leds_distancia_d[4];
 /// Valor acumulado de la distancia para el filtro kalman
 volatile float leds_distancia_kalman[4];
 
-/// Valor de los diodos que se corresponde con el valor devuelto en el centro de un pasillo
-volatile int16_t leds_valor_medio;
-
 // Constantes generadas por leds_obtener_matriz_segmentos.py
 #define LEDS_BITS_INDICE_MUESTRA 6
 #define LEDS_ESPACIO_MUESTRA 64
@@ -66,9 +63,10 @@ void leds_init() {
     pinMode(LED_SENSOR, INPUT);
 
     leds_activa();
-    sei();
-    leds_calibra();
-    cli();
+    //@todo es necesarioe esto?
+    //sei();
+    //leds_calibra();
+    //cli();
     leds_desactiva();
 
     leds_apaga(LED_IZQ);
@@ -77,27 +75,6 @@ void leds_init() {
     leds_apaga(LED_FDER);
 }
 
-
-/**
- * @brief Intenta calibrar los valores de los diodos en función de la lectura en la casilla inicial
- */
-void leds_calibra() {
-    leds_actualiza_valor(LED_IZQ);
-    delayMicroseconds(30000);
-    leds_actualiza_valor(LED_DER);
-    leds_valor_medio = (leds_get_valor(LED_IZQ) + leds_get_valor(LED_DER)) / 2;
-    Serial.print("valor medio leds: ");
-    Serial.println(leds_valor_medio);
-}
-
-
-/**
- * @brief Intenta actualizar el valor medio que define el centro del pasillo
- */
-void leds_recalibra() {
-    if (leds_pared_derecha() and leds_pared_izquierda() and abs(leds_get_valor(LED_IZQ)-leds_get_valor(LED_DER)) < 10)
-        leds_valor_medio = (leds_get_valor(LED_IZQ) + leds_get_valor(LED_DER)) / 2;
-}
 
 /**
  * @brief Establece el sistema de leds como activado
@@ -285,28 +262,6 @@ bool leds_pared_derecha() {
 }
 
 
-/**
- * @brief Devuelve el desvio a la derecha en funcion del valor medio de la calibracion
- */
-int16_t leds_get_desvio_derecho() {
-    return (leds_valor_medio - leds_valor[LED_DER - A0]);
-}
-
-
-/**
- * @brief Devuelve el desvio a la izquierda en funcion del valor medio de la calibracion
- */
-int16_t leds_get_desvio_izquierdo() {
-    return (leds_valor[LED_IZQ - A0] - leds_valor_medio);
-}
-
-
-/**
- * @brief Devuelve el vlor medio
- */
-int16_t leds_get_valor_medio() {
-    return leds_valor_medio;
-}
 /**
  * @brief Devuelve un valor estimado en mm a partir de una lectura del ADC
  */

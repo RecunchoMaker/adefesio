@@ -126,7 +126,7 @@ void camino_anadir_paso(tipo_paso paso) {
  */
 void camino_anadir_paso_recto() {
     camino_anadir_paso(PASO_RECTO);
-    laberinto_print();
+    //laberinto_print();
     log_camino();
 }
 

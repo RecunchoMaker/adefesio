@@ -107,8 +107,6 @@ void log_casilla_pasos_leds() {
     Serial.print("\t");
     Serial.print(leds_get_valor(LED_DER));
     Serial.print("\t");
-    Serial.print(leds_get_valor_medio());
-    Serial.print("\t");
     Serial.print(robot_get_desvio_centro(), 9);
     Serial.println();
 }

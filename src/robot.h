@@ -1,3 +1,8 @@
+/**
+ * @file robot.h
+ *
+ * @brief Cabecera de robot.cpp
+ */
 
 #ifndef __ROBOT_H
 #define __ROBOT_H
