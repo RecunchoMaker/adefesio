@@ -13,13 +13,13 @@
  */
 
 /// Radio de las ruedas motrices, en metros
-#define RADIO_RUEDAS 0.021692
+#define RADIO_RUEDAS 0.022992
 
 /// Distancia entre las ruedas, en metros
-#define DISTANCIA_ENTRE_RUEDAS (0.065753)
+#define DISTANCIA_ENTRE_RUEDAS (0.068753)
 
-/// Distancia del led al centro del robot
-#define LEDS_DISTANCIA 0.02
+/// Anchura robot
+#define ANCHURA_ROBOT 0.085
 //@}
 
 //@{
@@ -62,6 +62,9 @@
 
 #define KP_PASILLO 0.00007 ///< Constante por defecto P para corrección entre pasillos
 #define KI_PASILLO 0.1 ///< Constante por defecto D para corrección entre pasillos
+
+/// Define la distancia en la que estimamos incorporarnos al centro en trayectorias rectas
+#define DISTANCIA_CONVERGENCIA 0.09
 //@}
 
 //@{
@@ -74,8 +77,8 @@
 #define CASILLA_INICIAL 224 ///< Número de casilla en la que se posiciona el robot al inicio de la exploración
 #define CASILLA_SOLUCION 14
 */
-#define LABERINTO_FILAS 6    ///< Número de filas
-#define LABERINTO_COLUMNAS 6 ///< Número de columnas
+#define LABERINTO_FILAS 5    ///< Número de filas
+#define LABERINTO_COLUMNAS 4 ///< Número de columnas
 ///< Número de casilla en la que se posiciona el robot al inicio de la exploración. Por defecto ultima fila primera columna
 #define CASILLA_INICIAL (LABERINTO_FILAS * LABERINTO_COLUMNAS - LABERINTO_COLUMNAS)
 //#define CASILLA_INICIAL 7

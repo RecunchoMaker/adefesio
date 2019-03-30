@@ -17,7 +17,7 @@
 #include <Arduino.h>
 #include <leds.h>
 
-#define KALMAN_GAIN 0.3
+#define KALMAN_GAIN 0.1
 
 /// Flag que controla si la secuencia de encendido de leds está activa
 volatile bool leds_activados = false;
@@ -231,7 +231,7 @@ float leds_get_distancia_d(int8_t led) {
  * @todo Establecer el valor umbral de otra manera
  */
 bool leds_pared_enfrente() {
-    return leds_valor[LED_FDER - A0] > 10 and leds_valor[LED_FIZQ - A0] > 10;
+    return leds_valor[LED_FDER - A0] > 100 and leds_valor[LED_FIZQ - A0] > 100;
 }
 
 

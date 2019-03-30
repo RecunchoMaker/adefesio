@@ -69,19 +69,17 @@ def es_linea_correcta(linea):
 
     # Tiene el numero de valores correcto?
     linea = linea[1].split('\t')
-    if len(linea) <> 8:
+    if len(linea) <> 7:
         return False
 
-    # Son todos los valores enteros?
     try:
         linea = [int(linea[0]),
                  int(linea[1]),
-                 int(linea[2]),
-                 int(linea[3]),
-                 int(linea[4]),
-                 int(linea[5]),
-                 int(linea[6]),
-                 int(linea[7])]
+                 float(linea[2]),
+                 float(linea[3]),
+                 float(linea[4]),
+                 float(linea[5]),
+                 float(linea[6])]
     except:
         return False
 
@@ -93,12 +91,11 @@ def formatea(linea):
     l = linea.split(" ")[1].split('\t')
     return [int(l[0]),
             int(l[1]),
-            int(l[2]),
-            int(l[3]),
-            int(l[4]),
-            int(l[5]),
-            int(l[6]),
-            int(l[7])]
+            float(l[2]),
+            float(l[3]),
+            float(l[4]),
+            float(l[5]),
+            float(l[6])]
 
 
 """ Devuelve una lista con las lineas correctas del fichero de entrada """
@@ -168,7 +165,7 @@ def accion_es_giro(accion):
 """ Devuelve una accion en lista formateada como el log original """
 def log(accion):
     for a in accion:
-        print "%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t" % (a[0],a[1],a[2],a[3],a[4],a[5],a[6],a[7])
+        print "%d\t%d\t%f\t%f\t%f\t%f\t%f\t" % (a[0],a[1],a[2],a[3],a[4],a[5],a[6])
 
 
 def main():

@@ -16,15 +16,16 @@ set grid
 # obtiene los titulos de las columnas del fichero de datos
 set key autotitle columnhead
 
+set angles degrees
+
 # para mostrar nombres de colores: show palette colornames
 plot '/tmp/datos-1.dat' using ($1*10) linecolor "pink" title "casilla" with lines
 replot '/tmp/datos-1.dat' using 2 linecolor "pink" title "pasos" with points 
-replot '/tmp/datos-1.dat' using 3 linecolor "magenta" title "IZQ" with points
-replot '/tmp/datos-1.dat' using 4  linecolor "magenta" title "FIZQ" with lines
-replot '/tmp/datos-1.dat' using 5 linecolor "red" title "FDER" with lines
-replot '/tmp/datos-1.dat' using 6 linecolor "red" title "DER" with points
-replot '/tmp/datos-1.dat' using 7 linecolor "bisque" title "medio" with lines
-replot '/tmp/datos-1.dat' using 8 linecolor "slategrey" title "desvio" with points
+replot '/tmp/datos-1.dat' using ($3 * 1000) linecolor "magenta" title "IZQ (mm)" with points
+replot '/tmp/datos-1.dat' using ($4 * 1000) linecolor "magenta" title "FIZQ (mm)" with lines
+replot '/tmp/datos-1.dat' using ($5 * 1000) linecolor "red" title "FDER (mm)" with lines
+replot '/tmp/datos-1.dat' using ($6 * 1000) linecolor "red" title "DER (mm)" with points
+replot '/tmp/datos-1.dat' using (10*atan($7)) linecolor "slategrey" title "desvio" with points
 
 # Espera a que se pulse una tecla
 pause mouse keypress

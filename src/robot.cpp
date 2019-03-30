@@ -195,43 +195,35 @@ float robot_get_casilla_offset() {
  * Lo usa motores_actualiza_velocidad() para corregir la desviación
  *
  */
-float robot_get_desvio_centro() {
+float robot_get_angulo_desvio() {
 
     // Al principio de un movimiento en recta, se utilizan las paredes disponibles
     // solo si estamos al principio de la casilla
-    if (robot.estado != 99) {
-        if (pasos_recorridos + robot.casilla_offset > 999)  {
-           desvio = 0;
-        } else { 
-            // alfa final
-            desvio = 0;
-            if (laberinto_hay_pared_izquierda(robot.casilla)) {
-                desvio += ((LABERINTO_LONGITUD_CASILLA/2.0) - leds_get_distancia_kalman(LED_IZQ) - LEDS_DISTANCIA) / 0.2;
-                desvio -= leds_get_distancia_d(LED_IZQ) / (PERIODO_CICLO * motores_get_velocidad_lineal_objetivo());
+    // if (robot.estado != 99) {
+    if (robot.estado == AVANZANDO) {
+        desvio = 0;
+        
+            //if (pasos_recorridos + robot.casilla_offset < 200 and laberinto_hay_pared_izquierda(robot.casilla)) {
+            if (leds_get_distancia_kalman(LED_IZQ) < 0.08 and leds_get_distancia_d(LED_IZQ) < 0.002) {
+                desvio += (-leds_get_distancia_kalman(LED_IZQ) - (ANCHURA_ROBOT / 2.0) + (LABERINTO_LONGITUD_CASILLA/2.0)) / DISTANCIA_CONVERGENCIA;
+                desvio -= 0.05 * (leds_get_distancia_d(LED_IZQ) / (PERIODO_CICLO * motores_get_velocidad_lineal_objetivo()));
             }
-            /*
-            if (laberinto_hay_pared_derecha(robot.casilla)) {
-                desvio += 0.2 / ((LABERINTO_LONGITUD_CASILLA/2.0) - leds_get_distancia_kalman(LED_DER) - LEDS_DISTANCIA);
-                desvio -= leds_get_distancia_d(LED_DER) / (PERIODO_CICLO * motores_get_velocidad_lineal_objetivo());
+            //if (laberinto_hay_pared_derecha(robot.casilla)) {
+            if (leds_get_distancia_kalman(LED_DER) < 0.08 and leds_get_distancia_d(LED_DER) < 0.002) {
+                desvio += (leds_get_distancia_kalman(LED_DER) + (ANCHURA_ROBOT / 2.0) - (LABERINTO_LONGITUD_CASILLA/2.0)) / DISTANCIA_CONVERGENCIA;
+                desvio += 0.05 * (leds_get_distancia_d(LED_DER) / (PERIODO_CICLO * motores_get_velocidad_lineal_objetivo()));
+                ///@todo esto no es correcto
+                if (leds_pared_izquierda()) desvio /= 2.0;  // si contamos dos veces
             }
-            */
 
-            //float tan_angulo_der = laberinto_hay_pared_derecha(robot.casilla) ? 
-            //    leds_get_distancia_d(LED_DER) / (motores_get_velocidad_lineal_objetivo() * PERIODO_CICLO)
-            //    : 0;
-            //Serial.println(leds_get_distancia_d(LED_IZQ),8);
-            //Serial.println(tan_angulo_izq, 6);
-
-            //desvio = tan_angulo_der - tan_angulo_izq;
-        }
     }
 
-    return 0.1 * desvio;
+    return desvio;
 }
 
 void robot_control() {
 
-    if (robot.estado == PARADO) return;
+    //if (robot.estado == PARADO) return;
     // control de posicion
     /** TODO: esto no se entiende
     if (accion_get_radio()!=GIRO_DERECHA_TODO and accion_get_radio()!=GIRO_IZQUIERDA_TODO and robot.casilla_offset + pasos_recorridos * LONGITUD_PASO_ENCODER > LABERINTO_LONGITUD_CASILLA) {

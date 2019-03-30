@@ -85,9 +85,6 @@ float motores_get_velocidad_lineal_objetivo() {
 float motores_get_radio_aux() {
     return radio_aux;
 }
-float motores_get_angulo() {
-    return angulo;
-}
 void motores_set_velocidad_lineal_objetivo(float velocidad) {
     velocidad_lineal_objetivo = velocidad;
 }
@@ -296,16 +293,11 @@ void motores_actualiza_velocidad() {
         } else {
             // suponemos que un radio a 1m es siempre una recta
             
-            angulo = robot_get_desvio_centro();
-            //if (angulo > 0.3) angulo = 0.3;
-            //if (angulo < -0.3) angulo = -0.3;
-            //    Serial.print("a: ");
-            //Serial.print(angulo, 8);
+            angulo = robot_get_angulo_desvio();
 
             if (angulo != 0.0) {
-                radio_aux = 0.2 / angulo; // convergemos a 10 cm
-
-                velocidad_angular_objetivo = radio_aux == 0 ? 0 : velocidad_lineal_objetivo / radio_aux;
+                velocidad_angular_objetivo = angulo * motores_get_velocidad_lineal_objetivo() / DISTANCIA_CONVERGENCIA;
+                radio_aux = velocidad_lineal_objetivo / velocidad_angular_objetivo;
 
                 velocidad_lineal_objetivo_left = velocidad_angular_objetivo * (radio_aux + distancia_entre_ruedas/2);
                 velocidad_lineal_objetivo_right = velocidad_angular_objetivo * (radio_aux - distancia_entre_ruedas/2);

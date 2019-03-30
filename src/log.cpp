@@ -99,15 +99,15 @@ void log_casilla_pasos_leds() {
     Serial.print(F("\t"));
     Serial.print(robot_get_pasos_recorridos());
     Serial.print(F("\t"));
-    Serial.print(leds_get_valor(LED_IZQ));
+    Serial.print(leds_get_distancia(LED_IZQ),4);
     Serial.print("\t");
-    Serial.print(leds_get_valor(LED_FIZQ));
+    Serial.print(leds_get_distancia(LED_FIZQ),4);
     Serial.print("\t");
-    Serial.print(leds_get_valor(LED_FDER));
+    Serial.print(leds_get_distancia(LED_FDER),4);
     Serial.print("\t");
-    Serial.print(leds_get_valor(LED_DER));
+    Serial.print(leds_get_distancia(LED_DER),4);
     Serial.print("\t");
-    Serial.print(robot_get_desvio_centro(), 9);
+    Serial.print(robot_get_angulo_desvio(), 9);
     Serial.println();
 }
 
@@ -150,11 +150,13 @@ void log_variables_trayectoria() {
     */
     Serial.print(leds_get_distancia_kalman(LED_IZQ), 5);
     Serial.print("\t");
+    Serial.print(leds_get_distancia_kalman(LED_DER), 5);
+    Serial.print("\t");
     Serial.print(leds_get_distancia_d(LED_IZQ), 5);
     Serial.print("\t");
-    Serial.print(robot_get_desvio_centro(), 9);
+    Serial.print(leds_get_distancia_d(LED_DER), 5);
     Serial.print("\t");
-    Serial.print(motores_get_angulo(), 9);
+    Serial.print(robot_get_angulo_desvio(), 9);
     Serial.print("\t");
     Serial.print(motores_get_velocidad_lineal_objetivo_left(), 9);
     Serial.print("\t");
