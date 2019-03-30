@@ -82,14 +82,10 @@ void loop() {
     delayMicroseconds(32000); // un margen para actualizar los leds
 
     robot_inicia_exploracion();
-    sei();
 
     while (robot_get_estado() != PARADO) {
 
         log_casilla_pasos_leds();
-        //log_variables_trayectoria();
-    Serial.println(encoders_get_posicion_aux_left());
-    Serial.println(encoders_get_posicion_aux_right());
 
     }
     

@@ -23,6 +23,7 @@ void camino_anadir_paso(tipo_paso paso);
 void camino_anadir_paso_recto();
 void camino_anadir_paso_izq();
 void camino_anadir_paso_der();
+void camino_recalcula();
 
 #endif /* ifndef _CAMINO_H
 

@@ -60,6 +60,13 @@ void laberinto_inicializa_valores() {
         celda[idx].visitada = 0;
     }
 
+    /*
+    celda[17].paredO = 1;
+    celda[13].paredO = 1;
+    celda[5].paredN = 1;
+    celda[8].paredN = 1;
+    */
+
     // Anadir fila dummy
     if (num_filas < MAX_FILAS) {
         celda[num_filas*num_columnas].paredO = 1;

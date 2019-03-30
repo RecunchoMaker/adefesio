@@ -70,21 +70,6 @@ void flood_encuentra_vecinos(uint8_t casilla) {
     if (!laberinto_hay_pared_oeste(casilla))
         flood_vecinos.casilla[flood_vecinos.tamano++] = casilla + incremento[OESTE];
 
-    /*
-    Serial.print("vecinos de ");
-    Serial.print(casilla);
-    Serial.print("=");
-    Serial.print(flood_vecinos.tamano);
-    Serial.print(" ");
-    Serial.print(flood_vecinos.casilla[0]);
-    Serial.print(" ");
-    Serial.print(flood_vecinos.casilla[1]);
-    Serial.print(" ");
-    Serial.print(flood_vecinos.casilla[2]);
-    Serial.print(" ");
-    Serial.println(flood_vecinos.casilla[3]);
-    */
-
 }
 
 
@@ -145,13 +130,6 @@ bool flood_recalcula() {
 
         minimo = flood_minimo_vecino(idx);
         if (minimo != flood_distancia[idx] - 1) {
-            /*
-            Serial.print("actualizo casilla ");
-            Serial.print(idx);
-            Serial.print(" a ");
-            Serial.println(minimo+1);
-            */
-            Serial.println(idx);
             flood_distancia[idx] = minimo + 1;
             hay_pendientes = true;
         }

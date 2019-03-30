@@ -64,10 +64,10 @@ void robot_inicia_exploracion() {
     laberinto_set_pared_frontal(robot.casilla, leds_pared_enfrente());
 
     laberinto_print();
-    Serial.println("sa-0");
-
-    robot.estado = DECIDE;
+    cli(); // evita el tratamiento solapado en robot_control
+    robot.estado = FLOOD;
     robot_siguiente_accion();
+    sei();
 }
 
 
@@ -111,10 +111,26 @@ void robot_siguiente_accion() {
 
     if (robot.estado == PARADO) {
         motores_parar();
+    } else if (robot.estado == FLOOD) {
+        Serial.println(F("E-FLOOD"));
+        if (!flood_recalcula()) {
+            camino_recalcula();
+            log_camino();
+            robot.estado = REORIENTA;
+        } 
     } else if (robot.estado == ESPERANDO) {
         Serial.println(F("E-ESPERANDO"));
         accion_ejecuta(ESPERA);
         robot.estado = DECIDE;
+    } else if (robot.estado == REORIENTA) {
+        Serial.println(F("E-REORIENTA"));
+        if (robot.orientacion == camino_get_orientacion_origen()) {
+            robot.estado = DECIDE;
+        } else {
+            accion_ejecuta(GIRA_180);
+            robot.orientacion--;
+            robot.orientacion--;
+        }
     } else if (robot.estado == DECIDE) {
         Serial.println(F("E-DECIDE"));
         switch (paso) {
@@ -137,7 +153,7 @@ void robot_siguiente_accion() {
                              break;
             case PASO_STOP:  accion_ejecuta(GIRA_180);
                              Serial.println(F("GIRA_180"));
-                             robot.estado = FIN;
+                             robot.estado = FLOOD;
                              robot.orientacion--;
                              robot.orientacion--;
                              robot_led_izq = leds_get_valor(LED_IZQ);
@@ -147,14 +163,16 @@ void robot_siguiente_accion() {
     } else if (robot.estado == AVANZANDO) {
         robot.casilla_offset = 0;
         Serial.println(F("E-AVANZANDO"));
-        if (paso == PASO_RECTO) {
+        if (paso == PASO_RECTO and !leds_pared_enfrente()) {
             accion_ejecuta(AVANZA);
             Serial.println(F("AVANZA"));
             robot.estado = AVANZANDO;
         } else {
             accion_ejecuta(PARA);
             Serial.println(F("PARA"));
-            robot.estado = ESPERANDO;
+            robot.estado = DECIDE;
+            laberinto_set_paso(robot.casilla, PASO_STOP);
+            laberinto_set_pared_frontal(robot.casilla, leds_pared_enfrente());
         }
     } else if (robot.estado == FIN) {
         Serial.println(F("E-FIN"));
@@ -303,7 +321,6 @@ void robot_control() {
             : encoders_get_posicion_total();
 
         if (pasos_recorridos >= accion_get_pasos_objetivo() or motores_get_velocidad_lineal_objetivo() == 0) {
-            Serial.println("sa-2");
             robot_siguiente_accion();
         }
         else if (pasos_recorridos >= accion_get_pasos_hasta_decelerar()) {

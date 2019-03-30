@@ -14,15 +14,18 @@
 #include <Arduino.h>
 #include <camino.h>
 #include <laberinto.h>
+#include <flood.h>
 #include <robot.h>
 #include <settings.h>
 #include <log.h>
 
 
-uint8_t camino_casilla_origen;
-uint8_t camino_orientacion_origen;
-uint8_t camino_casilla_actual;
-uint8_t camino_orientacion_actual;
+volatile uint8_t camino_casilla_origen;
+volatile uint8_t camino_orientacion_origen;
+volatile uint8_t camino_casilla_actual;
+volatile uint8_t camino_orientacion_actual;
+volatile uint8_t siguiente;
+volatile uint8_t dir;
 
 /**
  * @brief Inicializa un camino en la celda inicial
@@ -54,6 +57,45 @@ void camino_init(uint8_t origen, uint8_t orientacion) {
 void camino_empieza() {
     camino_casilla_actual = camino_casilla_origen;
     camino_orientacion_actual = camino_orientacion_origen;
+}
+
+
+/**
+ * @brief Marca un camino de pesos decrecientes de flood
+ */
+void camino_recalcula() {
+    camino_init(robot_get_casilla(), robot_get_orientacion());
+
+    Serial.print("rec desde ");
+    Serial.print(camino_casilla_actual);
+    Serial.print(" ");
+    Serial.println(camino_orientacion_actual);
+    while (camino_casilla_actual != CASILLA_SOLUCION) {
+        siguiente = flood_mejor_vecino_desde(camino_casilla_actual);
+        Serial.print("mejor: ");
+        Serial.println(siguiente);
+
+        // direccion?
+        for (dir = 0; dir < 4; dir++) {
+            if ((int) siguiente - camino_casilla_actual == incremento[dir]) {
+
+                switch ((camino_orientacion_actual - dir)) {
+                    case 0:  camino_anadir_paso(PASO_RECTO); 
+                             break;
+                    case 1:  camino_anadir_paso(PASO_IZQ);
+                             break;
+                    case -1: 
+                    case  3: camino_anadir_paso(PASO_DER);
+                             break;
+                    default: Serial.print(F("ERROR!?????"));
+                             Serial.println(dir);
+                             Serial.println(camino_orientacion_actual - dir);
+                             break;
+                }
+            }
+        }
+    }
+
 }
 
 
@@ -113,8 +155,6 @@ void camino_anadir_paso(tipo_paso paso) {
     if (paso == PASO_IZQ) camino_orientacion_actual--;
     else if (paso == PASO_DER) camino_orientacion_actual++;
     camino_orientacion_actual = camino_orientacion_actual % 4;
-    Serial.print("orientacion actual");
-    Serial.println(camino_orientacion_actual);
 
     camino_casilla_actual += incremento[camino_orientacion_actual];
     laberinto_set_paso(camino_casilla_actual, PASO_STOP);

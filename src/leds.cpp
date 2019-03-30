@@ -231,7 +231,7 @@ float leds_get_distancia_d(int8_t led) {
  * @todo Establecer el valor umbral de otra manera
  */
 bool leds_pared_enfrente() {
-    return leds_valor[LED_FDER - A0] > 100 and leds_valor[LED_FIZQ - A0] > 100;
+    return leds_valor[LED_FDER - A0] > 50 and leds_valor[LED_FIZQ - A0] > 50;
 }
 
 
