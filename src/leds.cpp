@@ -16,6 +16,7 @@
 
 #include <Arduino.h>
 #include <leds.h>
+#include <robot.h>
 
 #define KALMAN_GAIN 0.1
 
@@ -39,6 +40,15 @@ volatile float leds_distancia_d[4];
 
 /// Valor acumulado de la distancia para el filtro kalman
 volatile float leds_distancia_kalman[4];
+
+/// Valor minimo de distancia
+volatile float leds_distancia_minima[4];
+
+/// Pasos en los que se ha guardado la distancia minima;
+volatile int16_t leds_pasos_distancia_minima[4];
+
+/// Sentidos creciente (1) o decreciente (0) de la distancia en cada leg. 1 bit por led
+volatile uint8_t leds_sentido = 0;
 
 // Constantes generadas por leds_obtener_matriz_segmentos.py
 #define LEDS_BITS_INDICE_MUESTRA 6
@@ -122,6 +132,20 @@ void leds_apaga(int8_t led) {
 
 
 /**
+ * @brief Pone al maximo el array de distancias minimas 
+ */
+void leds_reset_distancias_minimas() {
+    leds_distancia_minima[0] = 0.2;
+    leds_distancia_minima[1] = 0.2;
+    leds_distancia_minima[2] = 0.2;
+    leds_distancia_minima[3] = 0.2;
+    leds_pasos_distancia_minima[0] = 0;
+    leds_pasos_distancia_minima[1] = 0;
+    leds_pasos_distancia_minima[2] = 0;
+    leds_pasos_distancia_minima[3] = 0;
+}
+
+/**
  * @brief Actualiza el elemento correspondiente al led indicado en los arrays que guardan distintos datos de los sensores
  *
  * @param led pin digital del led que se quiere actualizar
@@ -157,6 +181,53 @@ void leds_actualiza_valor(int8_t led) {
     leds_distancia_kalman[led- A0] = KALMAN_GAIN * leds_distancia[led - A0] + (1-KALMAN_GAIN) * distancia_anterior;
 
     leds_distancia_d[led - A0] = leds_distancia_kalman[led - A0] - distancia_anterior;
+
+    if (leds_distancia_kalman[led - A0] < leds_distancia_minima[led-A0]) {
+        leds_distancia_minima[led-A0] = leds_distancia_kalman[led-A0];
+        leds_pasos_distancia_minima[led-A0] = robot_get_pasos_recorridos();
+    }
+    /*
+        if (leds_distancia_d[led - A0] < 0)
+            leds_distancia_minima[led - A0] = leds_distancia_kalman[led - A0];
+    }
+    else 
+        leds_minima_distancia[led - A0] = 0;
+    // actualiza sentidos y máximas distancias
+    if (leds_distancia_kalman[led - A0] < 0.07)
+        if (leds_distancia_d[led - A0] < 0)
+           if (leds_sentido & 1 << (led-A0)) {
+                Serial.print(" - maximo en ");
+                Serial.print(led - A0);
+                Serial.print(" -  ");
+                Serial.print(leds_distancia_kalman[led - A0], 9);
+                leds_sentido &= 0 << (led - A0);
+                Serial.print(" -  ");
+                Serial.println(leds_sentido, BIN);
+                leds_
+            } else {
+                leds_sentido &= 0 << (led - A0);
+            }
+
+        else {
+            //Serial.println(leds_sentido, BIN);
+            leds_sentido |= 1 << (led - A0);
+        }
+        */
+
+        /*
+        if (leds_distancia_d[led - A0] > 0) {
+            leds_sentido |= 1 << (led - A0);
+            Serial.print(leds_distancia_d[led - A0], 8);
+
+        }
+        else {
+            leds_sentido &= 0 << (led - A0);
+            Serial.print("            ");
+            Serial.print(leds_distancia_d[led - A0], 8);
+        }
+        Serial.print(" ");
+        Serial.println(leds_sentido, BIN);
+        */
 }
 
 /**
@@ -211,6 +282,18 @@ float leds_get_distancia_kalman(int8_t led) {
     return leds_distancia_kalman[led-A0];
 }
 
+
+/**
+ * @brief Devuelve la minima distancia detectada desde el ultimo reset
+ *
+ * @param led pin digital del led consultado
+ *
+ */
+float leds_get_distancia_minima(int8_t led) {
+    return leds_distancia_minima[led-A0];
+}
+
+
 /**
  * @brief Devuelve el valor diferencial en mm entre la actual lectura y la anterior
  *
@@ -261,6 +344,13 @@ bool leds_pared_derecha() {
     return (leds_valor[LED_DER - A0] > 20);
 }
 
+
+/*
+ * @brief Devuelve la diferencia de pasos entre las lecturas mínimas de los led IZQ y DER
+ */
+int16_t leds_get_diferencia_pasos_der_izq() {
+    return leds_pasos_distancia_minima[LED_IZQ-A0] - leds_pasos_distancia_minima[LED_DER - A0];
+}
 
 /**
  * @brief Devuelve un valor estimado en mm a partir de una lectura del ADC

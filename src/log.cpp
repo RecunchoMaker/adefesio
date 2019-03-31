@@ -164,6 +164,24 @@ void log_variables_trayectoria() {
     Serial.print("\t");
     Serial.print(motores_get_radio_aux(), 9);
     Serial.println();
+}
 
+/**
+ * @brief Muestra distancias minimas de leds
+ */
+void log_leds_distancias() {
+    Serial.print(F("#3 "));
+    Serial.print(robot_get_casilla());
+    Serial.print(F("\t"));
+    Serial.print(robot_get_pasos_recorridos());
+    Serial.print(F("\t"));
+    Serial.print(leds_get_distancia_minima(LED_IZQ),9);
+    Serial.print(F("\t"));
+    Serial.print(leds_get_distancia_minima(LED_FIZQ),9);
+    Serial.print(F("\t"));
+    Serial.print(leds_get_distancia_minima(LED_FDER),9);
+    Serial.print(F("\t"));
+    Serial.print(leds_get_distancia_minima(LED_DER),9);
 
+    Serial.println();
 }

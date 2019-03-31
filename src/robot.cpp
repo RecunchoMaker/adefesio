@@ -30,8 +30,10 @@ volatile int16_t robot_led_der = 0;
 typedef struct {
     volatile tipo_estado estado:3;
     volatile tipo_orientacion orientacion: 2;
+    volatile bool hay_alguna_pared: 1;
     volatile uint8_t casilla = 0;
     volatile float casilla_offset = 0;
+    volatile int16_t diferencia_pasos;
 } tipo_robot;
 
 volatile tipo_robot robot;
@@ -45,6 +47,7 @@ void robot_init() {
     
     encoders_reset_posicion_total();
     encoders_reset_posicion();
+    leds_reset_distancias_minimas();
     motores_parar();
 
     robot.casilla = CASILLA_INICIAL;
@@ -66,6 +69,7 @@ void robot_inicia_exploracion() {
     laberinto_print();
     cli(); // evita el tratamiento solapado en robot_control
     robot.estado = FLOOD;
+
     robot_siguiente_accion();
     sei();
 }
@@ -88,7 +92,26 @@ void _incrementa_casilla() {
             leds_pared_izquierda(),
             leds_pared_derecha()
             );
+
+    // robot.hay_alguna_pared indica si la casilla actual no tiene paredes y la anterior
+    // tampoco tenía
+    if (!robot.hay_alguna_pared and !leds_pared_izquierda() and !leds_pared_enfrente()) {
+        robot.hay_alguna_pared = false;
+        Serial.println("No hay paredes");
+    }
+    else
+        robot.hay_alguna_pared = true;
     laberinto_set_pared_frontal(robot.casilla, leds_pared_enfrente());
+
+    Serial.print("Diferencia de pasos: ");
+    Serial.print(leds_get_diferencia_pasos_der_izq());
+    Serial.print(" ");
+    Serial.print(leds_get_distancia_minima(LED_IZQ),9);
+    Serial.print(" ");
+    Serial.print(leds_get_distancia_minima(LED_DER),9);
+
+    robot.diferencia_pasos = leds_get_diferencia_pasos_der_izq() - LED_DESFASE_LATERAL;
+    leds_reset_distancias_minimas();
 
     laberinto_print();
 
@@ -97,6 +120,7 @@ void _incrementa_casilla() {
 
 
 void robot_siguiente_accion() {
+    static int8_t paso;
     /// @todo control del incremento de casilla... double check esto
     /*
     if (accion_cambio_casilla()) {
@@ -107,7 +131,7 @@ void robot_siguiente_accion() {
         _incrementa_casilla();
     }
 
-    int8_t paso = laberinto_get_paso(robot.casilla);
+    paso = laberinto_get_paso(robot.casilla);
 
     if (robot.estado == PARADO) {
         motores_parar();
@@ -115,6 +139,7 @@ void robot_siguiente_accion() {
         Serial.println(F("E-FLOOD"));
         if (!flood_recalcula()) {
             camino_recalcula();
+            laberinto_print();
             log_camino();
             robot.estado = REORIENTA;
         } 
@@ -133,6 +158,11 @@ void robot_siguiente_accion() {
         }
     } else if (robot.estado == DECIDE) {
         Serial.println(F("E-DECIDE"));
+        Serial.print("  casilla ");
+        Serial.print(robot.casilla);
+        Serial.print("  paso = ");
+        Serial.println(paso);
+        laberinto_print(); 
         switch (paso) {
             case PASO_RECTO: accion_ejecuta(ARRANCA);
                              Serial.println(F("ARRANCA"));
@@ -153,7 +183,8 @@ void robot_siguiente_accion() {
                              break;
             case PASO_STOP:  accion_ejecuta(GIRA_180);
                              Serial.println(F("GIRA_180"));
-                             robot.estado = FLOOD;
+                             //robot.estado = FLOOD;
+                             robot.estado = PARADO;
                              robot.orientacion--;
                              robot.orientacion--;
                              robot_led_izq = leds_get_valor(LED_IZQ);
@@ -171,7 +202,7 @@ void robot_siguiente_accion() {
             accion_ejecuta(PARA);
             Serial.println(F("PARA"));
             robot.estado = DECIDE;
-            laberinto_set_paso(robot.casilla, PASO_STOP);
+            // laberinto_set_paso(robot.casilla, PASO_STOP);
             laberinto_set_pared_frontal(robot.casilla, leds_pared_enfrente());
         }
     } else if (robot.estado == FIN) {
@@ -220,7 +251,10 @@ float robot_get_angulo_desvio() {
     // if (robot.estado != 99) {
     if (robot.estado == AVANZANDO) {
         desvio = 0;
-        
+        if (!robot.hay_alguna_pared) {
+            desvio += robot.diferencia_pasos * 0.0017;
+        }
+        else {
             //if (pasos_recorridos + robot.casilla_offset < 200 and laberinto_hay_pared_izquierda(robot.casilla)) {
             if (leds_get_distancia_kalman(LED_IZQ) < 0.08 and leds_get_distancia_d(LED_IZQ) < 0.002) {
                 desvio += (-leds_get_distancia_kalman(LED_IZQ) - (ANCHURA_ROBOT / 2.0) + (LABERINTO_LONGITUD_CASILLA/2.0)) / DISTANCIA_CONVERGENCIA;
@@ -233,6 +267,7 @@ float robot_get_angulo_desvio() {
                 ///@todo esto no es correcto
                 if (leds_pared_izquierda()) desvio /= 2.0;  // si contamos dos veces
             }
+        }
 
     }
 

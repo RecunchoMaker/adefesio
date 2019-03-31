@@ -25,6 +25,7 @@ void log_casilla_pasos_leds();    //#1
 void log_cambio_casilla();
 void log_variables_trayectoria(); //#2
 void log_camino();
+void log_leds_distancias();       //#3
 
 #endif /* ifndef LOG_H
 

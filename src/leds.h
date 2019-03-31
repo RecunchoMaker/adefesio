@@ -22,6 +22,9 @@
 /// Pin analógico de entrada compartido por todos los sensores infrarrojos
 #define LED_SENSOR A4
 
+/// Numero de pasos de desfase entre un led y otro al pasar recto entre dos viguetas
+#define LED_DESFASE_LATERAL 34
+
 void leds_init();
 void leds_calibra();
 void leds_recalibra();
@@ -37,6 +40,9 @@ int16_t leds_get_valor_encendido(int8_t sensor);
 float leds_get_distancia_d(int8_t sensor);
 float leds_get_distancia(int8_t sensor);
 float leds_get_distancia_kalman(int8_t sensor);
+float leds_get_distancia_minima(int8_t led);
+void leds_reset_distancias_minimas();
+int16_t leds_get_diferencia_pasos_der_izq();
 
 float leds_interpola_distancia(int16_t lectura);
 bool leds_pared_enfrente();

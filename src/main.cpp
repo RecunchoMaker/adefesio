@@ -17,10 +17,10 @@ ISR (TIMER1_COMPA_vect) {
 
     switch (timer1_get_estado()) {
         case 0: 
-                leds_actualiza_valor(LED_FDER);
+                leds_actualiza_valor(LED_IZQ);
                 break;
         case 1: 
-                leds_actualiza_valor(LED_IZQ);
+                leds_actualiza_valor(LED_FDER);
                 break;
         case 2: 
                 leds_actualiza_valor(LED_DER);
@@ -72,7 +72,7 @@ void loop() {
         comando_lee_serial();
         if (leds_get_leds_activados()) {
             //log_casilla_pasos_leds();
-            log_variables_trayectoria();
+            //log_variables_trayectoria();
         }
     }
 
@@ -85,7 +85,8 @@ void loop() {
 
     while (robot_get_estado() != PARADO) {
 
-        log_casilla_pasos_leds();
+        //log_casilla_pasos_leds();
+        log_leds_distancias();
 
     }
     
