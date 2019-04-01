@@ -14,7 +14,7 @@ set ylabel ""
 set grid
 
 # obtiene los titulos de las columnas del fichero de datos
-set key autotitle columnhead
+# set key autotitle columnhead
 
 set angles degrees
 
@@ -34,16 +34,12 @@ set style line 8 linetype 9 lc rgb "magenta" linewidth 2
 
 set style line 9 linetype 5 lc rgb "green" linewidth 1
 
-
-anchura_robot_2 = 0.085 / 2
-dist_con = 0.09
-
-plot '/tmp/datos-1.dat' using ($2/10) linestyle 5 title "pasos"
-replot '/tmp/datos-1.dat' using ($3*1000) linestyle 1 title "min izq (mm)"
-replot '/tmp/datos-1.dat' using ($4*1000) linestyle 5 title "min fizq (mm)"
-replot '/tmp/datos-1.dat' using ($5*1000) linestyle 6 title "min fder (mm)"
-replot '/tmp/datos-1.dat' using ($6*1000) linestyle 2 title "min fder (mm)"
-
+  plot '/tmp/datos-1.dat' using ($1 == 0? $2 : 1/0):3 title "izq" with points pointtype 2 ps 1 lc "red"
+replot '/tmp/datos-1.dat' using ($1 == 1? $2 : 1/0):3 title "fizq" with points pointtype 2 ps 1 lc "blue"
+replot '/tmp/datos-1.dat' using ($1 == 2? $2 : 1/0):3 title "fder" with points pointtype 3 ps 1 lc "blue"
+replot '/tmp/datos-1.dat' using ($1 == 3? $2 : 1/0):3 title "der" with points pointtype 3 ps 1 lc "red"
+replot '/tmp/datos-1.dat' using ($1 == 4? $2 : 1/0):3 title "" with lines 
+replot '/tmp/datos-1.dat' using ($1 == 5? $2 : 1/0):3 title "DF" with points pointtype 1 ps 2 lc "black"
 
 # Espera a que se pulse una tecla
 pause mouse keypress

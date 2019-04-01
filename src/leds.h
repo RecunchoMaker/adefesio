@@ -42,7 +42,9 @@ float leds_get_distancia(int8_t sensor);
 float leds_get_distancia_kalman(int8_t sensor);
 float leds_get_distancia_minima(int8_t led);
 void leds_reset_distancias_minimas();
+int16_t leds_get_pasos_distancia_minima(int8_t led);
 int16_t leds_get_diferencia_pasos_der_izq();
+int16_t leds_get_pasos_minima_lectura_frontal();
 
 float leds_interpola_distancia(int16_t lectura);
 bool leds_pared_enfrente();

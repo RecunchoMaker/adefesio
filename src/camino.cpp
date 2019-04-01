@@ -66,17 +66,6 @@ void camino_empieza() {
 void camino_recalcula() {
     camino_init(robot_get_casilla(), robot_get_orientacion());
 
-    // Creo un camino redondo
-    camino_anadir_paso(PASO_RECTO);
-    camino_anadir_paso(PASO_RECTO);
-    camino_anadir_paso(PASO_RECTO);
-    camino_anadir_paso(PASO_RECTO);
-    camino_anadir_paso(PASO_RECTO);
-    return;
-
-
-
-
     Serial.print("rec desde ");
     Serial.print(camino_casilla_actual);
     Serial.print(" ");

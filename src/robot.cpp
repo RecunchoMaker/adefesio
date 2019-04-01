@@ -31,6 +31,7 @@ typedef struct {
     volatile tipo_estado estado:3;
     volatile tipo_orientacion orientacion: 2;
     volatile bool hay_alguna_pared: 1;
+    volatile bool giro_corregido: 1;
     volatile uint8_t casilla = 0;
     volatile float casilla_offset = 0;
     volatile int16_t diferencia_pasos;
@@ -110,9 +111,6 @@ void _incrementa_casilla() {
     Serial.print(" ");
     Serial.print(leds_get_distancia_minima(LED_DER),9);
 
-    robot.diferencia_pasos = leds_get_diferencia_pasos_der_izq() - LED_DESFASE_LATERAL;
-    leds_reset_distancias_minimas();
-
     laberinto_print();
 
     log_cambio_casilla();
@@ -130,6 +128,9 @@ void robot_siguiente_accion() {
     if (robot.estado == AVANZANDO) {
         _incrementa_casilla();
     }
+    robot.diferencia_pasos = leds_get_diferencia_pasos_der_izq() - LED_DESFASE_LATERAL;
+    leds_reset_distancias_minimas();
+    robot.giro_corregido = false;
 
     paso = laberinto_get_paso(robot.casilla);
 
@@ -201,8 +202,8 @@ void robot_siguiente_accion() {
         } else {
             accion_ejecuta(PARA);
             Serial.println(F("PARA"));
-            robot.estado = DECIDE;
-            // laberinto_set_paso(robot.casilla, PASO_STOP);
+            // robot.estado = DECIDE;
+            robot.estado = FLOOD; 
             laberinto_set_pared_frontal(robot.casilla, leds_pared_enfrente());
         }
     } else if (robot.estado == FIN) {
@@ -252,7 +253,7 @@ float robot_get_angulo_desvio() {
     if (robot.estado == AVANZANDO) {
         desvio = 0;
         if (!robot.hay_alguna_pared) {
-            desvio += robot.diferencia_pasos * 0.0017;
+            //desvio += robot.diferencia_pasos * 0.0017;
         }
         else {
             //if (pasos_recorridos + robot.casilla_offset < 200 and laberinto_hay_pared_izquierda(robot.casilla)) {
@@ -276,6 +277,7 @@ float robot_get_angulo_desvio() {
 
 void robot_control() {
 
+    static int16_t aux;
     //if (robot.estado == PARADO) return;
     // control de posicion
     /** TODO: esto no se entiende
@@ -331,6 +333,40 @@ void robot_control() {
     }
     */
 
+    // Control giros
+    if (accion_get_radio() == GIRO_DERECHA_TODO and !robot.giro_corregido and pasos_recorridos > 120 and leds_get_pasos_minima_lectura_frontal() <100 ) {
+        Serial.print("Corrigo giro DER ");
+        Serial.print(leds_get_pasos_distancia_minima(LED_FIZQ));
+        Serial.print(" ");
+        Serial.print(leds_get_pasos_distancia_minima(LED_FDER));
+        Serial.print(" ");
+        Serial.print(leds_get_pasos_minima_lectura_frontal());
+        Serial.print(" ");
+        Serial.print(accion_get_pasos_objetivo());
+
+        aux = leds_get_pasos_minima_lectura_frontal() - 76; // La mitad de un giro 90
+        accion_set_pasos_objetivo(accion_get_pasos_objetivo() + aux * 0.0002 / LONGITUD_PASO_ENCODER);
+
+        robot.giro_corregido = true;
+    }
+    if (accion_get_radio() == GIRO_IZQUIERDA_TODO and !robot.giro_corregido and pasos_recorridos > 120 and leds_get_pasos_minima_lectura_frontal() <100 ) {
+        Serial.print("Corrigo giro IZQ ");
+        Serial.print(leds_get_pasos_distancia_minima(LED_FIZQ));
+        Serial.print(" ");
+        Serial.print(leds_get_pasos_distancia_minima(LED_FDER));
+        Serial.print(" ");
+        Serial.print(leds_get_pasos_minima_lectura_frontal());
+        Serial.print(" ");
+        Serial.print(accion_get_pasos_objetivo());
+
+        aux = 76 - leds_get_pasos_minima_lectura_frontal(); // La mitad de un giro 90
+        accion_set_pasos_objetivo(accion_get_pasos_objetivo() + aux * 0.0002 / LONGITUD_PASO_ENCODER);
+
+        robot.giro_corregido = true;
+    }
+
+
+
     if ((leds_get_valor(LED_FDER) + leds_get_valor(LED_FIZQ) > 1000) and accion_get_radio() == RADIO_INFINITO) {
         Serial.println(F("chocamos! leds:"));
         log_leds();
@@ -368,17 +404,5 @@ void robot_control() {
 
     }
 
-    ///@todo
-    /*
-    if (leds_get_distancia(LED_IZQ) > 0.1 or leds_get_distancia(LED_DER) > 0.1) {
-        Serial.println("emergencia!");
-        log_leds();
-        Serial.println(leds_get_distancia(LED_IZQ));
-        Serial.println(leds_get_distancia(LED_DER));
-        robot.estado = PARADO;
-        motores_parar();
-    }
-    */
-    
 
 }

@@ -306,6 +306,28 @@ float leds_get_distancia_d(int8_t led) {
 
 
 /**
+ * @brief Devuelve la media de pasos de los sensores frontales a los que se ha obtenido la lectura minima
+ *
+ * @param led pin digital del led consultado
+ *
+ */
+int16_t leds_get_pasos_minima_lectura_frontal() {
+    return (leds_pasos_distancia_minima[LED_FIZQ-A0] + leds_pasos_distancia_minima[LED_FDER-A0]) / 2;
+}
+
+
+/**
+ * @brief Devuelve los pasos a los que se ha muestreado la distancia minima
+ *
+ * @param led pin digital del led consultado
+ *
+ */
+int16_t leds_get_pasos_distancia_minima(int8_t led) {
+    return leds_pasos_distancia_minima[led-A0];
+}
+
+
+/**
  * @brief Devuelve si existe una pared enfrente
  *
  * Establece que existe una pared si alguna lectura de los leds que apuntan al frente

@@ -182,6 +182,14 @@ void log_leds_distancias() {
     Serial.print(leds_get_distancia_minima(LED_FDER),9);
     Serial.print(F("\t"));
     Serial.print(leds_get_distancia_minima(LED_DER),9);
+    Serial.print(F("\t"));
+    Serial.print(leds_get_pasos_distancia_minima(LED_IZQ),9);
+    Serial.print(F("\t"));
+    Serial.print(leds_get_pasos_distancia_minima(LED_FIZQ),9);
+    Serial.print(F("\t"));
+    Serial.print(leds_get_pasos_distancia_minima(LED_FDER),9);
+    Serial.print(F("\t"));
+    Serial.print(leds_get_pasos_distancia_minima(LED_DER),9);
 
     Serial.println();
 }

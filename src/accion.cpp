@@ -228,7 +228,7 @@ void accion_ejecuta(tipo_accion accion) {
         accion_set(LABERINTO_LONGITUD_CASILLA, amax, amax, ve, ve, RADIO_INFINITO);
     } else if (accion == ESPERA) {
         Serial.println(F("* Pausa"));
-        accion_set(0, 0, 0, 0, 0, 0.05); // espera 0.05 segundos
+        accion_set(0, 0, 0, 0, 0, 0.1); // espera 0.05 segundos
     } else if (accion == GIRA_DER) {
         Serial.println(F("* Gira derecha"));
         accion_set(-PI*motores_get_distancia_entre_ruedas()/4.0, amax, amax, vg, ACCION_V0, GIRO_DERECHA_TODO); // gira 90

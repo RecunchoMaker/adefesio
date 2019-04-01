@@ -87,7 +87,6 @@ void loop() {
 
         //log_casilla_pasos_leds();
         log_leds_distancias();
-
     }
     
     leds_desactiva();
