@@ -28,6 +28,7 @@ void laberinto_set_paredes_laterales(uint8_t casilla, bool izq, bool der);
 void laberinto_set_pared_frontal(uint8_t casilla, bool frontal);
 bool laberinto_hay_pared_derecha(uint8_t casilla);
 bool laberinto_hay_pared_izquierda(uint8_t casilla);
+bool laberinto_hay_pared_frontal(uint8_t casilla);
 
 bool laberinto_hay_pared_norte(uint8_t casilla);
 bool laberinto_hay_pared_sur(uint8_t casilla);

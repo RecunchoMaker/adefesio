@@ -29,6 +29,7 @@ void robot_inicia_exploracion();
 
 uint8_t robot_get_casilla();
 float robot_get_casilla_offset();
+int16_t robot_get_ultima_diferencia_encoders();
 tipo_estado robot_get_estado();
 tipo_orientacion robot_get_orientacion();
 int32_t robot_get_pasos_recorridos();

@@ -120,6 +120,19 @@ bool laberinto_hay_pared_izquierda(uint8_t casilla) {
     }
 }
     
+bool laberinto_hay_pared_frontal(uint8_t casilla) {
+    switch (robot_get_orientacion()) {
+        case NORTE: return celda[casilla].paredN;
+                    break;
+        case ESTE:  return celda[casilla + incremento[OESTE]].paredO;
+                    break;
+        case SUR:   return celda[casilla + incremento[SUR]].paredN;
+                    break;
+        default:    return celda[casilla].paredO;
+                    break;
+    }
+}
+    
 uint8_t laberinto_get_filas() {
     return num_filas;
 }
@@ -139,7 +152,7 @@ void laberinto_set_paredes_laterales(uint8_t casilla, bool izq, bool der) {
                     celda[casilla+incremento[SUR]].paredN = der;
                     break;
         case SUR:   celda[casilla].paredO = der;
-                    celda[casilla+incremento[OESTE]].paredO = izq;
+                    celda[casilla+incremento[ESTE]].paredO = izq;
                     break;
         case OESTE: celda[casilla].paredN = der;
                     celda[casilla+incremento[SUR]].paredN = izq;
@@ -149,12 +162,7 @@ void laberinto_set_paredes_laterales(uint8_t casilla, bool izq, bool der) {
 
 void laberinto_set_pared_frontal(uint8_t casilla, bool frontal) {
 
-    Serial.print("frontal ");
-    Serial.print(casilla);
-    Serial.print("(");
     Serial.print(robot_get_orientacion());
-    Serial.print("): ");
-    Serial.println(frontal);
 
     switch(robot_get_orientacion()) {
         case NORTE: celda[casilla].paredN = frontal;

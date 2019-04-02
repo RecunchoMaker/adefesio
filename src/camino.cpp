@@ -66,14 +66,12 @@ void camino_empieza() {
 void camino_recalcula() {
     camino_init(robot_get_casilla(), robot_get_orientacion());
 
-    Serial.print("rec desde ");
-    Serial.print(camino_casilla_actual);
-    Serial.print(" ");
     Serial.println(camino_orientacion_actual);
     while (camino_casilla_actual != CASILLA_SOLUCION) {
+
+        ///@todo Si no estamos en el limite y la casilla siguiente no esta
+        // visitada, seguimos recto
         siguiente = flood_mejor_vecino_desde(camino_casilla_actual);
-        Serial.print("mejor: ");
-        Serial.println(siguiente);
 
         // direccion?
         for (dir = 0; dir < 4; dir++) {
@@ -87,7 +85,12 @@ void camino_recalcula() {
                     case -1: 
                     case  3: camino_anadir_paso(PASO_DER);
                              break;
-                    default: Serial.print(F("ERROR!?????"));
+                    case 6:
+                    case 2:  
+                    case -2:  
+                    default:
+                             camino_anadir_paso(PASO_STOP);
+                             Serial.print(F("ERROR!?????"));
                              Serial.println(dir);
                              Serial.println(camino_orientacion_actual - dir);
                              break;

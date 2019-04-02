@@ -31,33 +31,7 @@
 #include <timer1.h>
 #include <leds.h>
 #include <log.h>
-
-/// Aceleracion maxima por defecto, usada en las rectas
-#define ACCION_AMAX 1.0
-
-/// Aceleracion de frenada antes de entrar en una curva
-#define ACCION_ACUR 1.0
-
-/// Aceleracion de la frenada final en la ultima casilla
-#define ACCION_AFIN 0.8
-
-/// Velocidad máxima en recta
-#define ACCION_VR 0.40
-
-/// Velocidad máxima en curva
-#define ACCION_VC 0.30
-
-/// Velocidad máxima en exploracion
-#define ACCION_VE 0.30
-
-/// Velocidad máxima giro en redonddo 
-#define ACCION_VG 0.20
-
-/// Velocidad minima antes de parar
-#define ACCION_V0 0.1
-
-/// Longitud del arco que se describe en una curva
-#define ACCION_DISTG (2*PI*(LABERINTO_LONGITUD_CASILLA/2)/4)
+#include <robot.h>
 
 volatile float distancia;               ///< Distancia en metros de la acción actual
 volatile int32_t pasos_objetivo;        ///< Pasos de encoder necesarios para completar la acción actual
@@ -76,10 +50,15 @@ volatile float vc = ACCION_VC;          ///< Velocidad máxima en curba
 volatile float ve = ACCION_VE;          ///< Velocidad máxima en exploración
 volatile float vg = ACCION_VG;          ///< Velocidad máxima giro en redondo
 
+volatile tipo_accion accion_actual;
+
 //@{
 /**
  * @name Setters y getters
  */
+tipo_accion accion_get_accion_actual() {
+    return accion_actual;
+}
 float accion_get_distancia() {
     return distancia;
 }
@@ -198,11 +177,6 @@ void accion_set(float dist,
 
     timer1_reset_cuenta();
 
-    if (pasos_objetivo > 0) {
-        Serial.print("po: ");
-        Serial.println(pasos_objetivo);
-    }
-    /// @todo es realmente necesario resetear los encoders, y si lo es, este es el sitio?
     encoders_reset_posicion_total();
 }
 
@@ -213,28 +187,44 @@ void accion_set(float dist,
  * @param accion Tipo de acción a ejectuar
  */
 void accion_ejecuta(tipo_accion accion) {
+
+    accion_actual = accion;
+
     if (accion == ARRANCA) {
-        Serial.println(F("* Arranca"));
+        Serial.println(F("* Arranca:"));
+        encoders_reset_posicion_aux_total();
         accion_set(LABERINTO_LONGITUD_CASILLA/2, amax, amax, ve, ve, RADIO_INFINITO);
     } else if (accion ==  PARA) {
-        /// @todo Introduzco correccion ad-hoc si la pared es demasiado cercvana
-        if (leds_pared_enfrente()) {
-        accion_set(LABERINTO_LONGITUD_CASILLA/2 - ((leds_get_valor(LED_FIZQ) + leds_get_valor(LED_FDER)) * LONGITUD_PASO_ENCODER / 2), amax, afin, ve, ACCION_V0, RADIO_INFINITO);
-        } else {
-          accion_set(LABERINTO_LONGITUD_CASILLA/2, amax, afin, ve, ACCION_V0, RADIO_INFINITO);
-        }
+        accion_set(LABERINTO_LONGITUD_CASILLA/2, amax, afin, ve, ACCION_V0, RADIO_INFINITO);
+
     } else if (accion == AVANZA) {
         Serial.println(F("* Continua recto"));
         accion_set(LABERINTO_LONGITUD_CASILLA, amax, amax, ve, ve, RADIO_INFINITO);
     } else if (accion == ESPERA) {
         Serial.println(F("* Pausa"));
-        accion_set(0, 0, 0, 0, 0, 0.1); // espera 0.05 segundos
+        accion_set(0, 0, 0, 0, 0, 0.3); // en segundos
+        Serial.println("leds: ");
+        Serial.print(leds_get_distancia(LED_IZQ),9);
+        Serial.print(" ");
+        Serial.print(leds_get_distancia(LED_FIZQ),9);
+        Serial.print(" ");
+        Serial.print(leds_get_distancia(LED_FDER),9);
+        Serial.print(" ");
+        Serial.print(leds_get_distancia(LED_DER),9);
+        Serial.println();
+
     } else if (accion == GIRA_DER) {
         Serial.println(F("* Gira derecha"));
-        accion_set(-PI*motores_get_distancia_entre_ruedas()/4.0, amax, amax, vg, ACCION_V0, GIRO_DERECHA_TODO); // gira 90
+        Serial.println(robot_get_ultima_diferencia_encoders());
+        accion_set(-PI*motores_get_distancia_entre_ruedas()/4.0 +
+                robot_get_ultima_diferencia_encoders() * LONGITUD_PASO_ENCODER,
+                amax, amax, vg, ACCION_V0, GIRO_DERECHA_TODO); // gira 90
     } else if (accion == GIRA_IZQ) {
-        Serial.println(F("* Gira izquierda"));
-        accion_set(PI*motores_get_distancia_entre_ruedas()/4.0, amax, amax, vg , ACCION_V0, GIRO_IZQUIERDA_TODO); // gira 90
+        Serial.print(F("* Gira izquierda (comp: "));
+        Serial.println(robot_get_ultima_diferencia_encoders());
+        accion_set(PI*motores_get_distancia_entre_ruedas()/4.0 + 
+                robot_get_ultima_diferencia_encoders() * LONGITUD_PASO_ENCODER,
+                amax, amax, vg , ACCION_V0, GIRO_IZQUIERDA_TODO); // gira 90
     } else if (accion == GIRA_180) {
         Serial.println(F("* Gira 180 grados"));
         accion_set(PI*motores_get_distancia_entre_ruedas()/2.0, amax, amax, vg, ACCION_V0, GIRO_IZQUIERDA_TODO); // gira 180g

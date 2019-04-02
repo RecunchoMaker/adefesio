@@ -12,6 +12,7 @@
 #include <laberinto.h>
 #include <flood.h>
 #include <camino.h>
+#include <accion.h>
 
 ISR (TIMER1_COMPA_vect) {
 
@@ -71,7 +72,7 @@ void loop() {
     while (!comando_get_go()) {
         comando_lee_serial();
         if (leds_get_leds_activados()) {
-            //log_casilla_pasos_leds();
+            log_casilla_pasos_leds();
             //log_variables_trayectoria();
         }
     }
@@ -86,7 +87,22 @@ void loop() {
     while (robot_get_estado() != PARADO) {
 
         //log_casilla_pasos_leds();
-        log_leds_distancias();
+        //log_leds_distancias();
+        //
+        /*
+            Serial.print("# ");
+            Serial.print(motores_get_velocidad_lineal_objetivo());
+            Serial.print(" ");
+            Serial.print((leds_get_distancia(LED_FDER) + leds_get_distancia(LED_FIZQ)) / 2.0,9);
+            Serial.print(" ");
+            Serial.print(encoders_get_posicion_total_left());
+            Serial.print(" ");
+            Serial.print(encoders_get_posicion_total_right());
+            Serial.print(" ");
+
+        Serial.print(ACCION_V0 + ( (  (leds_get_distancia(LED_FIZQ) + leds_get_distancia(LED_FDER) / 2) - 0.02 ) * (0.09 / (ACCION_VE - ACCION_V0))), 9);
+            Serial.println();
+        */
     }
     
     leds_desactiva();

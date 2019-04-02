@@ -14,9 +14,11 @@ enum tipo_direccion {ENCODER_ATRAS, ENCODER_ADELANTE};
 //@{
 /** @name Variables contadoras de saltos de encoder
  *
- * Se utilizan varios contadores para cada encoder. Uno funciona como
- * _contador_parcial_, para cálculos internos en este mismo fichero,
- * y el los demás son accesibles con un getter público para cálculos de más
+ * Se utilizan varios contadores para cada encoder.
+ *
+ * encoder_posicion es un contador parcial para cálculos cada interrupcion
+ * encoder_psocion_total es un contador parcial para cálculos de acciones
+ * encoder_posicion_aux_left es un contador parcial para cálculos en rectas largas que pueden incluir más de una acción
  * alto nivel
  */
 
@@ -168,6 +170,14 @@ void encoders_reset_posicion(void) {
 void encoders_reset_posicion_total(void) {
     encoder_posicion_total_left = 0;
     encoder_posicion_total_right = 0;
+}
+
+/**
+ * @brief Resetea el contador total auxiliar
+ */
+void encoders_reset_posicion_aux_total(void) {
+    encoder_posicion_aux_left = 0;
+    encoder_posicion_aux_right = 0;
 }
 
 /**

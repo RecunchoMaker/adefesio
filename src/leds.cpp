@@ -336,7 +336,7 @@ int16_t leds_get_pasos_distancia_minima(int8_t led) {
  * @todo Establecer el valor umbral de otra manera
  */
 bool leds_pared_enfrente() {
-    return leds_valor[LED_FDER - A0] > 50 and leds_valor[LED_FIZQ - A0] > 50;
+    return leds_distancia[LED_FDER - A0] < 0.14 and leds_distancia[LED_FIZQ - A0] < 0.14;
 }
 
 
@@ -350,7 +350,7 @@ bool leds_pared_enfrente() {
  *
  */
 bool leds_pared_izquierda() {
-    return (leds_valor[LED_IZQ - A0] > 30);
+    return (leds_distancia[LED_IZQ - A0] < 0.10);
 }
 
 
@@ -363,7 +363,7 @@ bool leds_pared_izquierda() {
  * @todo Establecer el valor umbral de otra manera
  */
 bool leds_pared_derecha() {
-    return (leds_valor[LED_DER - A0] > 20);
+    return (leds_distancia[LED_DER - A0] < 0.10);
 }
 
 

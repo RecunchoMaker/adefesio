@@ -14,6 +14,34 @@
 /// Constante precalculada equivalente a los pasos de encoder necesarios para recorrer 2/3 de una casilla
 #define DOS_TERCIOS_CASILLA (int)((2*LABERINTO_LONGITUD_CASILLA)/(3*LONGITUD_PASO_ENCODER))
 
+/// Aceleracion maxima por defecto, usada en las rectas
+#define ACCION_AMAX 1.0
+
+/// Aceleracion de frenada antes de entrar en una curva
+#define ACCION_ACUR 1.0
+
+/// Aceleracion de la frenada final en la ultima casilla
+#define ACCION_AFIN 0.8
+
+/// Velocidad máxima en recta
+#define ACCION_VR 0.40
+
+/// Velocidad máxima en curva
+#define ACCION_VC 0.30
+
+/// Velocidad máxima en exploracion
+#define ACCION_VE 0.30
+
+/// Velocidad máxima giro en redonddo 
+#define ACCION_VG 0.20
+
+/// Velocidad minima antes de parar
+#define ACCION_V0 0.1
+
+/// Longitud del arco que se describe en una curva
+#define ACCION_DISTG (2*PI*(LABERINTO_LONGITUD_CASILLA/2)/4)
+
+
 /**
  * @brief Tipos de acciones
  *
@@ -28,6 +56,7 @@ float accion_get_deceleracion();
 float accion_get_velocidad_final();
 float accion_get_velocidad_maxima();
 float accion_get_radio();
+tipo_accion accion_get_accion_actual();
 int32_t accion_get_pasos_objetivo();
 void accion_set_pasos_objetivo(int32_t pasos);
 int32_t accion_get_pasos_hasta_decelerar();
