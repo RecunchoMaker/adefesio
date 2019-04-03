@@ -81,12 +81,13 @@ void loop() {
 
     leds_activa();
     delayMicroseconds(32000); // un margen para actualizar los leds
+    log_leds();
 
     robot_inicia_exploracion();
 
     while (robot_get_estado() != PARADO) {
 
-        //log_casilla_pasos_leds();
+        log_casilla_pasos_leds();
         //log_leds_distancias();
         //
         /*
@@ -102,6 +103,22 @@ void loop() {
 
         Serial.print(ACCION_V0 + ( (  (leds_get_distancia(LED_FIZQ) + leds_get_distancia(LED_FDER) / 2) - 0.02 ) * (0.09 / (ACCION_VE - ACCION_V0))), 9);
             Serial.println();
+        */
+        /*
+        Serial.print(leds_get_distancia(LED_DER),9);
+        Serial.print(" ");
+        Serial.print(leds_get_distancia_d(LED_DER),9);
+        Serial.print(" ");
+        Serial.print(robot_get_angulo_desvio(),9);
+        Serial.print(" ");
+        Serial.print(motores_get_radio(),9);
+        Serial.print(" ");
+        Serial.print(-leds_get_distancia_kalman(LED_IZQ) - (ANCHURA_ROBOT / 2.0) + (LABERINTO_LONGITUD_CASILLA/2.0),9);
+        Serial.print(" ");
+        Serial.print(motores_get_kp_pasillo1() * (-leds_get_distancia_kalman(LED_IZQ) - (ANCHURA_ROBOT / 2.0) + (LABERINTO_LONGITUD_CASILLA/2.0)),9);
+        Serial.print(":(2):");
+        Serial.print( motores_get_kp_pasillo2() * leds_get_distancia_d(LED_DER) * motores_get_velocidad_lineal_objetivo(), 9);
+        Serial.println("");
         */
     }
     

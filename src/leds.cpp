@@ -175,15 +175,15 @@ void leds_actualiza_valor(int8_t led) {
     leds_valor_encendido[led - A0] = leds_lectura1;
     leds_valor_apagado[led - A0] = leds_lectura0;
 
-    float distancia_anterior = leds_distancia_kalman[led - A0];
+    float distancia_anterior = leds_distancia[led - A0];
     leds_distancia[led - A0] = leds_interpola_distancia(leds_valor[led-A0]);
 
     leds_distancia_kalman[led- A0] = KALMAN_GAIN * leds_distancia[led - A0] + (1-KALMAN_GAIN) * distancia_anterior;
 
     leds_distancia_d[led - A0] = leds_distancia_kalman[led - A0] - distancia_anterior;
 
-    if (leds_distancia_kalman[led - A0] < leds_distancia_minima[led-A0]) {
-        leds_distancia_minima[led-A0] = leds_distancia_kalman[led-A0];
+    if (leds_distancia[led - A0] < leds_distancia_minima[led-A0]) {
+        leds_distancia_minima[led-A0] = leds_distancia[led-A0];
         leds_pasos_distancia_minima[led-A0] = robot_get_pasos_recorridos();
     }
     /*
@@ -336,7 +336,7 @@ int16_t leds_get_pasos_distancia_minima(int8_t led) {
  * @todo Establecer el valor umbral de otra manera
  */
 bool leds_pared_enfrente() {
-    return leds_distancia[LED_FDER - A0] < 0.14 and leds_distancia[LED_FIZQ - A0] < 0.14;
+    return leds_distancia[LED_FDER - A0] < 0.16 and leds_distancia[LED_FIZQ - A0] < 0.16;
 }
 
 

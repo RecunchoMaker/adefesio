@@ -28,7 +28,7 @@ typedef struct {
     volatile bool giro_corregido: 1;
     volatile uint8_t casilla = 0;
     volatile float casilla_offset = 0;
-    volatile float ultima_distancia_lateral = 0;
+    volatile float ultima_distancia_lateral = LABERINTO_LONGITUD_CASILLA / 2.0;
     volatile int16_t ultima_diferencia_encoders = 0;
     volatile int16_t diferencia_pasos;
 } tipo_robot;
@@ -141,7 +141,7 @@ void robot_siguiente_accion() {
     } else if (robot.estado == ESPERANDO) {
 
         Serial.println(F("E-ESPERANDO"));
-        robot.ultima_distancia_lateral = (leds_pared_derecha()? leds_get_distancia(LED_DER):leds_get_distancia(LED_IZQ));
+        //robot.ultima_distancia_lateral = (leds_pared_derecha()? leds_get_distancia(LED_DER):leds_get_distancia(LED_IZQ));
         Serial.print("Ultima distancia lateral: ");
         Serial.println(robot.ultima_distancia_lateral, 9);
         Serial.print("  ");
@@ -168,31 +168,39 @@ void robot_siguiente_accion() {
         Serial.println(paso);
         laberinto_print(); 
         switch (paso) {
-            case PASO_RECTO: accion_ejecuta(ARRANCA);
+            case PASO_RECTO:
                              Serial.println(F("ARRANCA"));
                              robot.estado = AVANZANDO;
-                             robot.casilla_offset = LABERINTO_LONGITUD_CASILLA * 0.5 / LONGITUD_PASO_ENCODER;
-                             if (robot.ultima_distancia_lateral != 0)
-                             {
-                                 robot.casilla_offset += robot.ultima_distancia_lateral * LONGITUD_PASO_ENCODER - (ANCHURA_ROBOT/2.0);
-                                 Serial.print("offset nuevo = ");
-                                 Serial.println(robot.casilla_offset);
-                             }
+                             robot.casilla_offset = robot.ultima_distancia_lateral;
+                             accion_ejecuta(ARRANCA);
+                             Serial.print("offset nuevo = ");
+                             Serial.println(robot.casilla_offset);
                              break;
-            case PASO_DER:   accion_ejecuta(GIRA_DER);
+            case PASO_DER:   
+                             if (leds_pared_izquierda())
+                                 robot.ultima_distancia_lateral = leds_get_distancia(LED_IZQ) + (ANCHURA_ROBOT/2.0);
+                             else
+                                 robot.ultima_distancia_lateral = LABERINTO_LONGITUD_CASILLA * 0.5;
                              Serial.println(F("GIRA_DER"));
+                             accion_ejecuta(GIRA_DER);
                              robot.estado = ESPERANDO;
                              robot.orientacion++;
                              laberinto_set_paso(robot.casilla, PASO_RECTO);
                              break;
-            case PASO_IZQ:   accion_ejecuta(GIRA_IZQ);
+            case PASO_IZQ:   
+                             if (leds_pared_derecha())
+                                 robot.ultima_distancia_lateral = leds_get_distancia(LED_DER) + (ANCHURA_ROBOT/2.0);
+                             else
+                                 robot.ultima_distancia_lateral = LABERINTO_LONGITUD_CASILLA * 0.5;
                              Serial.println(F("GIRA_IZQ"));
+                             accion_ejecuta(GIRA_IZQ);
                              robot.estado = ESPERANDO;
                              robot.orientacion--;
                              laberinto_set_paso(robot.casilla, PASO_RECTO);
                              break;
-            case PASO_STOP:  accion_ejecuta(GIRA_180);
+            case PASO_STOP:  
                              Serial.println(F("GIRA_180"));
+                             accion_ejecuta(GIRA_180);
                              robot.estado = FLOOD;
                              //robot.estado = PARADO;
                              robot.orientacion--;
@@ -209,8 +217,6 @@ void robot_siguiente_accion() {
         } else {
             accion_ejecuta(PARA);
             Serial.println(F("PARA"));
-            Serial.print("paso es ");
-            Serial.println(paso);
 
             // robot.estado = DECIDE;
             robot.estado = FLOOD; 
@@ -264,35 +270,24 @@ float robot_get_angulo_desvio() {
     // Al principio de un movimiento en recta, se utilizan las paredes disponibles
     // solo si estamos al principio de la casilla
     // if (robot.estado != 99) {
-    desvio = 0;
-    if (robot.estado == AVANZANDO) {
+    desvio = 0.0;
+    if (robot.estado == AVANZANDO or robot.estado == PARA or robot.estado == FLOOD) {
         if (!robot.hay_alguna_pared) {
             //desvio += robot.diferencia_pasos * 0.0017;
-            //Serial.println("no corrijo");
         }
         else {
-            //if (pasos_recorridos + robot.casilla_offset < 200 and laberinto_hay_pared_izquierda(robot.casilla)) {
-            if (robot.casilla_offset + pasos_recorridos*LONGITUD_PASO_ENCODER < LABERINTO_LONGITUD_CASILLA/2.0) {
-                //if (leds_get_distancia_kalman(LED_IZQ) < 0.08 and leds_get_distancia_d(LED_IZQ) < 0.002) {
-                if (leds_get_distancia_kalman(LED_IZQ) < 0.08) {
-                    desvio += 0.01 * (-leds_get_distancia_kalman(LED_IZQ) - (ANCHURA_ROBOT / 2.0) + (LABERINTO_LONGITUD_CASILLA/2.0)) / DISTANCIA_CONVERGENCIA;
-                    //desvio -= 0.1 * (leds_get_distancia_d(LED_IZQ) / (PERIODO_CICLO * motores_get_velocidad_lineal_objetivo()));
-                }
-                //if (laberinto_hay_pared_derecha(robot.casilla)) {
-                if (leds_get_distancia_kalman(LED_DER) < 0.08) {
-                    desvio += 0.01 * (-leds_get_distancia_kalman(LED_DER) - (ANCHURA_ROBOT / 2.0) + (LABERINTO_LONGITUD_CASILLA/2.0)) / DISTANCIA_CONVERGENCIA;
-                    //desvio -= 0.07 * (leds_get_distancia_kalman(LED_DER) + (ANCHURA_ROBOT / 2.0) + 0.12 - (LABERINTO_LONGITUD_CASILLA/2.0)) / DISTANCIA_CONVERGENCIA;
-                    //desvio += 0.005 * (leds_get_distancia_kalman(LED_DER) + (ANCHURA_ROBOT / 2.0) - (LABERINTO_LONGITUD_CASILLA/2.0)) / DISTANCIA_CONVERGENCIA;
-                    //desvio -= 0.001 * (leds_get_distancia_d(LED_DER) / (PERIODO_CICLO * motores_get_velocidad_lineal_objetivo()));
-                    ///@todo esto no es correcto
-                    //if (leds_pared_izquierda()) desvio /= 2.0;  // si contamos dos veces
-                }
+            if (leds_get_distancia_kalman(LED_IZQ) < 0.08) {
+                desvio += motores_get_kp_pasillo1() * (-leds_get_distancia_kalman(LED_IZQ) - (ANCHURA_ROBOT / 2.0) + (LABERINTO_LONGITUD_CASILLA/2.0));
+                desvio -= motores_get_kp_pasillo2() * (leds_get_distancia_d(LED_IZQ) * motores_get_velocidad_lineal_objetivo());
+            }
+            //if (laberinto_hay_pared_derecha(robot.casilla)) {
+            if (leds_get_distancia_kalman(LED_DER) < 0.08) {
+                desvio -= motores_get_kp_pasillo1() * (-leds_get_distancia_kalman(LED_DER) - (ANCHURA_ROBOT / 2.0) + (LABERINTO_LONGITUD_CASILLA/2.0));
+                desvio += motores_get_kp_pasillo2() * (leds_get_distancia_d(LED_DER) * motores_get_velocidad_lineal_objetivo());
             }
         }
 
     }
-            //Serial.print("desvio:");
-            //Serial.println(desvio,9);
     return desvio;
 }
 
@@ -387,6 +382,12 @@ void robot_control() {
     }
 
 
+    if (accion_get_accion_actual() == AVANZA) {
+        if (robot_get_angulo_desvio() != 0)
+            motores_set_radio(1.0 / robot_get_angulo_desvio());
+        else
+            motores_set_radio(8888);
+    }
 
     if ((leds_get_distancia(LED_FDER) + leds_get_distancia(LED_FIZQ)) / 2.0 < 0.01 and accion_get_radio() == RADIO_INFINITO) {
         Serial.println(F("chocamos! leds:"));
@@ -403,7 +404,6 @@ void robot_control() {
     if (accion_get_velocidad_maxima() <= 0.0) {
         motores_parar();
         if (timer1_get_cuenta() * PERIODO_TIMER > accion_get_radio()) {
-            //Serial.println("sa-1");
             robot_siguiente_accion();
         }
     } else {
@@ -415,9 +415,9 @@ void robot_control() {
         if (accion_get_accion_actual() == PARA and leds_pared_enfrente()) {
             motores_set_velocidad_lineal_objetivo( 
                     min(
-                    ACCION_V0 + ((leds_get_distancia(LED_FDER)+leds_get_distancia(LED_FIZQ)/2.0) - 0.019) * (ACCION_VE/(ACCION_VE-ACCION_V0)),
+                    ACCION_V0 + ((leds_get_distancia(LED_FDER)+leds_get_distancia(LED_FIZQ)/2.0) - 0.022) * (ACCION_VE/(ACCION_VE-ACCION_V0)),
                     ACCION_VE));
-            accion_set_pasos_objetivo(pasos_recorridos + (( (leds_get_distancia(LED_FIZQ) + leds_get_distancia(LED_FDER)) / 2.0)-0.019) / LONGITUD_PASO_ENCODER);
+            accion_set_pasos_objetivo(pasos_recorridos + (( (leds_get_distancia(LED_FIZQ) + leds_get_distancia(LED_FDER)) / 2.0)-0.022) / LONGITUD_PASO_ENCODER);
             /*
             Serial.print("parando: ");
             Serial.print(motores_get_velocidad_lineal_objetivo(),9);

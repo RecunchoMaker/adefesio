@@ -69,8 +69,6 @@ void camino_recalcula() {
     Serial.println(camino_orientacion_actual);
     while (camino_casilla_actual != CASILLA_SOLUCION) {
 
-        ///@todo Si no estamos en el limite y la casilla siguiente no esta
-        // visitada, seguimos recto
         siguiente = flood_mejor_vecino_desde(camino_casilla_actual);
 
         // direccion?
@@ -97,6 +95,17 @@ void camino_recalcula() {
                 }
             }
         }
+
+        // bias de camino recto: si la celda no es visitada, continuamos
+        // recto (no comprobamos que llegamos al límite. no es necesario
+        // ya que en la vida real aparecerá una pared antes
+        // -
+        if (!laberinto_get_visitada(siguiente)) {
+            for (dir =0; dir < max(laberinto_get_filas(), laberinto_get_columnas()); dir++)
+                camino_anadir_paso(PASO_RECTO);
+            break;
+        }
+
     }
 
 }

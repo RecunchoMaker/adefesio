@@ -191,9 +191,10 @@ void accion_ejecuta(tipo_accion accion) {
     accion_actual = accion;
 
     if (accion == ARRANCA) {
-        Serial.println(F("* Arranca:"));
+        Serial.print(F("* Arranca desde:"));
+        Serial.println(robot_get_casilla_offset());
         encoders_reset_posicion_aux_total();
-        accion_set(LABERINTO_LONGITUD_CASILLA/2, amax, amax, ve, ve, RADIO_INFINITO);
+        accion_set(LABERINTO_LONGITUD_CASILLA-robot_get_casilla_offset(), amax, amax, ve, ve, RADIO_INFINITO);
     } else if (accion ==  PARA) {
         accion_set(LABERINTO_LONGITUD_CASILLA/2, amax, afin, ve, ACCION_V0, RADIO_INFINITO);
 

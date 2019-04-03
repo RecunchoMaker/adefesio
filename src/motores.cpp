@@ -18,8 +18,8 @@ volatile float kp_lineal = KP_LINEAL; ///< Parámetro P para pid de velocidad li
 volatile float kd_lineal = KD_LINEAL; ///< Parámetro D para pid de velocidad lineal
 volatile float ki_lineal = KI_LINEAL; ///< Parámetro I para pid de velocidad lineal
 
-volatile float kp_pasillo = KP_PASILLO; ///< Parametro P para corrección entre pasillos
-volatile float ki_pasillo = KI_PASILLO; ///< Parametro I para corrección entre pasillos
+volatile float kp_pasillo1 = KP_PASILLO1; ///< Parametro P para corrección entre pasillos en funcion del desvio lateral
+volatile float kp_pasillo2 = KP_PASILLO2; ///< Parametro I para corrección entre pasillos en funcion del incremento de desvio
 //@{
 /// @name Variables para control de pwm
 
@@ -73,14 +73,17 @@ void motores_set_ki_lineal(float ki) { ki_lineal = ki; }
 float motores_get_kd_lineal()  { return kd_lineal; }
 void motores_set_kd_lineal(float kd) { kd_lineal = kd; }
 
-float motores_get_kp_pasillo()  { return kp_pasillo; }
-void motores_set_kp_pasillo(float kp) { kp_pasillo = kp; }
+float motores_get_kp_pasillo1()  { return kp_pasillo1; }
+void motores_set_kp_pasillo1(float kp) { kp_pasillo1 = kp; }
 
-float motores_get_ki_pasillo()  { return ki_pasillo; }
-void motores_set_ki_pasillo(float kp) { ki_pasillo = kp; }
+float motores_get_kp_pasillo2()  { return kp_pasillo2; }
+void motores_set_kp_pasillo2(float kp) { kp_pasillo2 = kp; }
 
 float motores_get_velocidad_lineal_objetivo() {
     return velocidad_lineal_objetivo;
+}
+float motores_get_radio() {
+    return radio;
 }
 float motores_get_radio_aux() {
     return radio_aux;
@@ -284,29 +287,17 @@ void motores_actualiza_velocidad() {
             potencia_left += 0.001 * (encoders_get_posicion_total_left() + encoders_get_posicion_total_right());
             potencia_right -= 0.001 *(encoders_get_posicion_total_left() + encoders_get_posicion_total_right());
 
-        } else if (radio < 1) { 
+        } else if (radio < 10 or radio > -10) { 
             // Giro en redondo
             velocidad_angular_objetivo = velocidad_lineal_objetivo / radio;
             velocidad_lineal_objetivo_left = velocidad_angular_objetivo * (radio + distancia_entre_ruedas/2);
             velocidad_lineal_objetivo_right = velocidad_angular_objetivo * (radio - distancia_entre_ruedas/2);
 
         } else {
-            // suponemos que un radio a 1m es siempre una recta
+            // suponemos que un radio a 10m es siempre una recta
             
-            angulo = robot_get_angulo_desvio();
-
-            if (angulo != 0.0) {
-                velocidad_angular_objetivo = angulo * motores_get_velocidad_lineal_objetivo() / DISTANCIA_CONVERGENCIA;
-                radio_aux = velocidad_lineal_objetivo / velocidad_angular_objetivo;
-
-                velocidad_lineal_objetivo_left = velocidad_angular_objetivo * (radio_aux + distancia_entre_ruedas/2);
-                velocidad_lineal_objetivo_right = velocidad_angular_objetivo * (radio_aux - distancia_entre_ruedas/2);
-
-            } else {
-
-                velocidad_lineal_objetivo_left = velocidad_lineal_objetivo;
-                velocidad_lineal_objetivo_right = velocidad_lineal_objetivo;
-            }
+            velocidad_lineal_objetivo_left = velocidad_lineal_objetivo;
+            velocidad_lineal_objetivo_right = velocidad_lineal_objetivo;
 
         }
 

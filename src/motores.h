@@ -40,14 +40,15 @@ float motores_get_ki_lineal();
 void motores_set_ki_lineal(float ki);
 float motores_get_kd_lineal();
 void motores_set_kd_lineal(float kd);
-float motores_get_kp_pasillo();
-void motores_set_kp_pasillo(float kd);
-float motores_get_ki_pasillo();
-void motores_set_ki_pasillo(float kd);
+float motores_get_kp_pasillo1();
+void motores_set_kp_pasillo1(float kd);
+float motores_get_kp_pasillo2();
+void motores_set_kp_pasillo2(float kd);
 
 float motores_get_velocidad_lineal_objetivo();
 float motores_get_velocidad_lineal_objetivo_left();
 float motores_get_velocidad_lineal_objetivo_right();
+float motores_get_radio();
 float motores_get_radio_aux();
 void motores_set_velocidad_lineal_objetivo(float velocidad);
 

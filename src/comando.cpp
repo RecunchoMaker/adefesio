@@ -79,17 +79,18 @@ bool go = false;
  */
 char const *comando_go = "go";   ///< comando especial para permitir la espera de un comando completo en el bucle principal
 
-char const *comando_kp = "kp";       ///< set constante P del pid para velocidad lineal
-char const *comando_kd = "kd";       ///< set D
-char const *comando_ki = "ki";       ///< set I
-char const *comando_kpp = "kpp";     ///< set constante P del pid para correcion en pasillo
-char const *comando_amax = "amax";   ///< set aceleracion maxima
-char const *comando_acur = "acur";   ///< set aceleracion para entrada en curvas
-char const *comando_afin = "afin";   ///< set deceleracion final
-char const *comando_vc = "vc";       ///< set velocidad maxima en curva
-char const *comando_vr = "vr";       ///< set velocidad maxima en recta
-char const *comando_ve = "ve";       ///< set velocidad maxima en exploracion
-char const *comando_dr = "dr";       ///< set distancia entre ruedas
+char const *comando_kp = "kp";       ///< constante P del pid para velocidad lineal
+char const *comando_kd = "kd";       ///< D
+char const *comando_ki = "ki";       ///< I
+char const *comando_kp1 = "kp1";     ///< constante P del pid para correcion en pasillo en funcion del desvio lateral
+char const *comando_kp2 = "kp2";     ///< constante P del pid para correcion en pasillo en funcion del incremento del desvio
+char const *comando_amax = "amax";   ///< aceleracion maxima
+char const *comando_acur = "acur";   ///< aceleracion para entrada en curvas
+char const *comando_afin = "afin";   ///< deceleracion final
+char const *comando_vc = "vc";       ///< velocidad maxima en curva
+char const *comando_vr = "vr";       ///< velocidad maxima en recta
+char const *comando_ve = "ve";       ///< velocidad maxima en exploracion
+char const *comando_dr = "dr";       ///< distancia entre ruedas
 
 char const *comando_l1 = "l1";       ///< activar leds
 char const *comando_l0 = "l0";       ///< desactivar leds
@@ -190,7 +191,8 @@ void _procesa_comando(char *token, char *parametro) {
     _procesa_setter(comando_kp, token, parametro, motores_set_kp_lineal, motores_get_kp_lineal);
     _procesa_setter(comando_kd, token, parametro, motores_set_kd_lineal, motores_get_kd_lineal);
     _procesa_setter(comando_ki, token, parametro, motores_set_ki_lineal, motores_get_ki_lineal);
-    _procesa_setter(comando_kpp, token, parametro, motores_set_kp_pasillo, motores_get_kp_pasillo);
+    _procesa_setter(comando_kp1, token, parametro, motores_set_kp_pasillo1, motores_get_kp_pasillo1);
+    _procesa_setter(comando_kp2, token, parametro, motores_set_kp_pasillo2, motores_get_kp_pasillo2);
     _procesa_setter(comando_amax, token, parametro, accion_set_amax, accion_get_amax);
     _procesa_setter(comando_acur, token, parametro, accion_set_acur, accion_get_acur);
     _procesa_setter(comando_afin, token, parametro, accion_set_afin, accion_get_afin);
