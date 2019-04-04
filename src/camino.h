@@ -17,13 +17,15 @@ void camino_empieza();
 uint8_t camino_get_casilla_origen();
 uint8_t camino_get_casilla_actual();
 uint8_t camino_get_orientacion_origen();
+uint8_t camino_get_ultima_casilla();
 bool camino_es_fin();
+bool camino_get_todas_visitadas();
 void camino_siguiente_casilla();
 void camino_anadir_paso(tipo_paso paso);
 void camino_anadir_paso_recto();
 void camino_anadir_paso_izq();
 void camino_anadir_paso_der();
-void camino_recalcula();
+bool camino_recalcula();
 
 #endif /* ifndef _CAMINO_H
 

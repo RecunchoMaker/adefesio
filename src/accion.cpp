@@ -217,15 +217,15 @@ void accion_ejecuta(tipo_accion accion) {
     } else if (accion == GIRA_DER) {
         Serial.println(F("* Gira derecha"));
         Serial.println(robot_get_ultima_diferencia_encoders());
-        accion_set(-PI*motores_get_distancia_entre_ruedas()/4.0 +
-                robot_get_ultima_diferencia_encoders() * LONGITUD_PASO_ENCODER,
-                amax, amax, vg, ACCION_V0, GIRO_DERECHA_TODO); // gira 90
+        accion_set(-PI*motores_get_distancia_entre_ruedas()/4.0
+               // + robot_get_ultima_diferencia_encoders() * LONGITUD_PASO_ENCODER
+                ,amax, amax, vg, ACCION_V0, GIRO_DERECHA_TODO); // gira 90
     } else if (accion == GIRA_IZQ) {
         Serial.print(F("* Gira izquierda (comp: "));
         Serial.println(robot_get_ultima_diferencia_encoders());
-        accion_set(PI*motores_get_distancia_entre_ruedas()/4.0 + 
-                robot_get_ultima_diferencia_encoders() * LONGITUD_PASO_ENCODER,
-                amax, amax, vg , ACCION_V0, GIRO_IZQUIERDA_TODO); // gira 90
+        accion_set(PI*motores_get_distancia_entre_ruedas()/4.0
+                //+ robot_get_ultima_diferencia_encoders() * LONGITUD_PASO_ENCODER
+                ,amax, amax, vg , ACCION_V0, GIRO_IZQUIERDA_TODO); // gira 90
     } else if (accion == GIRA_180) {
         Serial.println(F("* Gira 180 grados"));
         accion_set(PI*motores_get_distancia_entre_ruedas()/2.0, amax, amax, vg, ACCION_V0, GIRO_IZQUIERDA_TODO); // gira 180g

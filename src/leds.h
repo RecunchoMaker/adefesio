@@ -51,4 +51,6 @@ bool leds_pared_enfrente();
 bool leds_pared_derecha();
 bool leds_pared_izquierda();
 
+bool leds_go();
+
 #endif

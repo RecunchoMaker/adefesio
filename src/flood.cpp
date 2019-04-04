@@ -29,20 +29,21 @@ volatile uint8_t flood_distancia[MAX_FILAS * MAX_COLUMNAS];
  *
  * @todo Solo vale cuando la solución es una única casilla
  */
-void flood_init(uint8_t origen, uint8_t solucion) {
+void flood_init(uint8_t solucion) {
 
     uint8_t idx = 0;
     Serial.print(laberinto_get_filas());
     Serial.print(" x ");
     Serial.println(laberinto_get_columnas());
     for (idx = 0; idx < laberinto_get_columnas() * laberinto_get_filas(); idx++) {
-        flood_distancia[idx] = abs ( idx / laberinto_get_columnas()) -
-                                     solucion / laberinto_get_columnas()
+        flood_distancia[idx] = abs ( idx / laberinto_get_columnas() -
+                                     solucion / laberinto_get_columnas())
                                +
                                abs ( idx % laberinto_get_columnas() -
                                      solucion % laberinto_get_columnas() );
     }
-
+    Serial.println("flood init");
+    laberinto_print();
 }
 
 /**

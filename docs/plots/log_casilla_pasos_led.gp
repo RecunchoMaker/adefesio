@@ -19,7 +19,7 @@ set key autotitle columnhead
 set angles degrees
 
 # para mostrar nombres de colores: show palette colornames
-plot '/tmp/datos-1.dat' using ($1*10) linecolor "pink" title "casilla" with lines
+plot '/tmp/datos-1.dat' using ($1*100) linecolor "pink" title "casilla" with lines
 replot '/tmp/datos-1.dat' using 2 linecolor "pink" title "pasos" with points 
 replot '/tmp/datos-1.dat' using ($3 * 1000) linecolor "magenta" title "IZQ (mm)" with points
 replot '/tmp/datos-1.dat' using ($4 * 1000) linecolor "magenta" title "FIZQ (mm)" with lines

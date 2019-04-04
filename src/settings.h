@@ -60,8 +60,8 @@
 #define KD_LINEAL -0.0 ///< Constante D por defecto para pid de velocidad lineal
 #define KI_LINEAL -0.0 ///< Constante I por defecto para pid de velocidad lineal
 
-#define KP_PASILLO1 50.0 ///< Constante por defecto P para corrección entre pasillos
-#define KP_PASILLO2 40000 ///< Constante por defecto D para corrección entre pasillos
+#define KP_PASILLO1 45.0 ///< Constante por defecto P para corrección entre pasillos
+#define KP_PASILLO2 4000.0 ///< Constante por defecto D para corrección entre pasillos
 
 /// Define la distancia en la que estimamos incorporarnos al centro en trayectorias rectas
 #define DISTANCIA_CONVERGENCIA 0.09

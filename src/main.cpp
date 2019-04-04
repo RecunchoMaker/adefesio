@@ -53,7 +53,7 @@ void setup() {
     timer1_init(PERIODO_TIMER, 1);
     robot_init();
     laberinto_init();
-    flood_init(CASILLA_INICIAL, CASILLA_SOLUCION);
+    flood_init(CASILLA_SOLUCION);
     camino_init();
     laberinto_print();
 
@@ -69,60 +69,35 @@ void loop() {
     robot_init();
     camino_init();
 
-    while (!comando_get_go()) {
+    leds_activa();
+    //while(true) log_casilla_pasos_leds();
+    while (!leds_go() and !comando_get_go()) {
         comando_lee_serial();
         if (leds_get_leds_activados()) {
-            log_casilla_pasos_leds();
-            //log_variables_trayectoria();
+            //log_casilla_pasos_leds();
         }
     }
 
     bateria_watchdog();
 
-    leds_activa();
-    delayMicroseconds(32000); // un margen para actualizar los leds
     log_leds();
 
     robot_inicia_exploracion();
 
     while (robot_get_estado() != PARADO) {
+        Serial.print(">");
+        Serial.print(robot_es_valido_led_izquierdo());
+        Serial.println(robot_es_valido_led_derecho());
 
         log_casilla_pasos_leds();
-        //log_leds_distancias();
-        //
-        /*
-            Serial.print("# ");
-            Serial.print(motores_get_velocidad_lineal_objetivo());
-            Serial.print(" ");
-            Serial.print((leds_get_distancia(LED_FDER) + leds_get_distancia(LED_FIZQ)) / 2.0,9);
-            Serial.print(" ");
-            Serial.print(encoders_get_posicion_total_left());
-            Serial.print(" ");
-            Serial.print(encoders_get_posicion_total_right());
-            Serial.print(" ");
 
-        Serial.print(ACCION_V0 + ( (  (leds_get_distancia(LED_FIZQ) + leds_get_distancia(LED_FDER) / 2) - 0.02 ) * (0.09 / (ACCION_VE - ACCION_V0))), 9);
-            Serial.println();
-        */
-        /*
-        Serial.print(leds_get_distancia(LED_DER),9);
-        Serial.print(" ");
-        Serial.print(leds_get_distancia_d(LED_DER),9);
-        Serial.print(" ");
-        Serial.print(robot_get_angulo_desvio(),9);
-        Serial.print(" ");
-        Serial.print(motores_get_radio(),9);
-        Serial.print(" ");
-        Serial.print(-leds_get_distancia_kalman(LED_IZQ) - (ANCHURA_ROBOT / 2.0) + (LABERINTO_LONGITUD_CASILLA/2.0),9);
-        Serial.print(" ");
-        Serial.print(motores_get_kp_pasillo1() * (-leds_get_distancia_kalman(LED_IZQ) - (ANCHURA_ROBOT / 2.0) + (LABERINTO_LONGITUD_CASILLA/2.0)),9);
-        Serial.print(":(2):");
-        Serial.print( motores_get_kp_pasillo2() * leds_get_distancia_d(LED_DER) * motores_get_velocidad_lineal_objetivo(), 9);
-        Serial.println("");
-        */
     }
+    laberinto_print();
+    Serial.println("encontrada solucion");
+
+    while (!leds_go());
+
+    robot_resuelve();
     
     leds_desactiva();
-    laberinto_print();
-    Serial.println("fin");
 }

@@ -16,6 +16,7 @@
 
 #include <Arduino.h>
 #include <leds.h>
+#include <bateria.h>
 #include <robot.h>
 
 #define KALMAN_GAIN 0.1
@@ -54,10 +55,15 @@ volatile uint8_t leds_sentido = 0;
 #define LEDS_BITS_INDICE_MUESTRA 6
 #define LEDS_ESPACIO_MUESTRA 64
 /// Constantes para interpolar la distancia a partir de las lecturas analógicas
-const uint8_t leds_segmentos[17] = { \
-     199 , 97 , 69 , 54 , 44 , 37 , 32 , 27 ,  \
-     24 , 21 , 18 , 15 , 13 , 11 , 8 , 2 ,  \
+const uint8_t leds_segmentos[17] = { 
+     199 , 97 , 69 , 54 , 44 , 37 , 32 , 27 ,
+     24 , 21 , 18 , 15 , 13 , 11 , 8 , 2 ,
      0 };
+
+/// Constantes de correccion para cada led
+const float leds_correccion[4] = {   // FIZQ,DER,IZQ,FDER
+    0.007, 0.000, -0.01, 0.000
+};
 
 /**
  * @brief Inicializa pins y establece el sistema de leds como desactivado
@@ -176,7 +182,7 @@ void leds_actualiza_valor(int8_t led) {
     leds_valor_apagado[led - A0] = leds_lectura0;
 
     float distancia_anterior = leds_distancia[led - A0];
-    leds_distancia[led - A0] = leds_interpola_distancia(leds_valor[led-A0]);
+    leds_distancia[led - A0] = leds_interpola_distancia(leds_valor[led-A0]) + leds_correccion[led-A0];
 
     leds_distancia_kalman[led- A0] = KALMAN_GAIN * leds_distancia[led - A0] + (1-KALMAN_GAIN) * distancia_anterior;
 
@@ -385,4 +391,20 @@ float leds_interpola_distancia(int16_t lectura) {
 
     return 0.001 * (leds_segmentos[indice] + pendiente * (lectura - espacio));
 
+}
+
+/**
+ * @brief Devuelve true cuando se detecta que se ha puesto y retirado algo delante del sensor frontal izquierdo
+ */
+bool leds_go() {
+
+    static uint8_t leds_frontal_go_estado = 0;
+
+    if (robot_get_estado() == PARADO and leds_get_distancia_kalman(LED_FIZQ) < 0.05)
+        leds_frontal_go_estado = 1;
+    if (robot_get_estado() == PARADO and leds_get_distancia_kalman(LED_FIZQ) > 0.10)  {
+        leds_frontal_go_estado = (leds_frontal_go_estado == 1 ? 2 : 0);
+    }
+    digitalWrite(BATERIA_LED_PIN, leds_frontal_go_estado == 1);
+    return (leds_frontal_go_estado == 2);
 }

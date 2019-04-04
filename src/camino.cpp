@@ -26,6 +26,8 @@ volatile uint8_t camino_casilla_actual;
 volatile uint8_t camino_orientacion_actual;
 volatile uint8_t siguiente;
 volatile uint8_t dir;
+volatile uint8_t camino_ultima_casilla;
+volatile bool camino_todas_visitadas;
 
 /**
  * @brief Inicializa un camino en la celda inicial
@@ -63,13 +65,22 @@ void camino_empieza() {
 /**
  * @brief Marca un camino de pesos decrecientes de flood
  */
-void camino_recalcula() {
+bool camino_recalcula() {
+
+    bool todas = true;
     camino_init(robot_get_casilla(), robot_get_orientacion());
+    camino_ultima_casilla = camino_casilla_actual;
 
     Serial.println(camino_orientacion_actual);
-    while (camino_casilla_actual != CASILLA_SOLUCION) {
+
+    camino_todas_visitadas = true;
+    while (flood_get_distancia[camino_casilla_actual] != 0) {
+
 
         siguiente = flood_mejor_vecino_desde(camino_casilla_actual);
+        Serial.print("mv:");
+        Serial.println(siguiente);
+
 
         // direccion?
         for (dir = 0; dir < 4; dir++) {
@@ -78,7 +89,9 @@ void camino_recalcula() {
                 switch ((camino_orientacion_actual - dir)) {
                     case 0:  camino_anadir_paso(PASO_RECTO); 
                              break;
-                    case 1:  camino_anadir_paso(PASO_IZQ);
+                    case 1:  
+                    case -3:
+                             camino_anadir_paso(PASO_IZQ);
                              break;
                     case -1: 
                     case  3: camino_anadir_paso(PASO_DER);
@@ -101,13 +114,14 @@ void camino_recalcula() {
         // ya que en la vida real aparecerá una pared antes
         // -
         if (!laberinto_get_visitada(siguiente)) {
+            camino_todas_visitadas = false;
             for (dir =0; dir < max(laberinto_get_filas(), laberinto_get_columnas()); dir++)
                 camino_anadir_paso(PASO_RECTO);
             break;
+        } else {
+            camino_ultima_casilla = camino_casilla_actual;
         }
-
     }
-
 }
 
 
@@ -125,6 +139,20 @@ void camino_siguiente_casilla() {
 }
 
 
+/**
+ * @brief Devuelve la ultima casilla del camino calculado 
+ */
+uint8_t camino_get_ultima_casilla() {
+    return camino_ultima_casilla;
+}
+
+/**
+ * @brief Devuelve true si todas las celdas del camino estan visitadas
+ */
+bool camino_get_todas_visitadas() {
+    return camino_todas_visitadas;
+}
+    
 /**
  * @brief getter de casilla_origen
  */
