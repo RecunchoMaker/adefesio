@@ -77,8 +77,8 @@
 #define CASILLA_INICIAL 224 ///< Número de casilla en la que se posiciona el robot al inicio de la exploración
 #define CASILLA_SOLUCION 14
 */
-#define LABERINTO_FILAS 5    ///< Número de filas
-#define LABERINTO_COLUMNAS 4 ///< Número de columnas
+#define LABERINTO_FILAS 4    ///< Número de filas
+#define LABERINTO_COLUMNAS 3 ///< Número de columnas
 ///< Número de casilla en la que se posiciona el robot al inicio de la exploración. Por defecto ultima fila primera columna
 #define CASILLA_INICIAL (LABERINTO_FILAS * LABERINTO_COLUMNAS - LABERINTO_COLUMNAS)
 //#define CASILLA_INICIAL 7

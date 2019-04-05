@@ -52,5 +52,6 @@ bool leds_pared_derecha();
 bool leds_pared_izquierda();
 
 bool leds_go();
+void leds_reset_go();
 
 #endif

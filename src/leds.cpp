@@ -51,6 +51,10 @@ volatile int16_t leds_pasos_distancia_minima[4];
 /// Sentidos creciente (1) o decreciente (0) de la distancia en cada leg. 1 bit por led
 volatile uint8_t leds_sentido = 0;
 
+
+volatile uint8_t leds_frontal_go_estado = 0;
+
+
 // Constantes generadas por leds_obtener_matriz_segmentos.py
 #define LEDS_BITS_INDICE_MUESTRA 6
 #define LEDS_ESPACIO_MUESTRA 64
@@ -398,8 +402,7 @@ float leds_interpola_distancia(int16_t lectura) {
  */
 bool leds_go() {
 
-    static uint8_t leds_frontal_go_estado = 0;
-
+    Serial.println(leds_frontal_go_estado);
     if (robot_get_estado() == PARADO and leds_get_distancia_kalman(LED_FIZQ) < 0.05)
         leds_frontal_go_estado = 1;
     if (robot_get_estado() == PARADO and leds_get_distancia_kalman(LED_FIZQ) > 0.10)  {
@@ -407,4 +410,10 @@ bool leds_go() {
     }
     digitalWrite(BATERIA_LED_PIN, leds_frontal_go_estado == 1);
     return (leds_frontal_go_estado == 2);
+}
+
+void leds_reset_go() {
+
+    leds_frontal_go_estado = 0;
+
 }

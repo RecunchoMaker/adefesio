@@ -84,7 +84,7 @@ void robot_resuelve() {
     laberinto_print();
     Serial.print(F("SOLUCION: "));
     log_camino();
-    robot.estado = DECIDE;
+    robot.estado = AVANZANDO;
     cli(); // evita el tratamiento solapado en robot_control
     robot_siguiente_accion();
     sei();
@@ -146,7 +146,7 @@ void robot_siguiente_accion() {
     if (robot.estado == PARADO) {
         motores_parar();
     } else if (robot.estado == FLOOD) {
-        Serial.print("encoders aux: ");
+        Serial.print(F("encoders aux: "));
         Serial.print(encoders_get_posicion_aux_left());
         Serial.print(":");
         Serial.println(encoders_get_posicion_aux_right());
@@ -162,7 +162,7 @@ void robot_siguiente_accion() {
 
         Serial.println(F("E-ESPERANDO"));
         //robot.ultima_distancia_lateral = (leds_pared_derecha()? leds_get_distancia(LED_DER):leds_get_distancia(LED_IZQ));
-        Serial.print("Ultima distancia lateral: ");
+        Serial.print(F("Ultima distancia lateral: "));
         Serial.println(robot.ultima_distancia_lateral, 9);
         Serial.print("  ");
         Serial.print(leds_get_distancia(LED_IZQ));
@@ -181,7 +181,6 @@ void robot_siguiente_accion() {
             accion_ejecuta(GIRA_180);
             robot.orientacion--;
             robot.orientacion--;
-
         }
 
     } else if (robot.estado == DECIDE) {
@@ -195,56 +194,57 @@ void robot_siguiente_accion() {
         
         if (robot.casilla == CASILLA_INICIAL 
                 and camino_get_ultima_casilla() == CASILLA_SOLUCION 
-                and !robot.resolviendo
                 and camino_get_todas_visitadas()) {
-            robot.estado = ESPERANDO_RESOLUCION;
-        }
+            robot.estado = ESPERANDO_SOLUCION;
+            Serial.print("Esperando solucion");
+        } else {
 
-        Serial.println(F("E-DECIDE"));
-        Serial.print("  casilla ");
-        Serial.print(robot.casilla);
-        Serial.print("  paso = ");
-        Serial.println(paso);
-        laberinto_print(); 
-        switch (paso) {
-            case PASO_RECTO:
-                             Serial.println(F("ARRANCA"));
-                             robot.estado = AVANZANDO;
-                             robot.casilla_offset = robot.ultima_distancia_lateral;
-                             accion_ejecuta(ARRANCA);
-                             Serial.print("offset nuevo = ");
-                             Serial.println(robot.casilla_offset,5);
-                             break;
-            case PASO_DER:   
-                             if (leds_pared_izquierda())
-                                 robot.ultima_distancia_lateral = leds_get_distancia(LED_IZQ) + (ANCHURA_ROBOT/2.0);
-                             else
-                                 robot.ultima_distancia_lateral = LABERINTO_LONGITUD_CASILLA * 0.5;
-                             Serial.println(F("GIRA_DER"));
-                             accion_ejecuta(GIRA_DER);
-                             robot.estado = ESPERANDO;
-                             robot.orientacion++;
-                             laberinto_set_paso(robot.casilla, PASO_RECTO);
-                             break;
-            case PASO_IZQ:   
-                             if (leds_pared_derecha())
-                                 robot.ultima_distancia_lateral = leds_get_distancia(LED_DER) + (ANCHURA_ROBOT/2.0);
-                             else
-                                 robot.ultima_distancia_lateral = LABERINTO_LONGITUD_CASILLA * 0.5;
-                             Serial.println(F("GIRA_IZQ"));
-                             accion_ejecuta(GIRA_IZQ);
-                             robot.estado = ESPERANDO;
-                             robot.orientacion--;
-                             laberinto_set_paso(robot.casilla, PASO_RECTO);
-                             break;
-            case PASO_STOP:  
-                             Serial.println(F("GIRA_180"));
-                             accion_ejecuta(GIRA_180);
-                             robot.estado = FLOOD;
-                             //robot.estado = PARADO;
-                             robot.orientacion--;
-                             robot.orientacion--;
-                             break;
+            Serial.println(F("E-DECIDE"));
+            Serial.print("  casilla ");
+            Serial.print(robot.casilla);
+            Serial.print("  paso = ");
+            Serial.println(paso);
+            laberinto_print(); 
+            switch (paso) {
+                case PASO_RECTO:
+                                 Serial.println(F("ARRANCA"));
+                                 robot.estado = AVANZANDO;
+                                 robot.casilla_offset = robot.ultima_distancia_lateral;
+                                 accion_ejecuta(ARRANCA);
+                                 //Serial.print("offset nuevo = ");
+                                 //Serial.println(robot.casilla_offset,5);
+                                 break;
+                case PASO_DER:   
+                                 //if (leds_pared_izquierda())
+                                 //    robot.ultima_distancia_lateral = leds_get_distancia(LED_IZQ) + (ANCHURA_ROBOT/2.0);
+                                 //else
+                                     robot.ultima_distancia_lateral = LABERINTO_LONGITUD_CASILLA * 0.5;
+                                 Serial.println(F("GIRA_DER"));
+                                 accion_ejecuta(GIRA_DER);
+                                 robot.estado = ESPERANDO;
+                                 robot.orientacion++;
+                                 laberinto_set_paso(robot.casilla, PASO_RECTO);
+                                 break;
+                case PASO_IZQ:   
+                                 //if (leds_pared_derecha())
+                                 //    robot.ultima_distancia_lateral = leds_get_distancia(LED_DER) + (ANCHURA_ROBOT/2.0);
+                                 //else
+                                 //    robot.ultima_distancia_lateral = LABERINTO_LONGITUD_CASILLA * 0.5;
+                                 Serial.println(F("GIRA_IZQ"));
+                                 accion_ejecuta(GIRA_IZQ);
+                                 robot.estado = ESPERANDO;
+                                 robot.orientacion--;
+                                 laberinto_set_paso(robot.casilla, PASO_RECTO);
+                                 break;
+                case PASO_STOP:  
+                                 Serial.println(F("GIRA_180"));
+                                 accion_ejecuta(GIRA_180);
+                                 robot.estado = FLOOD;
+                                 //robot.estado = PARADO;
+                                 robot.orientacion--;
+                                 robot.orientacion--;
+                                 break;
+            }
         }
     } else if (robot.estado == AVANZANDO) {
         robot.casilla_offset = 0;
@@ -258,12 +258,17 @@ void robot_siguiente_accion() {
             Serial.println(F("PARA"));
 
             // robot.estado = DECIDE;
-            if (robot.casilla == CASILLA_SOLUCION)
+            if (robot.casilla == CASILLA_SOLUCION) {
+                Serial.println("Casilla solucion!");
                 flood_init(CASILLA_INICIAL);
-            if (robot.casilla == CASILLA_INICIAL)
+            }
+            if (robot.casilla == CASILLA_INICIAL) {
                 flood_init(CASILLA_SOLUCION);
+                Serial.println("Casilla inicial!");
+            }
 
-            robot.estado = robot.resolviendo ? REORIENTA : FLOOD;
+
+            robot.estado = robot.resolviendo ? DECIDE : FLOOD;
             laberinto_set_pared_frontal(robot.casilla, leds_pared_enfrente());
         }
     } else if (robot.estado == FIN) {
@@ -293,6 +298,10 @@ tipo_orientacion robot_get_orientacion() {
 
 tipo_estado robot_get_estado() {
     return robot.estado;
+}
+
+void robot_set_estado(tipo_estado estado) {;
+    robot.estado = estado;
 }
 
 float robot_get_casilla_offset() {

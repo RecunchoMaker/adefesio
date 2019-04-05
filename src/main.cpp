@@ -71,10 +71,11 @@ void loop() {
 
     leds_activa();
     //while(true) log_casilla_pasos_leds();
+    leds_reset_go();
     while (!leds_go() and !comando_get_go()) {
         comando_lee_serial();
         if (leds_get_leds_activados()) {
-            //log_casilla_pasos_leds();
+            log_casilla_pasos_leds();
         }
     }
 
@@ -84,20 +85,27 @@ void loop() {
 
     robot_inicia_exploracion();
 
-    while (robot_get_estado() != PARADO) {
-        Serial.print(">");
-        Serial.print(robot_es_valido_led_izquierdo());
-        Serial.println(robot_es_valido_led_derecho());
+    while (robot_get_estado() != ESPERANDO_SOLUCION) {
+        //Serial.print(">");
+        //Serial.print(robot_es_valido_led_izquierdo());
+        //Serial.println(robot_es_valido_led_derecho());
 
-        log_casilla_pasos_leds();
+        //log_casilla_pasos_leds();
 
     }
-    laberinto_print();
-    Serial.println("encontrada solucion");
 
-    while (!leds_go());
+    while(true) {
+        robot_set_estado(PARADO);
+        leds_reset_go();
+        laberinto_print();
+        Serial.println(F("encontrada solucion"));
 
-    robot_resuelve();
+        while (!leds_go());
+
+        Serial.println(F("resuelvo1j!"));
+        robot_resuelve();
+        while (robot_get_estado() != ESPERANDO_SOLUCION);
+        Serial.println(F("finresuelvo1!"));
+    }
     
-    leds_desactiva();
 }
