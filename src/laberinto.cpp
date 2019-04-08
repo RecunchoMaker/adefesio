@@ -185,12 +185,6 @@ void laberinto_print() {
     uint8_t idx = 0;
     uint8_t tipo_linea = 0;
 
-    Serial.print("Orientacion ");
-    Serial.println(robot_get_orientacion());
-
-
-
-
     while (idx < num_filas * num_columnas) {
 
         switch (tipo_linea) {
@@ -257,7 +251,7 @@ void laberinto_print() {
     // Ultima linea
     for (idx = 0; idx < num_columnas; idx++)
         Serial.print("+-----");
-    Serial.println("+");
+    Serial.print(F("+\n"));
 }
 
 

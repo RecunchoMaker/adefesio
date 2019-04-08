@@ -70,18 +70,13 @@ void loop() {
     camino_init();
 
     leds_activa();
-    //while(true) log_casilla_pasos_leds();
     leds_reset_go();
     while (!leds_go() and !comando_get_go()) {
         comando_lee_serial();
-        if (leds_get_leds_activados()) {
-            log_casilla_pasos_leds();
-        }
+        //log_casilla_pasos_leds();
     }
 
     bateria_watchdog();
-
-    log_leds();
 
     robot_inicia_exploracion();
 
@@ -98,14 +93,13 @@ void loop() {
         robot_set_estado(PARADO);
         leds_reset_go();
         laberinto_print();
-        Serial.println(F("encontrada solucion"));
+        Serial.println(F("esperando senal..."));
 
         while (!leds_go());
 
-        Serial.println(F("resuelvo1j!"));
         robot_resuelve();
         while (robot_get_estado() != ESPERANDO_SOLUCION);
-        Serial.println(F("finresuelvo1!"));
+        Serial.println(F("fin!"));
     }
     
 }

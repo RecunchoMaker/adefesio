@@ -118,7 +118,6 @@ void log_casilla_pasos_leds() {
 void log_cambio_casilla() {
     Serial.print(F("cambio a casilla "));
     Serial.println(robot_get_casilla());
-    log_leds();
 }
 
 

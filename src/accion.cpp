@@ -177,6 +177,9 @@ void accion_set(float dist,
 
     timer1_reset_cuenta();
 
+    Serial.print("TODO: distancia ");
+    Serial.println(distancia, 8);
+    
     encoders_reset_posicion_total();
 }
 
@@ -204,16 +207,6 @@ void accion_ejecuta(tipo_accion accion) {
     } else if (accion == ESPERA) {
         Serial.println(F("* Pausa"));
         accion_set(0, 0, 0, 0, 0, 0.05); // en segundos
-        Serial.println("leds: ");
-        Serial.print(leds_get_distancia(LED_IZQ),9);
-        Serial.print(" ");
-        Serial.print(leds_get_distancia(LED_FIZQ),9);
-        Serial.print(" ");
-        Serial.print(leds_get_distancia(LED_FDER),9);
-        Serial.print(" ");
-        Serial.print(leds_get_distancia(LED_DER),9);
-        Serial.println();
-
     } else if (accion == GIRA_DER) {
         Serial.println(F("* Gira derecha: "));
         Serial.println(robot_get_ultima_diferencia_encoders());
@@ -221,7 +214,7 @@ void accion_ejecuta(tipo_accion accion) {
         Serial.println(leds_get_distancia(LED_FDER) - leds_get_distancia(LED_FIZQ),6);
         accion_set(-PI*motores_get_distancia_entre_ruedas()/4.0
                //+ robot_get_ultima_diferencia_encoders() * LONGITUD_PASO_ENCODER
-               + (leds_pared_enfrente() ? (leds_get_distancia(LED_FDER) - leds_get_distancia(LED_FIZQ)) / 4.0 : 0)
+               //+ (leds_pared_enfrente() ? (leds_get_distancia(LED_FDER) - leds_get_distancia(LED_FIZQ)) / 4.0 : 0)
                 ,amax, amax, vg, ACCION_V0, GIRO_DERECHA_TODO); // gira 90
     } else if (accion == GIRA_IZQ) {
         Serial.print(F("* Gira izquierda (comp: "));
@@ -230,14 +223,14 @@ void accion_ejecuta(tipo_accion accion) {
         Serial.println(leds_get_distancia(LED_FDER) - leds_get_distancia(LED_FIZQ),6);
         accion_set(PI*motores_get_distancia_entre_ruedas()/4.0
                 //+ robot_get_ultima_diferencia_encoders() * LONGITUD_PASO_ENCODER
-                + ((leds_pared_enfrente() ? (leds_get_distancia(LED_FDER) - leds_get_distancia(LED_FIZQ)) / 4.0 :0))
+                //+ ((leds_pared_enfrente() ? (leds_get_distancia(LED_FDER) - leds_get_distancia(LED_FIZQ)) / 4.0 :0))
                 ,amax, amax, vg , ACCION_V0, GIRO_IZQUIERDA_TODO); // gira 90
     } else if (accion == GIRA_180) {
         Serial.println(F("* Gira 180 grados"));
         Serial.print("dif leds: ");
         Serial.println(leds_get_distancia(LED_FIZQ) - leds_get_distancia(LED_FDER),6);
         accion_set(PI*motores_get_distancia_entre_ruedas()/2.0
-                - ((leds_pared_enfrente() ? (leds_get_distancia(LED_FIZQ) - leds_get_distancia(LED_FDER)) / 3.8 : 0))
+                //- ((leds_pared_enfrente() ? (leds_get_distancia(LED_FIZQ) - leds_get_distancia(LED_FDER)) / 3.8 : 0))
                 , amax, amax, vg, ACCION_V0, GIRO_IZQUIERDA_TODO); // gira 180g
     } else {
         Serial.println(F("No existe accion!"));

@@ -70,25 +70,18 @@ bool camino_recalcula() {
     camino_init(robot_get_casilla(), robot_get_orientacion());
     camino_ultima_casilla = camino_casilla_actual;
 
-    Serial.println(camino_orientacion_actual);
-
-
     camino_todas_visitadas = true;
     while (flood_get_distancia(camino_casilla_actual) != 0) {
 
 
         siguiente = flood_mejor_vecino_desde(camino_casilla_actual);
-        Serial.print(F("mv desde:"));
-        Serial.print(camino_casilla_actual);
-        Serial.print(" ");
-        Serial.println(siguiente);
-
 
         // direccion?
         for (dir = 0; dir < 4; dir++) {
             if ((int) siguiente - camino_casilla_actual == incremento[dir]) {
 
                 switch ((camino_orientacion_actual - dir)) {
+                    ///@todo hacer este calculo con modulo 4?
                     case 0:  camino_anadir_paso(PASO_RECTO); 
                              break;
                     case 1:  
@@ -103,24 +96,13 @@ bool camino_recalcula() {
                     case -2:  
                     default:
                              camino_anadir_paso(PASO_STOP);
-                             Serial.print(F("ERROR!?????"));
-                             Serial.println(dir);
-                             Serial.println(camino_orientacion_actual - dir);
                              break;
                 }
             }
         }
 
-        // bias de camino recto: si la celda no es visitada, continuamos
-        // recto (no comprobamos que llegamos al límite. no es necesario
-        // ya que en la vida real aparecerá una pared antes
-        // -
+        // bias de camino recto
         if (!laberinto_get_visitada(siguiente)) {
-            Serial.print(F("vistadas = false, casill:"));
-            Serial.println(siguiente);
-            camino_todas_visitadas = false;
-            Serial.print(F("anado pasos rectos con orientacion "));
-            Serial.println(camino_orientacion_actual);
             for (dir =0; dir < max(laberinto_get_filas(), laberinto_get_columnas()); dir++)
                 camino_anadir_paso(PASO_RECTO);
             break;
@@ -128,10 +110,6 @@ bool camino_recalcula() {
             camino_ultima_casilla = camino_casilla_actual;
         }
     }
-    Serial.println(F("Acabo calculo camino"));
-    Serial.print(F("todas_visitadas: "));
-    Serial.println(camino_todas_visitadas);
-    Serial.print(F("ultima casilla"));
     return camino_todas_visitadas;
 
 }

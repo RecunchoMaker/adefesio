@@ -15,6 +15,7 @@
  */
 
 #include <Arduino.h>
+#include <settings.h>
 #include <leds.h>
 #include <bateria.h>
 #include <robot.h>
@@ -101,6 +102,7 @@ void leds_init() {
  */
 void leds_activa() {
     leds_activados = true;
+    delayMicroseconds(PERIODO_CICLO * 10); // espera unos ciclos de interrupcion
 }
 
 
@@ -402,10 +404,9 @@ float leds_interpola_distancia(int16_t lectura) {
  */
 bool leds_go() {
 
-    Serial.println(leds_frontal_go_estado);
-    if (robot_get_estado() == PARADO and leds_get_distancia_kalman(LED_FIZQ) < 0.05)
+    if (robot_get_estado() == PARADO and leds_get_distancia(LED_FIZQ) < 0.05)
         leds_frontal_go_estado = 1;
-    if (robot_get_estado() == PARADO and leds_get_distancia_kalman(LED_FIZQ) > 0.10)  {
+    if (robot_get_estado() == PARADO and leds_get_distancia(LED_FIZQ) > 0.10)  {
         leds_frontal_go_estado = (leds_frontal_go_estado == 1 ? 2 : 0);
     }
     digitalWrite(BATERIA_LED_PIN, leds_frontal_go_estado == 1);
