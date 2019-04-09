@@ -22,9 +22,6 @@
 /// Pin analógico de entrada compartido por todos los sensores infrarrojos
 #define LED_SENSOR A4
 
-/// Numero de pasos de desfase entre un led y otro al pasar recto entre dos viguetas
-#define LED_DESFASE_LATERAL 34
-
 void leds_init();
 void leds_calibra();
 void leds_recalibra();

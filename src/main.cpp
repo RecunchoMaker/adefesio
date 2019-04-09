@@ -71,24 +71,33 @@ void loop() {
 
     leds_activa();
     leds_reset_go();
-    while (!leds_go() and !comando_get_go()) {
-        comando_lee_serial();
-        //log_casilla_pasos_leds();
-    }
 
-    bateria_watchdog();
 
-    robot_inicia_exploracion();
+    while (true) {
+        while (!leds_go() and !comando_get_go()) {
+            comando_lee_serial();
+            //log_casilla_pasos_leds();
+        }
 
-    while (robot_get_estado() != ESPERANDO_SOLUCION) {
+        bateria_watchdog();
+
+        for (int i = 0; i< 1000; i++)
+            timer1_reset_cuenta();
+            while (timer1_get_cuenta() < 1000);
+
+        robot_empieza();
+        while (robot_get_estado() != ESPERANDO_SENAL) {
         //Serial.print(">");
         //Serial.print(robot_es_valido_led_izquierdo());
         //Serial.println(robot_es_valido_led_derecho());
 
         //log_casilla_pasos_leds();
+        }
+
 
     }
 
+    /*
     while(true) {
         robot_set_estado(PARADO);
         leds_reset_go();
@@ -101,5 +110,6 @@ void loop() {
         while (robot_get_estado() != ESPERANDO_SOLUCION);
         Serial.println(F("fin!"));
     }
+    */
     
 }

@@ -70,6 +70,19 @@ void flood_encuentra_vecinos(uint8_t casilla) {
 
 
 /**
+ * brief Devuelve true si vecino es accesible desde casilla
+ */
+bool flood_es_vecino(uint8_t origen, uint8_t vecino) {
+
+    flood_encuentra_vecinos(origen);
+    for (uint8_t i = 0; i < flood_vecinos.tamano; i++)
+        if (flood_vecinos.casilla[i] == vecino)
+            return true;
+    return false;
+}
+
+
+/**
  * brief Devuelve la casilla mas cercana a la solución con la información actual
  */
 uint8_t flood_mejor_vecino_desde(uint8_t casilla) {
@@ -77,6 +90,17 @@ uint8_t flood_mejor_vecino_desde(uint8_t casilla) {
     uint8_t mejor_casilla;
 
     flood_encuentra_vecinos(casilla);
+    /*
+    Serial.print("vecinos de ");
+    Serial.print(casilla);
+    Serial.print(" = ");
+    for (uint8_t idx = 0; idx < flood_vecinos.tamano; idx++) {
+        Serial.print(flood_vecinos.casilla[idx]);
+        Serial.print(", ");
+    }
+    */
+
+
     for (uint8_t idx = 0; idx < flood_vecinos.tamano; idx++) {
         if (flood_distancia[flood_vecinos.casilla[idx]] < minimo) {
             minimo = flood_distancia[flood_vecinos.casilla[idx]];

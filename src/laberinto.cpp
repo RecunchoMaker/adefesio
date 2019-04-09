@@ -144,6 +144,14 @@ uint8_t laberinto_get_columnas() {
 
 void laberinto_set_paredes_laterales(uint8_t casilla, bool izq, bool der) {
 
+    if (der) {
+        Serial.print(F("* setWall "));
+        Serial.print(num_columnas - casilla / num_columnas);
+        Serial.print(F(" "));
+        Serial.print(num_filas - casilla % num_filas);
+        Serial.print(F(" "));
+        Serial.println("NWSE"[(robot_get_orientacion()+1) % 4]);
+    }
     switch (robot_get_orientacion()) {
         case NORTE: celda[casilla].paredO = izq;
                     celda[casilla+incremento[ESTE]].paredO = der;
@@ -162,12 +170,23 @@ void laberinto_set_paredes_laterales(uint8_t casilla, bool izq, bool der) {
 
 void laberinto_set_pared_frontal(uint8_t casilla, bool frontal) {
 
-    Serial.print(robot_get_orientacion());
-
+    if (frontal) {
+        Serial.print(F("* setWall "));
+        Serial.print(num_columnas - casilla / num_columnas);
+        Serial.print(F(" "));
+        Serial.print(num_filas - casilla % num_filas);
+        Serial.print(F(" "));
+        Serial.println("NWSE"[robot_get_orientacion()]);
+    }
     switch(robot_get_orientacion()) {
         case NORTE: celda[casilla].paredN = frontal;
                     break;
         case ESTE:  celda[casilla + incremento[ESTE]].paredO = frontal;
+                    Serial.print(" marco el este de ");
+                    Serial.print(casilla);
+                    Serial.print(" con ");
+                    Serial.print(frontal);
+
                     break;
         case SUR:   celda[casilla + incremento[SUR]].paredN = frontal;
                     break;

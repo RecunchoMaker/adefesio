@@ -14,6 +14,7 @@ uint8_t flood_get_distancia(uint8_t casilla);
 uint8_t flood_minimo_vecino(uint8_t casilla);
 uint8_t flood_mejor_vecino_desde(uint8_t casilla);
 void flood_encuentra_vecinos(uint8_t casilla);
+bool flood_es_vecino(uint8_t casilla, uint8_t vecino);
 bool flood_recalcula();
 
 #endif /* ifndef FLOOD

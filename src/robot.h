@@ -8,7 +8,7 @@
 #define __ROBOT_H
 
 enum tipo_orientacion {NORTE, ESTE, SUR, OESTE};
-enum tipo_estado {PARADO, FLOOD, REORIENTA, ESPERANDO, DECIDE, AVANZANDO, FIN, ESPERANDO_SOLUCION};
+enum tipo_estado {PARADO, FLOOD, REORIENTA, ESPERANDO, DECIDE, AVANZANDO, EMPIEZA, ESPERANDO_SENAL};
 
 
 void robot_set_amax(float aceleracion_maxima);
@@ -23,10 +23,11 @@ void robot_set_vc(float velocidad_en_curva);
 float robot_get_vc();
 
 void robot_init();
+void robot_empieza();
+void robot_resuelve();
+void robot_explora();
 void robot_siguiente_accion();
 void robot_control();
-void robot_inicia_exploracion();
-void robot_resuelve();
 
 uint8_t robot_get_casilla();
 float robot_get_casilla_offset();
