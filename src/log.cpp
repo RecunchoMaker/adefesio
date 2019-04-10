@@ -18,7 +18,7 @@
  * @brief Muestra en una línea la diferencia de valores de sensor con led encedido/apagado
  */
 void log_leds() {
-    Serial.print(F("leds:"));
+    Serial.print(F("l:"));
     Serial.print(leds_get_valor(LED_IZQ));
     Serial.print("\t");
     Serial.print(leds_get_valor(LED_FIZQ));
@@ -130,7 +130,7 @@ void log_camino() {
     camino_empieza();
 	while (!camino_es_fin()) {
 		Serial.print(camino_get_casilla_actual());
-		Serial.print(", ");
+		Serial.print(" ");
 		camino_siguiente_casilla();
 	}
     Serial.println(camino_get_casilla_actual());

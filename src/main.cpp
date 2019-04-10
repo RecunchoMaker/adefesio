@@ -16,6 +16,9 @@
 
 ISR (TIMER1_COMPA_vect) {
 
+#ifdef MOCK
+    robot_control();
+#else
     switch (timer1_get_estado()) {
         case 0: 
                 leds_actualiza_valor(LED_IZQ);
@@ -34,9 +37,8 @@ ISR (TIMER1_COMPA_vect) {
                 robot_control();
                 break;
     }
-
+#endif
     timer1_incrementa_cuenta();
-
 }
 
 
@@ -87,29 +89,11 @@ void loop() {
 
         robot_empieza();
         while (robot_get_estado() != ESPERANDO_SENAL) {
-        //Serial.print(">");
-        //Serial.print(robot_es_valido_led_izquierdo());
-        //Serial.println(robot_es_valido_led_derecho());
-
-        //log_casilla_pasos_leds();
+#ifdef MOCK
+            comando_lee_serial();
+#endif
         }
-
-
     }
 
-    /*
-    while(true) {
-        robot_set_estado(PARADO);
-        leds_reset_go();
-        laberinto_print();
-        Serial.println(F("esperando senal..."));
-
-        while (!leds_go());
-
-        robot_resuelve();
-        while (robot_get_estado() != ESPERANDO_SOLUCION);
-        Serial.println(F("fin!"));
-    }
-    */
     
 }

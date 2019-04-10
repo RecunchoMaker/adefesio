@@ -7,6 +7,9 @@
 #ifndef __SETTINGS_H
 #define __SETTINGS_H
 
+/// Constante definida para simulador mms
+#define MOCK 1
+
 //@{
 /**
  * @name Características físicas del robot
@@ -38,7 +41,11 @@
  * @name Configuración del timer
  */
 
+#ifdef MOCK
+#define PERIODO_TIMER 0.005
+#else
 #define PERIODO_TIMER 0.001
+#endif
 
 /// Distintos estados del timer (cada ciclo de timer se ejecuta un estado distinto)
 #define NUMERO_ESTADOS 4
@@ -80,12 +87,18 @@
 #define LABERINTO_FILAS 3    ///< Número de filas
 #define LABERINTO_COLUMNAS 5 ///< Número de columnas
 ///< Número de casilla en la que se posiciona el robot al inicio de la exploración. Por defecto ultima fila primera columna
+#ifdef MOCK
+#define CASILLA_INICIAL (LABERINTO_COLUMNAS * (LABERINTO_FILAS - 1))
+#define CASILLA_SOLUCION (LABERINTO_COLUMNAS-1)  
+#define ORIENTACION_INICIAL NORTE ///< Orientación del robot al inicio de la exploración
+#else
 #define CASILLA_INICIAL (LABERINTO_FILAS * LABERINTO_COLUMNAS - 1)
 //#define CASILLA_INICIAL 7
 ///< Casilla solución. Por defecto primera fila ultima columna.
 ///#define CASILLA_SOLUCION (LABERINTO_COLUMNAS-1)  
 #define CASILLA_SOLUCION 0
 #define ORIENTACION_INICIAL NORTE ///< Orientación del robot al inicio de la exploración
+#endif
 #define LABERINTO_LONGITUD_CASILLA 0.18 //< Longitud en metros de cada casilla
 //@}
 

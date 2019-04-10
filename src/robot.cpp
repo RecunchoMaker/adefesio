@@ -119,14 +119,6 @@ void _incrementa_casilla() {
             leds_pared_derecha()
             );
 
-    // robot.hay_alguna_pared indica si la casilla actual no tiene paredes y la anterior
-    // tampoco tenía
-    if (!robot.hay_alguna_pared and !leds_pared_izquierda() and !leds_pared_enfrente()) {
-        robot.hay_alguna_pared = false;
-        Serial.print("No hay paredes\n");
-    }
-    else
-        robot.hay_alguna_pared = true;
     laberinto_set_pared_frontal(robot.casilla, leds_pared_enfrente());
 
     laberinto_print();
@@ -342,20 +334,15 @@ float robot_get_angulo_desvio() {
     // if (robot.estado != 99) {
     desvio = 0.0;
     if (accion_get_accion_actual() == ARRANCA or accion_get_accion_actual() == AVANZA or accion_get_accion_actual() == PARA) {
-        if (!robot.hay_alguna_pared) {
-            //desvio += robot.diferencia_pasos * 0.0017;
+        //if (leds_get_distancia_kalman(LED_IZQ) < 0.08) {
+        if (robot_es_valido_led_izquierdo()) {
+            desvio += motores_get_kp_pasillo1() * (-leds_get_distancia_kalman(LED_IZQ) - (ANCHURA_ROBOT / 2.0) + (LABERINTO_LONGITUD_CASILLA/2.0));
+            desvio -= motores_get_kp_pasillo2() * (leds_get_distancia_d(LED_IZQ) * motores_get_velocidad_lineal_objetivo());
         }
-        else {
-            //if (leds_get_distancia_kalman(LED_IZQ) < 0.08) {
-            if (robot_es_valido_led_izquierdo()) {
-                desvio += motores_get_kp_pasillo1() * (-leds_get_distancia_kalman(LED_IZQ) - (ANCHURA_ROBOT / 2.0) + (LABERINTO_LONGITUD_CASILLA/2.0));
-                desvio -= motores_get_kp_pasillo2() * (leds_get_distancia_d(LED_IZQ) * motores_get_velocidad_lineal_objetivo());
-            }
-            if (robot_es_valido_led_derecho()) {
-            //if (leds_get_distancia_kalman(LED_DER) < 0.08) {
-                desvio -= motores_get_kp_pasillo1() * (-leds_get_distancia_kalman(LED_DER) - (ANCHURA_ROBOT / 2.0) + (LABERINTO_LONGITUD_CASILLA/2.0));
-                desvio += motores_get_kp_pasillo2() * (leds_get_distancia_d(LED_DER) * motores_get_velocidad_lineal_objetivo());
-            }
+        if (robot_es_valido_led_derecho()) {
+        //if (leds_get_distancia_kalman(LED_DER) < 0.08) {
+            desvio -= motores_get_kp_pasillo1() * (-leds_get_distancia_kalman(LED_DER) - (ANCHURA_ROBOT / 2.0) + (LABERINTO_LONGITUD_CASILLA/2.0));
+            desvio += motores_get_kp_pasillo2() * (leds_get_distancia_d(LED_DER) * motores_get_velocidad_lineal_objetivo());
         }
 
     }
@@ -364,6 +351,18 @@ float robot_get_angulo_desvio() {
 
 void robot_control() {
 
+#ifdef MOCK
+
+//            if (Serial.available()) {
+//                char c = Serial.read();
+//                if (c == '.')
+//                    // Serial.println(F("*accion"));
+//                    robot_siguiente_accion();
+//            }
+//            return;
+//
+
+#endif
     if (accion_get_accion_actual() == AVANZA) {
         if (robot_get_angulo_desvio() != 0)
             motores_set_radio(1.0 / robot_get_angulo_desvio());
@@ -403,6 +402,13 @@ void robot_control() {
         }
 
         if (pasos_recorridos >= accion_get_pasos_objetivo() or motores_get_velocidad_lineal_objetivo() == 0) {
+#ifdef MOCK
+            if (!Serial.available()) {
+                Serial.print(F("Esperooooo"));
+                return;
+            }
+
+#endif
             robot_siguiente_accion();
         }
         else if (pasos_recorridos >= accion_get_pasos_hasta_decelerar()) {

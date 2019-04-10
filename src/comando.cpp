@@ -45,6 +45,7 @@
 #include <robot.h>
 #include <leds.h>
 #include <camino.h>
+#include <log.h>
 
 /// Máxima longitud permitida para un comando
 #define COMANDO_MAX_TAMANO 16
@@ -98,6 +99,11 @@ char const *comando_l0 = "l0";       ///< desactivar leds
 char const *comando_pr = "pr";       ///< anadir PASO_RECTO a camino
 char const *comando_pd = "pd";       ///< anadir PASO_DER a camino
 char const *comando_pi = "pi";       ///< anadir PASO_IZQ a camino
+
+/// comandos para MOCK
+char const *comando_ld = "ld";       ///< setear distancia del led derecho
+char const *comando_li = "li";       ///< setear distancia del led izquierdo
+char const *comando_lf = "lf";       ///< setear distancia del led frontal
 
 //@}
 
@@ -200,6 +206,9 @@ void _procesa_comando(char *token, char *parametro) {
     _procesa_setter(comando_vr, token, parametro, accion_set_vr, accion_get_vr);
     _procesa_setter(comando_ve, token, parametro, accion_set_ve, accion_get_ve);
     _procesa_setter(comando_dr, token, parametro, motores_set_distancia_entre_ruedas, motores_get_distancia_entre_ruedas);
+    _procesa_setter(comando_ld, token, parametro, leds_mock_led_d, log_leds);
+    _procesa_setter(comando_li, token, parametro, leds_mock_led_i, log_leds);
+    _procesa_setter(comando_lf, token, parametro, leds_mock_led_f, log_leds);
 
 }
 

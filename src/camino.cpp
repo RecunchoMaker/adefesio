@@ -84,16 +84,9 @@ bool camino_recalcula() {
             and !laberinto_get_visitada(camino_casilla_actual + incremento[camino_orientacion_actual])
             and flood_get_distancia(siguiente) == flood_get_distancia(camino_casilla_actual + incremento[camino_orientacion_actual]))
         {
-            Serial.print(F("Mejor voy recto hasta \n"));
             camino_anadir_paso(PASO_RECTO);
-            Serial.print(camino_casilla_actual);
         } else {
             siguiente = flood_mejor_vecino_desde(camino_casilla_actual);
-
-            Serial.print("mejor vecino desde ");
-            Serial.print(camino_casilla_actual);
-            Serial.print(" es ");
-            Serial.println(siguiente);
 
             // direccion?
             for (dir = 0; dir < 4; dir++) {

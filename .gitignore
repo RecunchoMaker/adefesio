@@ -6,3 +6,4 @@
 docs/html
 scripts/.ropeproject
 .ropeproject
+*.pyc
