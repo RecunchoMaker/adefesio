@@ -84,8 +84,8 @@
 #define CASILLA_INICIAL 224 ///< Número de casilla en la que se posiciona el robot al inicio de la exploración
 #define CASILLA_SOLUCION 14
 */
-#define LABERINTO_FILAS 3    ///< Número de filas
-#define LABERINTO_COLUMNAS 5 ///< Número de columnas
+#define LABERINTO_FILAS 9    ///< Número de filas
+#define LABERINTO_COLUMNAS 9 ///< Número de columnas
 ///< Número de casilla en la que se posiciona el robot al inicio de la exploración. Por defecto ultima fila primera columna
 #ifdef MOCK
 #define CASILLA_INICIAL (LABERINTO_COLUMNAS * (LABERINTO_FILAS - 1))

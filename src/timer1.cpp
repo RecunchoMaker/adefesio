@@ -88,19 +88,6 @@ void timer1_reset_cuenta() {
 
 
 /**
- * @brief Espera un numero de milisegundos milisegundos
- */
-void timer1_espera(uint16_t ciclos) {
-    while (ciclos > 0) {
-        timer1_reset_cuenta();
-        while (timer1_get_cuenta() < PERIODO_CICLO);
-        ciclos--;
-    }
-
-}
-
-
-/**
  * @brief Incrementa el contador de entradas en la interrupción y gestiona el estado
  *
  * Es necesario incluir esta función en la rutina de interrupción del timer, para

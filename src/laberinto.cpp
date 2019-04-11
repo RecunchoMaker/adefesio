@@ -181,13 +181,12 @@ void laberinto_set_pared_frontal(uint8_t casilla, bool frontal) {
                     break;
     }
 #ifdef MOCK
-    Serial.print(F("setParedFrontal"));
+    Serial.print(F("setParedFrontal "));
     Serial.print(casilla);
     Serial.print(F(" "));
     Serial.print(robot_get_orientacion());
     Serial.print(F(" "));
-    Serial.print(frontal);
-    Serial.print(F(" "));
+    Serial.println(frontal);
 #endif
 }
 
@@ -197,6 +196,7 @@ void laberinto_set_pared_frontal(uint8_t casilla, bool frontal) {
  */
 void laberinto_print() {
 
+#ifndef MOCK
     uint8_t idx = 0;
     uint8_t tipo_linea = 0;
 
@@ -267,6 +267,7 @@ void laberinto_print() {
     for (idx = 0; idx < num_columnas; idx++)
         Serial.print("+-----");
     Serial.print(F("+\n"));
+#endif
 }
 
 

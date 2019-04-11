@@ -35,6 +35,8 @@ typedef struct {
 
 volatile tipo_robot robot;
 
+volatile bool mock_flag_siguiente_accion = false;
+
 volatile uint8_t mejor_casilla; ///< Mejor casilla calculada desde la posición actual
 
 volatile float desvio; ///< auxilar;
@@ -162,6 +164,7 @@ void robot_siguiente_accion() {
         */
     } else if (robot.estado == FLOOD) {
         Serial.print(F("E-FLOOD\n"));
+        //while (flood_recalcula());
         if (!flood_recalcula()) {
             camino_recalcula();
             laberinto_print();
@@ -174,6 +177,7 @@ void robot_siguiente_accion() {
             Serial.print(F("OK\n"));
             robot.estado = ESPERANDO;
         } else {
+            Serial.println();
             accion_ejecuta(GIRA_180);
             robot.orientacion--;
             robot.orientacion--;
@@ -245,7 +249,7 @@ void robot_siguiente_accion() {
             if (robot.casilla == CASILLA_SOLUCION or robot.casilla == CASILLA_INICIAL) {
                 robot.estado = EMPIEZA;
             } else {
-                robot.estado = DECIDE;
+                robot.estado = FLOOD;
             }
         }
     }
@@ -361,6 +365,13 @@ void robot_control() {
 //            }
 //            return;
 //
+    if (robot.estado == ESPERANDO or robot.estado == REORIENTA)
+        robot_siguiente_accion();
+    else if (mock_flag_siguiente_accion) {
+        mock_flag_siguiente_accion = false;
+        robot_siguiente_accion();
+    }
+    return;
 
 #endif
     if (accion_get_accion_actual() == AVANZA) {
@@ -422,4 +433,8 @@ void robot_control() {
     }
 
 
+}
+
+void mock_siguiente_accion() {
+    mock_flag_siguiente_accion = true;
 }

@@ -55,8 +55,6 @@ void setup() {
     timer1_init(PERIODO_TIMER, 1);
     robot_init();
     laberinto_init();
-    flood_init(CASILLA_SOLUCION);
-    camino_init();
     laberinto_print();
 
     pinMode(A5, INPUT_PULLUP);
@@ -76,16 +74,19 @@ void loop() {
 
 
     while (true) {
+#ifdef MOCK
+        while (!comando_get_go()) {
+#else
         while (!leds_go() and !comando_get_go()) {
+#endif
             comando_lee_serial();
             //log_casilla_pasos_leds();
         }
+        flood_init(CASILLA_SOLUCION);
+        camino_init();
 
         bateria_watchdog();
-
-        for (int i = 0; i< 1000; i++)
-            timer1_reset_cuenta();
-            while (timer1_get_cuenta() < 1000);
+        Serial.print("antes");
 
         robot_empieza();
         while (robot_get_estado() != ESPERANDO_SENAL) {

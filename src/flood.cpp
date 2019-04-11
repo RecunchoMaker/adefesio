@@ -38,6 +38,12 @@ void flood_init(uint8_t solucion) {
                                +
                                abs ( idx % laberinto_get_columnas() -
                                      solucion % laberinto_get_columnas() );
+#ifdef MOCK
+        Serial.print("flood ");
+        Serial.print(idx);
+        Serial.print(" ");
+        Serial.println(flood_distancia[idx]);
+#endif
     }
 }
 
@@ -145,6 +151,13 @@ bool flood_recalcula() {
         if (minimo != flood_distancia[idx] - 1) {
             flood_distancia[idx] = minimo + 1;
             hay_pendientes = true;
+#ifdef MOCK
+            Serial.print("flood ");
+            Serial.print(idx);
+            Serial.print(" ");
+            Serial.println(minimo+1);
+#endif
+
         }
     }
 

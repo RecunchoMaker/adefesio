@@ -163,6 +163,8 @@ void leds_reset_distancias_minimas() {
  * @brief Setea las distancias en los leds, para MOCK
  */
 void leds_mock_led_f(float valor) {
+    Serial.print("moc led f ");
+    Serial.println(valor);
     leds_distancia[LED_FDER - A0] = (valor == 1? 0.01 : 0.19);
     leds_distancia[LED_FIZQ - A0] = (valor == 1? 0.01 : 0.19);
 }
@@ -369,16 +371,6 @@ int16_t leds_get_pasos_distancia_minima(int8_t led) {
  * @todo Establecer el valor umbral de otra manera
  */
 bool leds_pared_enfrente() {
-    /*
-#ifdef MOCK
-    Serial.println(F("f?"));    
-    while (!Serial.available());
-    char c = Serial.read();
-    Serial.print(F("ledfrontal: "));
-    Serial.println(c == '1' ? "si" : "no");
-    return c == '1';
-#endif
-    */
     return leds_distancia[LED_FDER - A0] < 0.16 and leds_distancia[LED_FIZQ - A0] < 0.16;
 }
 
@@ -393,16 +385,6 @@ bool leds_pared_enfrente() {
  *
  */
 bool leds_pared_izquierda() {
-    /*
-#ifdef MOCK
-    Serial.println(F("i?"));    
-    while (!Serial.available());
-    char c = Serial.read();
-    Serial.print(F("aledizq: "));
-    Serial.println(c == '1' ? "si" : "no");
-    return c == '1';
-#endif
-    */
     return (leds_distancia[LED_IZQ - A0] < 0.10);
 }
 
@@ -416,16 +398,6 @@ bool leds_pared_izquierda() {
  * @todo Establecer el valor umbral de otra manera
  */
 bool leds_pared_derecha() {
-    /*
-#ifdef MOCK
-    Serial.println(F("lder?"));    
-    while (!Serial.available());
-    char c = Serial.read();
-    Serial.print(F("cledder: "));
-    Serial.println(c == '1' ? "si" : "no");
-    return c == '1';
-#endif
-    */
     return (leds_distancia[LED_DER - A0] < 0.10);
 }
 

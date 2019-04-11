@@ -4,8 +4,8 @@ import serial
 import time
 
 
-filas = 3
-columnas = 5
+filas = 9
+columnas = 9
 
 def log(string):
     sys.stderr.write("{}\n".format(string))
@@ -19,11 +19,39 @@ def casilla2y(casilla):
     global filas, columnas
     return filas - 1 - casilla / columnas;
 
+def enviaSensores(arduino):
+    res = ""
+    if (API.wallFront()):
+        arduino.write('lf 1\r'.encode())
+        res = res + "F"
+    else:
+        arduino.write('lf 0\r'.encode())
+        res = res + " "
+    #time.sleep(0.01)
+
+    if (API.wallRight()):
+        arduino.write('ld 1\r'.encode())
+        res = res + "D"
+    else:
+        arduino.write('ld 0\r'.encode())
+        res = res + " "
+    #time.sleep(0.01)
+
+    if (API.wallLeft()):
+        res = res + "I"
+        arduino.write('li 1\r'.encode())
+    else:
+        res = res + " "
+        arduino.write('li 0\r'.encode())
+    #time.sleep(0.01)
+    log("Enviados sensores: %s" % res)
+
+
 def main():
     global filas, columnas
     arduino = serial.Serial()
     arduino.baudrate = 115200
-    arduino.timeout = 1
+    arduino.timeout = 0.1
     arduino.port = '/dev/ttyUSB0'
     arduino.open()
 
@@ -35,65 +63,48 @@ def main():
         if 'A>' in response:
             break
 
-    time.sleep(1)
-
-    arduino.write('lf 1\r'.encode())
-    time.sleep(1)
-
-    arduino.write('go\r'.encode())
-    log("go!")
+    enviaSensores(arduino)
 
     # picocom -b 19200 --imap lfcr --omap crcrlf /dev/ttyUSB0
+    i = 0
 
+    camino = []
 
     while True:
+        time.sleep(0.02)
+        i = i + 1
         linea = arduino.readline().strip()
-        """
-        response = ''
-        while True:
-            response += arduino.read()
-            if len(response) > 10:
-                log(response)
-                linea = response
-                break
-        """
 
-        arduino.write('lf %s' % (API.wallRight()))
+
+        if i > 16:
+            i = 0
+            log("fuerzo siguiente accion");
+            arduino.write("sa\r".encode())
+
         if (linea):
             try:
-                if "f?" in linea:
-                    log("frontal?")
-                    if API.wallFront():
-                        arduino.write("1");
-                    else:
-                        arduino.write("0");
-                if "i?" in linea:
-                    log("izquierdo?")
-                    if API.wallLeft():
-                        arduino.write("1");
-                    else:
-                        arduino.write("0");
-                if "lder?" in linea:
-                    log("derecho?")
-                    if API.wallRight():
-                        arduino.write("1");
-                    else:
-                        arduino.write("0");
-                elif linea == "moveForward":
+                if linea == "moveForward":
                     API.moveForward()
+                    enviaSensores(arduino)
+                    arduino.write("sa\r".encode())
+                    i = 0
                 elif linea == "turnLeft":
                     API.turnLeft()
+                    enviaSensores(arduino)
+                    #arduino.write("sa\r".encode())
+                    i = 0
                 elif linea == "turnRight":
                     API.turnRight()
-                elif linea == "sd":
-                    sensor = API.wallRight()
-                    log("sensor derecha: %s" % sensor)
-                elif linea == "si":
-                    sensor = API.wallLeft()
-                    log("sensor izquierda: %s" % sensor)
-                elif linea == "sf":
-                    sensor = API.wallFront()
-                    log("sensor frontal: %s" % sensor)
+                    enviaSensores(arduino)
+                    #arduino.write("sa\r".encode())
+                    i = 0
+                elif linea == "turn180":
+                    API.turnLeft()
+                    enviaSensores(arduino)
+                    API.turnLeft()
+                    enviaSensores(arduino)
+                    #arduino.write("sa\r".encode())
+                    i = 0
                 elif "setParedLateral" in linea:
                     casilla,ori,izq,der = map(int,linea.split(" ")[1:])
                     if (der):
@@ -102,41 +113,39 @@ def main():
                     if (izq):
                         log("setWall %d %d %s" % (casilla2x(casilla), casilla2y(casilla),"neswnesw"[ori+3]))
                         API.setWall(casilla2x(casilla),casilla2y(casilla),"neswnesw"[ori+3])
+                elif "setParedFrontal" in linea:
+                    log("pared frontal: %s" % linea)
+                    casilla,ori,frente = map(int,linea.split(" ")[1:])
+                    if (frente):
+                        log("setWall %d %d %s" % (casilla2x(casilla), casilla2y(casilla),"nesw"[ori]))
+                        API.setWall(casilla2x(casilla),casilla2y(casilla),"nesw"[ori])
+                elif "flood" in linea:
+                    casilla,peso= map(int,linea.split(" ")[1:])
+                    #log("setWall %d %d %s" % (casilla2x(casilla), casilla2y(casilla),peso))
+                    API.setText(casilla2x(casilla),casilla2y(casilla),str(peso))
                 elif "camino: " in linea:
                     log(linea)
+                    for p in camino:
+                        API.setColor(casilla2x(p),casilla2y(p),"k")
                     camino = map(int,linea.split(" ")[1:])
                     for p in camino:
                         API.setColor(casilla2x(p),casilla2y(p),"G")
+                    #arduino.write("sa\r".encode())
+                elif "nextAction" in linea:
+                    log("pide siguiente")
+                    arduino.write("sa\r".encode())
                 else:
                     log(linea)
-                time.sleep(0.2)
+                    pass
             except Exception as inst:
                 log ("Error: ")
                 log(type(inst))    # the exception instance
                 log(inst.args)     # arguments stored in .args
                 log(inst)          # __str__ allows args to be printed directly,
         else:
-            log(linea);
+            pass
+            #log(linea);
 
-
-
-
-
-
-
-
-
-
-    """
-    if (API.wallFront()):
-        maze[x][y][orientacion] = 1
-    if (API.wallLeft()):
-        maze[x][y][(orientacion+1) % 4] = 1
-    if (API.wallRight()):
-        maze[x][y][(orientacion-1) % 4] = 1
-
-        API.moveForward()
-    """
 
 if __name__ == "__main__":
     main()
