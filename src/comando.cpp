@@ -232,8 +232,6 @@ void _procesa_buffer() {
     if (buffer[aux_i] == COMANDO_DELIMITADOR) {
         // Comando con token + valor
         buffer[aux_i] = 0;
-        Serial.print("buffer = ");
-        Serial.println(buffer + aux_i + 1);
         _procesa_comando(buffer, buffer + aux_i + 1 );
     } else {
         // Comando con un unico token

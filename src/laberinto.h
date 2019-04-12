@@ -41,8 +41,8 @@ tipo_paso laberinto_get_paso(uint8_t casilla);
 
 void laberinto_set_paso(uint8_t casilla, tipo_paso paso);
 
-uint8_t laberinto_get_filas();
-uint8_t laberinto_get_columnas();
+int8_t laberinto_get_filas();
+int8_t laberinto_get_columnas();
 
 #endif
 

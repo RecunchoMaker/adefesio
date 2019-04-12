@@ -19,8 +19,8 @@
  * @name variables que almacenan el numero de filas y columnas del laberinto actual
  */
 
-volatile uint8_t num_filas = LABERINTO_FILAS;       ///< numero de filas
-volatile uint8_t num_columnas = LABERINTO_COLUMNAS; ///< numero de columnas
+volatile int8_t num_filas = LABERINTO_FILAS;       ///< numero de filas
+volatile int8_t num_columnas = LABERINTO_COLUMNAS; ///< numero de columnas
 //@}
 
 /**
@@ -133,11 +133,11 @@ bool laberinto_hay_pared_frontal(uint8_t casilla) {
     }
 }
     
-uint8_t laberinto_get_filas() {
+int8_t laberinto_get_filas() {
     return num_filas;
 }
     
-uint8_t laberinto_get_columnas() {
+int8_t laberinto_get_columnas() {
     return num_columnas;
 }
 
@@ -276,11 +276,11 @@ bool laberinto_hay_pared_norte(uint8_t casilla) {
 }
 
 bool laberinto_hay_pared_sur(uint8_t casilla) {
-    return celda[casilla + incremento[SUR]].paredN;
+    return celda[(uint8_t) (casilla + incremento[SUR])].paredN;
 }
 
 bool laberinto_hay_pared_este(uint8_t casilla) {
-    return celda[casilla + incremento[ESTE]].paredO;
+    return celda[(uint8_t) (casilla + incremento[ESTE])].paredO;
 }
 
 bool laberinto_hay_pared_oeste(uint8_t casilla) {

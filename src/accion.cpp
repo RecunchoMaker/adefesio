@@ -205,6 +205,8 @@ void accion_ejecuta(tipo_accion accion) {
         Serial.println(F("turn180\n"));
     } else if (accion == ESPERA) {
         Serial.println(F("nextAction"));
+    } else if (accion == PARA) {
+        Serial.println(F("nextAction"));
     }
     return;
 #else

@@ -163,11 +163,16 @@ void leds_reset_distancias_minimas() {
  * @brief Setea las distancias en los leds, para MOCK
  */
 void leds_mock_led_f(float valor) {
-    Serial.print("moc led f ");
-    Serial.println(valor);
     leds_distancia[LED_FDER - A0] = (valor == 1? 0.01 : 0.19);
     leds_distancia[LED_FIZQ - A0] = (valor == 1? 0.01 : 0.19);
+#ifdef MOCK
+    Serial.print("sensores IFD: ");
+    Serial.print(leds_distancia[LED_IZQ - A0] < 0.1);
+    Serial.print(leds_distancia[LED_FIZQ - A0] < 0.1);
+    Serial.println(leds_distancia[LED_DER - A0] < 0.1);
+#endif
 }
+
 
 void leds_mock_led_i(float valor) {
     leds_distancia[LED_IZQ - A0] = (valor == 1? 0.01 : 0.19);

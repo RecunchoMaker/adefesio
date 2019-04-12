@@ -72,7 +72,6 @@ void loop() {
     leds_activa();
     leds_reset_go();
 
-
     while (true) {
 #ifdef MOCK
         while (!comando_get_go()) {
@@ -82,11 +81,12 @@ void loop() {
             comando_lee_serial();
             //log_casilla_pasos_leds();
         }
+        Serial.println("inicia Flood");
         flood_init(CASILLA_SOLUCION);
         camino_init();
 
         bateria_watchdog();
-        Serial.print("antes");
+        Serial.println("empiezo");
 
         robot_empieza();
         while (robot_get_estado() != ESPERANDO_SENAL) {
