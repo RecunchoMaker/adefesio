@@ -29,15 +29,22 @@ volatile uint8_t flood_distancia[MAX_FILAS * MAX_COLUMNAS];
  *
  * @todo Solo vale cuando la solución es una única casilla
  */
-void flood_init(uint8_t solucion) {
+void flood_init(int16_t solucion) {
 
-    uint8_t idx = 0;
+    int16_t idx = 0;
+
     for (idx = 0; idx < laberinto_get_columnas() * laberinto_get_filas(); idx++) {
         flood_distancia[idx] = abs ( idx / laberinto_get_columnas() -
                                      solucion / laberinto_get_columnas())
                                +
                                abs ( idx % laberinto_get_columnas() -
                                      solucion % laberinto_get_columnas() );
+#ifdef MOCK
+        Serial.print("flood ");
+        Serial.print(idx);
+        Serial.print(" ");
+        Serial.println(flood_distancia[idx]);
+#endif
     }
 }
 
@@ -57,6 +64,7 @@ uint8_t flood_get_distancia(uint8_t casilla) {
 void flood_encuentra_vecinos(uint8_t casilla) {
 
     flood_vecinos.tamano = 0;
+
     if (!laberinto_hay_pared_norte(casilla))
         flood_vecinos.casilla[flood_vecinos.tamano++] = casilla + incremento[NORTE];
     if (!laberinto_hay_pared_sur(casilla))
@@ -90,16 +98,6 @@ uint8_t flood_mejor_vecino_desde(uint8_t casilla) {
     uint8_t mejor_casilla;
 
     flood_encuentra_vecinos(casilla);
-    /*
-    Serial.print("vecinos de ");
-    Serial.print(casilla);
-    Serial.print(" = ");
-    for (uint8_t idx = 0; idx < flood_vecinos.tamano; idx++) {
-        Serial.print(flood_vecinos.casilla[idx]);
-        Serial.print(", ");
-    }
-    */
-
 
     for (uint8_t idx = 0; idx < flood_vecinos.tamano; idx++) {
         if (flood_distancia[flood_vecinos.casilla[idx]] < minimo) {
@@ -117,8 +115,15 @@ uint8_t flood_mejor_vecino_desde(uint8_t casilla) {
 uint8_t flood_minimo_vecino(uint8_t casilla) {
     uint8_t minimo = 255;
 
+    /*
+    Serial.print("vecinos de ");
+    Serial.println(casilla);
+    */
+
     flood_encuentra_vecinos(casilla);
     for (uint8_t idx = 0; idx < flood_vecinos.tamano; idx++) {
+        // Serial.println(flood_vecinos.casilla[idx]);
+        
         minimo = min(flood_distancia[flood_vecinos.casilla[idx]], minimo);
     }
 
@@ -136,7 +141,7 @@ bool flood_recalcula() {
     uint8_t minimo = 0;
     bool hay_pendientes = false;
 
-    for (uint8_t idx = 0; idx < laberinto_get_columnas() * laberinto_get_filas(); idx++) {
+    for (int16_t idx = 0; idx < laberinto_get_columnas() * laberinto_get_filas(); idx++) {
 
         if (flood_distancia[idx] == 0) // es la solucion
             continue;
@@ -145,6 +150,13 @@ bool flood_recalcula() {
         if (minimo != flood_distancia[idx] - 1) {
             flood_distancia[idx] = minimo + 1;
             hay_pendientes = true;
+#ifdef MOCK
+            Serial.print("flood2 ");
+            Serial.print(idx);
+            Serial.print(" ");
+            Serial.println(minimo+1);
+#endif
+
         }
     }
 

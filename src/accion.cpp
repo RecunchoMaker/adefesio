@@ -177,8 +177,8 @@ void accion_set(float dist,
 
     timer1_reset_cuenta();
 
-    Serial.print("TODO: distancia ");
-    Serial.println(distancia, 8);
+    //Serial.print("TODO: distancia ");
+    //Serial.println(distancia, 8);
     
     encoders_reset_posicion_total();
 }
@@ -192,7 +192,24 @@ void accion_set(float dist,
 void accion_ejecuta(tipo_accion accion) {
 
     accion_actual = accion;
-
+#ifdef MOCK
+    if (accion == ARRANCA) {
+        Serial.println(F("moveForward"));
+    } else if (accion == AVANZA) {
+        Serial.println(F("moveForward\n"));
+    } else if (accion == GIRA_DER) {
+        Serial.println(F("turnRight\n"));
+    } else if (accion == GIRA_IZQ) {
+        Serial.println(F("turnLeft\n"));
+    } else if (accion == GIRA_180) {
+        Serial.println(F("turn180\n"));
+    } else if (accion == ESPERA) {
+        Serial.println(F("nextAction"));
+    } else if (accion == PARA) {
+        Serial.println(F("nextAction"));
+    }
+    return;
+#else
     if (accion == ARRANCA) {
         Serial.print(F("Arranca desde:\n"));
         Serial.println(robot_get_casilla_offset());
@@ -239,6 +256,7 @@ void accion_ejecuta(tipo_accion accion) {
     } else {
         Serial.println(F("No existe accion!"));
     }
+#endif
 }
 
 

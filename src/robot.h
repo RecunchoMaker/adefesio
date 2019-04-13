@@ -40,6 +40,8 @@ float robot_get_angulo_desvio();
 bool robot_es_valido_led_izquierdo();
 bool robot_es_valido_led_derecho();
 
+void mock_siguiente_accion();
+
 float _distancia_para_decelerar(float velocidad, float aceleracion);
 
 #endif /* ifndef ROBOT_H

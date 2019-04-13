@@ -45,6 +45,7 @@
 #include <robot.h>
 #include <leds.h>
 #include <camino.h>
+#include <log.h>
 
 /// Máxima longitud permitida para un comando
 #define COMANDO_MAX_TAMANO 16
@@ -99,6 +100,12 @@ char const *comando_pr = "pr";       ///< anadir PASO_RECTO a camino
 char const *comando_pd = "pd";       ///< anadir PASO_DER a camino
 char const *comando_pi = "pi";       ///< anadir PASO_IZQ a camino
 
+/// comandos para MOCK
+char const *comando_ld = "ld";       ///< setear distancia del led derecho
+char const *comando_li = "li";       ///< setear distancia del led izquierdo
+char const *comando_lf = "lf";       ///< setear distancia del led frontal
+char const *comando_sa = "sa";       ///< lanza siguiente accion
+
 //@}
 
 
@@ -141,9 +148,11 @@ void _procesa_setter(char const *comando, char *token, char *parametro,
 
     if (!strcmp(token, comando)) {
         (*setter) (atof(parametro));
-        Serial.print(token);
-        Serial.print(" = ");
-        Serial.println((*getter)(),5);
+        if (getter) {
+            Serial.print(token);
+            Serial.print(" = ");
+            Serial.println((*getter)(),5);
+        }
     }
 }
 
@@ -175,6 +184,7 @@ void _procesa_comando(char *token) {
     _procesa_comando_simple(comando_pr, token, camino_anadir_paso_recto);
     _procesa_comando_simple(comando_pd, token, camino_anadir_paso_der);
     _procesa_comando_simple(comando_pi, token, camino_anadir_paso_izq);
+    _procesa_comando_simple(comando_sa, token, mock_siguiente_accion);
 }
 
 
@@ -200,6 +210,9 @@ void _procesa_comando(char *token, char *parametro) {
     _procesa_setter(comando_vr, token, parametro, accion_set_vr, accion_get_vr);
     _procesa_setter(comando_ve, token, parametro, accion_set_ve, accion_get_ve);
     _procesa_setter(comando_dr, token, parametro, motores_set_distancia_entre_ruedas, motores_get_distancia_entre_ruedas);
+    _procesa_setter(comando_ld, token, parametro, leds_mock_led_d, nullptr);
+    _procesa_setter(comando_li, token, parametro, leds_mock_led_i, nullptr);
+    _procesa_setter(comando_lf, token, parametro, leds_mock_led_f, nullptr);
 
 }
 

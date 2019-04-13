@@ -16,6 +16,9 @@
 
 ISR (TIMER1_COMPA_vect) {
 
+#ifdef MOCK
+    robot_control();
+#else
     switch (timer1_get_estado()) {
         case 0: 
                 leds_actualiza_valor(LED_IZQ);
@@ -34,9 +37,8 @@ ISR (TIMER1_COMPA_vect) {
                 robot_control();
                 break;
     }
-
+#endif
     timer1_incrementa_cuenta();
-
 }
 
 
@@ -53,8 +55,6 @@ void setup() {
     timer1_init(PERIODO_TIMER, 1);
     robot_init();
     laberinto_init();
-    flood_init(CASILLA_SOLUCION);
-    camino_init();
     laberinto_print();
 
     pinMode(A5, INPUT_PULLUP);
@@ -72,44 +72,29 @@ void loop() {
     leds_activa();
     leds_reset_go();
 
-
     while (true) {
+#ifdef MOCK
+        while (!comando_get_go()) {
+#else
         while (!leds_go() and !comando_get_go()) {
+#endif
             comando_lee_serial();
             //log_casilla_pasos_leds();
         }
+        Serial.println("inicia Flood");
+        flood_init(CASILLA_SOLUCION);
+        camino_init();
 
         bateria_watchdog();
-
-        for (int i = 0; i< 1000; i++)
-            timer1_reset_cuenta();
-            while (timer1_get_cuenta() < 1000);
+        Serial.println("empiezo");
 
         robot_empieza();
         while (robot_get_estado() != ESPERANDO_SENAL) {
-        //Serial.print(">");
-        //Serial.print(robot_es_valido_led_izquierdo());
-        //Serial.println(robot_es_valido_led_derecho());
-
-        //log_casilla_pasos_leds();
+#ifdef MOCK
+            comando_lee_serial();
+#endif
         }
-
-
     }
 
-    /*
-    while(true) {
-        robot_set_estado(PARADO);
-        leds_reset_go();
-        laberinto_print();
-        Serial.println(F("esperando senal..."));
-
-        while (!leds_go());
-
-        robot_resuelve();
-        while (robot_get_estado() != ESPERANDO_SOLUCION);
-        Serial.println(F("fin!"));
-    }
-    */
     
 }

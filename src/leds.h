@@ -48,6 +48,10 @@ bool leds_pared_enfrente();
 bool leds_pared_derecha();
 bool leds_pared_izquierda();
 
+void leds_mock_led_f(float valor);
+void leds_mock_led_i(float valor);
+void leds_mock_led_d(float valor);
+
 bool leds_go();
 void leds_reset_go();
 
