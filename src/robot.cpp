@@ -154,24 +154,9 @@ void robot_siguiente_accion() {
         flood_init(robot.casilla == CASILLA_INICIAL ? CASILLA_SOLUCION: CASILLA_INICIAL);
         robot.estado = FLOOD;
 
-        /*
-        if (robot.casilla == CASILLA_INICIAL 
-                and camino_get_ultima_casilla() == CASILLA_SOLUCION 
-                and camino_get_todas_visitadas()) {
-            robot.estado = ESPERANDO_SOLUCION;
-        } else {
-
-
-        if (robot.exploracion_completada)
-        robot.estado = FLOOD;
-
-        Serial.print(F("E-FIN\n"));
-        robot.estado = PARADO;
-        */
         accion_ejecuta(ESPERA);
     } else if (robot.estado == FLOOD) {
         Serial.print(F("E-FLOOD\n"));
-        //while (flood_recalcula());
         if (!flood_recalcula()) {
             camino_recalcula();
             laberinto_print();
@@ -368,15 +353,6 @@ float robot_get_angulo_desvio() {
 void robot_control() {
 
 #ifdef MOCK
-
-//            if (Serial.available()) {
-//                char c = Serial.read();
-//                if (c == '.')
-//                    // Serial.println(F("*accion"));
-//                    robot_siguiente_accion();
-//            }
-//            return;
-//
     if (robot.estado == ESPERANDO or robot.estado == REORIENTA)
         robot_siguiente_accion();
     else if (mock_flag_siguiente_accion) {
@@ -384,7 +360,6 @@ void robot_control() {
         robot_siguiente_accion();
     }
     return;
-
 #endif
     if (accion_get_accion_actual() == AVANZA) {
         if (robot_get_angulo_desvio() != 0)
@@ -425,13 +400,6 @@ void robot_control() {
         }
 
         if (pasos_recorridos >= accion_get_pasos_objetivo() or motores_get_velocidad_lineal_objetivo() == 0) {
-#ifdef MOCK
-            if (!Serial.available()) {
-                Serial.print(F("Esperooooo"));
-                return;
-            }
-
-#endif
             robot_siguiente_accion();
         }
         else if (pasos_recorridos >= accion_get_pasos_hasta_decelerar()) {

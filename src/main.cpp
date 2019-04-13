@@ -81,15 +81,20 @@ void loop() {
             comando_lee_serial();
             //log_casilla_pasos_leds();
         }
-        Serial.println("inicia Flood");
-        flood_init(CASILLA_SOLUCION);
+        //Serial.println("inicia Flood");
+        //flood_init(CASILLA_SOLUCION);
         camino_init();
+        camino_anadir_paso_recto();
+        camino_anadir_paso_recto();
+        camino_anadir_paso_recto();
+        camino_anadir_paso_recto();
 
         bateria_watchdog();
         Serial.println("empiezo");
 
         robot_empieza();
         while (robot_get_estado() != ESPERANDO_SENAL) {
+            log_correccion_pasillos();
 #ifdef MOCK
             comando_lee_serial();
 #endif

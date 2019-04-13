@@ -66,7 +66,23 @@ void camino_empieza() {
  * @brief Marca un camino de pesos decrecientes de flood
  */
 bool camino_recalcula() {
-
+#if NOFLOOD
+    camino_init(robot_get_casilla(), robot_get_orientacion());
+    if (robot_get_casilla() == CASILLA_INICIAL) {
+        camino_anadir_paso(PASO_RECTO);
+        camino_anadir_paso(PASO_RECTO);
+        camino_anadir_paso(PASO_RECTO);
+        camino_anadir_paso(PASO_RECTO);
+    } else {
+        camino_orientacion_origen = (camino_orientacion_actual + 2) % 4;
+        camino_orientacion_actual = camino_orientacion_origen;
+        camino_anadir_paso(PASO_RECTO);
+        camino_anadir_paso(PASO_RECTO);
+        camino_anadir_paso(PASO_RECTO);
+        camino_anadir_paso(PASO_RECTO);
+    }
+    return false;
+#endif
     camino_init(robot_get_casilla(), robot_get_orientacion());
     camino_ultima_casilla = camino_casilla_actual;
 

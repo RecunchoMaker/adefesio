@@ -192,3 +192,30 @@ void log_leds_distancias() {
 
     Serial.println();
 }
+
+/**
+ * @brief Muestra las variables implicadas en la correcion en pasillos
+ */
+void log_correccion_pasillos() {
+    Serial.print(F("#4 "));
+
+    Serial.print(robot_get_casilla());
+    Serial.print(F("\t"));
+    Serial.print(robot_get_pasos_recorridos());
+    Serial.print(F("\t"));
+    LOGF(encoders_get_velocidad_left(),5);
+    LOGF(encoders_get_velocidad_right(),5);
+    Serial.print(robot_es_valido_led_izquierdo()? 3:2);
+    Serial.print(F("\t"));
+    Serial.print(robot_es_valido_led_derecho()?1:2);
+    Serial.print(F("\t"));
+    Serial.print(motores_get_kp_pasillo1() * (-leds_get_distancia_kalman(LED_IZQ) - (ANCHURA_ROBOT / 2.0) + (LABERINTO_LONGITUD_CASILLA/2.0)),5);
+    Serial.print(F("\t"));
+    Serial.print(-motores_get_kp_pasillo2() * (leds_get_distancia_d(LED_IZQ) * motores_get_velocidad_lineal_objetivo()),5);
+    Serial.print(F("\t"));
+    Serial.print(-motores_get_kp_pasillo1() * (-leds_get_distancia_kalman(LED_DER) - (ANCHURA_ROBOT / 2.0) + (LABERINTO_LONGITUD_CASILLA/2.0)),5);
+    Serial.print(F("\t"));
+    Serial.print(motores_get_kp_pasillo2() * (leds_get_distancia_d(LED_DER) * motores_get_velocidad_lineal_objetivo()),5);
+    Serial.println();
+}
+

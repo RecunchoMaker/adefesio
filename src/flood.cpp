@@ -137,6 +137,9 @@ uint8_t flood_minimo_vecino(uint8_t casilla) {
  * @returns Valor booleano que indica si hay casillas pendientes
  */
 bool flood_recalcula() {
+#ifdef NOFLOOD
+    return false;
+#endif
 
     uint8_t minimo = 0;
     bool hay_pendientes = false;

@@ -8,7 +8,7 @@
 #define __SETTINGS_H
 
 /// Constante definida para simulador mms
-#define MOCK 1
+/// #define MOCK 1
 
 //@{
 /**
@@ -92,19 +92,14 @@
 #define CASILLA_SOLUCION (LABERINTO_COLUMNAS-1)  
 #define ORIENTACION_INICIAL NORTE ///< Orientación del robot al inicio de la exploración
 #else
-#define CASILLA_INICIAL (LABERINTO_FILAS * LABERINTO_COLUMNAS - 1)
-//#define CASILLA_INICIAL 7
-///< Casilla solución. Por defecto primera fila ultima columna.
-#define CASILLA_SOLUCION (LABERINTO_COLUMNAS-1)  
-//define CASILLA_SOLUCION 0
-#define ORIENTACION_INICIAL NORTE ///< Orientación del robot al inicio de la exploración
+#define CASILLA_INICIAL 240
+#define CASILLA_SOLUCION 245
+#define ORIENTACION_INICIAL ESTE ///< Orientación del robot al inicio de la exploración
 #endif
 #define LABERINTO_LONGITUD_CASILLA 0.18 //< Longitud en metros de cada casilla
 //@}
 
-
-#define FLOOD_FILL
-
+#define NOFLOOD 1
 #endif /* ifndef SETTINGS_H
 
- */
+*/

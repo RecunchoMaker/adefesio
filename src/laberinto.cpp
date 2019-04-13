@@ -96,9 +96,9 @@ tipo_paso laberinto_get_paso(uint8_t casilla) {
 
 bool laberinto_hay_pared_derecha(uint8_t casilla) {
     switch (robot_get_orientacion()) {
-        case NORTE: return celda[casilla + incremento[ESTE]].paredO;
+        case NORTE: return celda[(uint8_t) (casilla + incremento[ESTE])].paredO;
                     break;
-        case ESTE:  return celda[casilla + incremento[SUR]].paredN;
+        case ESTE:  return celda[(uint8_t) (casilla + incremento[SUR])].paredN;
                     break;
         case SUR:   return celda[casilla].paredO;
                     break;
@@ -113,9 +113,9 @@ bool laberinto_hay_pared_izquierda(uint8_t casilla) {
                     break;
         case ESTE:  return celda[casilla].paredN;
                     break;
-        case SUR:   return celda[casilla + incremento[ESTE]].paredO;
+        case SUR:   return celda[(uint8_t) (casilla + incremento[ESTE])].paredO;
                     break;
-        default:    return celda[casilla + incremento[SUR]].paredN;
+        default:    return celda[(uint8_t) (casilla + incremento[SUR])].paredN;
                     break;
     }
 }
@@ -124,9 +124,9 @@ bool laberinto_hay_pared_frontal(uint8_t casilla) {
     switch (robot_get_orientacion()) {
         case NORTE: return celda[casilla].paredN;
                     break;
-        case ESTE:  return celda[casilla + incremento[OESTE]].paredO;
+        case ESTE:  return celda[(uint8_t) (casilla + incremento[OESTE])].paredO;
                     break;
-        case SUR:   return celda[casilla + incremento[SUR]].paredN;
+        case SUR:   return celda[(uint8_t) (casilla + incremento[SUR])].paredN;
                     break;
         default:    return celda[casilla].paredO;
                     break;
@@ -145,16 +145,16 @@ int8_t laberinto_get_columnas() {
 void laberinto_set_paredes_laterales(uint8_t casilla, bool izq, bool der) {
     switch (robot_get_orientacion()) {
         case NORTE: celda[casilla].paredO = izq;
-                    celda[casilla+incremento[ESTE]].paredO = der;
+                    celda[(uint8_t) (casilla+incremento[ESTE])].paredO = der;
                     break;
         case ESTE: celda[casilla].paredN = izq;
-                    celda[casilla+incremento[SUR]].paredN = der;
+                    celda[(uint8_t) (casilla+incremento[SUR])].paredN = der;
                     break;
         case SUR:   celda[casilla].paredO = der;
-                    celda[casilla+incremento[ESTE]].paredO = izq;
+                    celda[(uint8_t) (casilla+incremento[ESTE])].paredO = izq;
                     break;
         case OESTE: celda[casilla].paredN = der;
-                    celda[casilla+incremento[SUR]].paredN = izq;
+                    celda[(uint8_t) (casilla+incremento[SUR])].paredN = izq;
                     break;
     }
 #ifdef MOCK
@@ -173,9 +173,9 @@ void laberinto_set_pared_frontal(uint8_t casilla, bool frontal) {
     switch(robot_get_orientacion()) {
         case NORTE: celda[casilla].paredN = frontal;
                     break;
-        case ESTE:  celda[casilla + incremento[ESTE]].paredO = frontal;
+        case ESTE:  celda[(uint8_t) (casilla + incremento[ESTE])].paredO = frontal;
                     break;
-        case SUR:   celda[casilla + incremento[SUR]].paredN = frontal;
+        case SUR:   celda[(uint8_t) (casilla + incremento[SUR])].paredN = frontal;
                     break;
         case OESTE: celda[casilla].paredO = frontal;
                     break;
@@ -196,11 +196,12 @@ void laberinto_set_pared_frontal(uint8_t casilla, bool frontal) {
  */
 void laberinto_print() {
 
+    return ;
 #ifndef MOCK
-    uint8_t idx = 0;
+    uint16_t idx = 0;
     uint8_t tipo_linea = 0;
 
-    while (idx < num_filas * num_columnas) {
+    while (idx < laberinto_get_filas() * laberinto_get_columnas()) {
 
         switch (tipo_linea) {
         case 0: 

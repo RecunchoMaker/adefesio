@@ -11,8 +11,8 @@
 /**
  * @name Helpers para imprimir variables
  */
-#define LOG(x) Serial.print(x); Serial.print(" ");
-#define LOGF(x,d) Serial.print(x,d); Serial.print(" ");
+#define LOG(x) Serial.print(x); Serial.print("\t");
+#define LOGF(x,d) Serial.print(x,d); Serial.print("\t");
 #define LOGN(x) Serial.println(x)
 #define LOGFN(x,d) Serial.print(x,d); Serial.println();
 //@}
@@ -26,6 +26,7 @@ void log_cambio_casilla();
 void log_variables_trayectoria(); //#2
 void log_camino();
 void log_leds_distancias();       //#3
+void log_correccion_pasillos();   //#4
 
 #endif /* ifndef LOG_H
 
