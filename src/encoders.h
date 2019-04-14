@@ -25,6 +25,7 @@ int32_t encoders_get_posicion_total_left(void);
 int32_t encoders_get_posicion_total_right(void);
 int32_t encoders_get_posicion_aux_left(void);
 int32_t encoders_get_posicion_aux_right(void);
+int32_t encoders_get_posicion_aux(void);
 
 uint8_t encoders_get_ticks_sin_actualizar_left(void);
 uint8_t encoders_get_ticks_sin_actualizar_right(void);

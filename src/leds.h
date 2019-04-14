@@ -22,6 +22,11 @@
 /// Pin analógico de entrada compartido por todos los sensores infrarrojos
 #define LED_SENSOR A4
 
+// Constantes generadas por leds_obtener_matriz_segmentos.py
+#define LEDS_BITS_INDICE_MUESTRA 6
+#define LEDS_ESPACIO_MUESTRA 64
+
+
 void leds_init();
 void leds_calibra();
 void leds_recalibra();
@@ -43,7 +48,7 @@ int16_t leds_get_pasos_distancia_minima(int8_t led);
 int16_t leds_get_diferencia_pasos_der_izq();
 int16_t leds_get_pasos_minima_lectura_frontal();
 
-float leds_interpola_distancia(int16_t lectura);
+float leds_interpola_distancia(int8_t led);
 bool leds_pared_enfrente();
 bool leds_pared_derecha();
 bool leds_pared_izquierda();
@@ -54,5 +59,7 @@ void leds_mock_led_d(float valor);
 
 bool leds_go();
 void leds_reset_go();
+
+void leds_set_segmento(uint8_t led, int16_t array[]);
 
 #endif

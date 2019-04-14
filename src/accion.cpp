@@ -152,8 +152,10 @@ void accion_set(float dist,
                 float vmax, float vfinal,
                 float radio) {
 
-    // la distancia puede ser negativa en los giros en redondo
-    distancia = abs(dist);
+    ///@todo la distancia puede ser negativa en los giros en redondo
+    //distancia = abs(dist);
+    distancia = dist;
+
     aceleracion = acel;
 
     pasos_objetivo = distancia / LONGITUD_PASO_ENCODER;
@@ -169,12 +171,19 @@ void accion_set(float dist,
 
     motores_set_radio(accion_radio);
 
-    if (velocidad_maxima > motores_get_velocidad_lineal_objetivo()) {
+    if (velocidad_maxima > 0 and velocidad_maxima > motores_get_velocidad_lineal_objetivo()) {
+        Serial.print("vmax 1 ");
+        Serial.println(aceleracion);
+        motores_set_aceleracion_lineal(aceleracion);
+    } else if (velocidad_maxima < 0 and velocidad_maxima < motores_get_velocidad_lineal_objetivo()) {
+        Serial.print("vmax 2 ");
+        Serial.println(aceleracion);
         motores_set_aceleracion_lineal(aceleracion);
     }
     else
         motores_set_aceleracion_lineal(0);
 
+    log_accion();
     timer1_reset_cuenta();
 
     //Serial.print("TODO: distancia ");
@@ -253,7 +262,16 @@ void accion_ejecuta(tipo_accion accion) {
         accion_set(PI*motores_get_distancia_entre_ruedas()/2.0
                 //- ((leds_pared_enfrente() ? (leds_get_distancia(LED_FIZQ) - leds_get_distancia(LED_FDER)) / 3.8 : 0))
                 , amax, amax, vg, ACCION_V0, GIRO_IZQUIERDA_TODO); // gira 180g
-    } else {
+    } else if (accion == CALIBRA_ATRAS) {
+        Serial.print(F("calibrando hacia atras..."));
+        accion_set(-0.30, -0.5, -0.5, -0.05, -0.01, RADIO_INFINITO);
+        motores_set_velocidad_lineal_objetivo(0);
+    } else if (accion == CALIBRA_ADELANTE) {
+        Serial.print(F("calibrando hacia adelante..."));
+        accion_set(0.30, 0.5, 0.5, 0.05, 0.01, RADIO_INFINITO);
+        motores_set_velocidad_lineal_objetivo(0);
+    }
+    else {
         Serial.println(F("No existe accion!"));
     }
 #endif

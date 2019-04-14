@@ -15,6 +15,7 @@
 #include <laberinto.h>
 #include <accion.h>
 #include <log.h>
+#include <leds.h>
 #include <flood.h>
 
 /// Acumula los pasos recorridos de encoder desde el último reset
@@ -22,7 +23,7 @@ volatile int32_t pasos_recorridos = 0;
 
 
 typedef struct {
-    volatile tipo_estado estado:3;
+    volatile tipo_estado estado:4;
     volatile tipo_orientacion orientacion: 2;
     volatile bool hay_alguna_pared: 1;
     volatile bool giro_corregido: 1;
@@ -249,7 +250,21 @@ void robot_siguiente_accion() {
                 robot.estado = FLOOD;
             }
         }
+    } else if (robot.estado == CALIBRANDO) {
+        Serial.print(F("E-CALIBRANDO"));
+        accion_ejecuta(CALIBRA_ATRAS);
+        robot.estado = CALIBRANDO_ATRAS;
+    } else if (robot.estado == CALIBRANDO_ATRAS) {
+        Serial.println("ejecuto camibra alante");
+        accion_ejecuta(CALIBRA_ADELANTE);
+        robot.estado = CALIBRANDO_ADELANTE;
+    } else if (robot.estado == CALIBRANDO_ADELANTE) {
+        Serial.println("y paro");
+        accion_ejecuta(ESPERA);
+        robot.estado = PARADO;
     }
+
+
 }
 
 
@@ -368,7 +383,8 @@ void robot_control() {
             motores_set_radio(8888);
     }
 
-    if ((leds_get_distancia(LED_FDER) + leds_get_distancia(LED_FIZQ)) / 2.0 < 0.01 and accion_get_radio() == RADIO_INFINITO) {
+    /*
+    if (motores_get_velocidad_lineal_objetivo() > 0 and (leds_get_distancia(LED_FDER) + leds_get_distancia(LED_FIZQ)) / 2.0 < 0.01 and accion_get_radio() == RADIO_INFINITO) {
         Serial.print(F("chocamos! leds:"));
         log_leds();
         log_pasos();
@@ -378,9 +394,11 @@ void robot_control() {
             robot.estado = PARADO;
         }
     }
+    */
 
 
-    if (accion_get_velocidad_maxima() <= 0.0) {
+    ///@todo
+    if (accion_get_velocidad_maxima() <= -9990.0) {
         motores_parar();
         if (timer1_get_cuenta() * PERIODO_TIMER > accion_get_radio()) {
             robot_siguiente_accion();
@@ -399,13 +417,24 @@ void robot_control() {
             accion_set_pasos_objetivo(pasos_recorridos + (( (leds_get_distancia(LED_FIZQ) + leds_get_distancia(LED_FDER)) / 2.0)-0.028) / LONGITUD_PASO_ENCODER);
         }
 
-        if (pasos_recorridos >= accion_get_pasos_objetivo() or motores_get_velocidad_lineal_objetivo() == 0) {
+        if ( (pasos_recorridos >= accion_get_pasos_objetivo() and motores_get_velocidad_lineal_objetivo() > 0)
+             or ((pasos_recorridos <= accion_get_pasos_objetivo() and motores_get_velocidad_lineal_objetivo() < 0))
+             or motores_get_velocidad_lineal_objetivo() == 0) {
+
             robot_siguiente_accion();
-        }
-        else if (pasos_recorridos >= accion_get_pasos_hasta_decelerar()) {
+        } else if (
+                (motores_get_velocidad_lineal_objetivo() > 0 and pasos_recorridos >= accion_get_pasos_hasta_decelerar())
+                or 
+                (motores_get_velocidad_lineal_objetivo() < 0 and pasos_recorridos <= accion_get_pasos_hasta_decelerar())
+                )
+                {
             motores_set_aceleracion_lineal(-accion_get_deceleracion());
         }
-        else if (motores_get_velocidad_lineal_objetivo() >= accion_get_velocidad_maxima()) {
+        else if ((motores_get_velocidad_lineal_objetivo() > 0 and motores_get_velocidad_lineal_objetivo() >= accion_get_velocidad_maxima())
+                or
+                (motores_get_velocidad_lineal_objetivo() < 0 and motores_get_velocidad_lineal_objetivo() <= accion_get_velocidad_maxima())
+                )
+        {
             motores_set_velocidad_lineal_objetivo(accion_get_velocidad_maxima());
         }
 
@@ -417,4 +446,92 @@ void robot_control() {
 
 void mock_siguiente_accion() {
     mock_flag_siguiente_accion = true;
+}
+
+
+void robot_calibracion_frontal() {
+
+    //if (leds_pared_enfrente() and leds_pared_derecha() and leds_pared_izquierda()) {
+    delay(1000);
+    if (leds_get_distancia(LED_FIZQ) < 0.02) {
+
+        bool fin_calibracion = false;
+        Serial.println(F("Comienzo calibracion"));
+
+        while (!fin_calibracion) {
+            int16_t indice_i = 15;
+            int16_t array_i[15];
+            int16_t indice_d = 15;
+            int16_t array_d[15];
+
+            encoders_reset_posicion_aux_total();
+
+            while((leds_get_valor(LED_FIZQ) >> 6) < indice_i)
+                array_i[indice_i--] = 0;
+            while((leds_get_valor(LED_FDER) >> 6) < indice_d)
+                array_d[indice_d--] = 0;
+
+            robot.estado = CALIBRANDO;
+
+            while (encoders_get_posicion_aux() > -200 and (indice_i >= 0 or indice_d >=0 )) {
+                /*
+                Serial.print(leds_get_valor(LED_FIZQ));
+                Serial.print(";");
+                Serial.print(leds_get_valor(LED_FIZQ)>>6, BIN);
+                Serial.print(";");
+                Serial.println(encoders_get_posicion_aux());
+                */
+                if (leds_get_valor(LED_FIZQ) >> 6 < indice_i and indice_i>=0) {
+                    Serial.print("(mov) array _i");
+                    Serial.print(indice_i);
+                    Serial.print(" = ");
+                    Serial.println(encoders_get_posicion_aux());
+                    array_i[indice_i--] = encoders_get_posicion_aux();
+                }
+                if (leds_get_valor(LED_FDER) >> 6 < indice_d and indice_d>=0) {
+                    Serial.print("(mov) array _d ");
+                    Serial.print(indice_d);
+                    Serial.print(" = ");
+                    Serial.println(encoders_get_posicion_aux());
+                    array_d[indice_d--] = encoders_get_posicion_aux();
+                }
+            }
+
+            for (int i =0; i<=15; i++) {
+                //leds_segmentos[LED_FIZQ - A0][i] = int(array_i[i] / LONGITUD_PASO_ENCODER);
+
+                Serial.print("array ");
+                Serial.print(i);
+                Serial.print(" = ");
+                Serial.print(array_i[i]);
+                Serial.print(", ");
+                Serial.print(array_d[i]);
+                Serial.print(": ");
+                Serial.print((int) (1000.0 * -array_i[i] * LONGITUD_PASO_ENCODER));
+                /*
+                Serial.print(": ");
+                Serial.print(led_segmentos[LED_FIZQ-A0][i]);
+                Serial.print(", ");
+                Serial.print(led_segmentos[LED_FDER-A0][i]);
+                */
+
+                Serial.println();
+
+            }
+            leds_set_segmento(LED_FIZQ, array_i);
+            leds_set_segmento(LED_FDER, array_d);
+                
+            Serial.println(F("Fin calibra frontal "));
+            accion_set_pasos_objetivo(pasos_recorridos);
+            while (leds_get_distancia(LED_FDER) > 0.02) {
+                Serial.println(leds_get_distancia(LED_FDER) - leds_get_distancia(LED_FIZQ),5);
+            }
+            accion_set_pasos_objetivo(pasos_recorridos);
+            Serial.println(F("Fin calibra frontal 2"));
+
+            fin_calibracion = true;
+
+            delay(5000);
+        }
+    }
 }

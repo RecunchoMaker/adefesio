@@ -48,7 +48,7 @@
  * @todo Actualmente sólo estan consideradas las acciones necesarias para la exploración
  */
 enum tipo_accion {ARRANCA, PARA, AVANZA, ESPERA,
-                  GIRA_DER, GIRA_IZQ, GIRA_180};
+                  GIRA_DER, GIRA_IZQ, GIRA_180, CALIBRA_ATRAS, CALIBRA_ADELANTE};
 
 float accion_get_distancia();
 float accion_get_aceleracion();

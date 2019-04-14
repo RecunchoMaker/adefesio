@@ -45,13 +45,13 @@ ISR (TIMER1_COMPA_vect) {
 void setup() {
 
     Serial.begin(115200);
-
     bateria_init();
     motores_init(bateria_get_voltaje());
     encoders_init();
     leds_init();
     comando_init();
     bateria_muestra_nivel();
+
     timer1_init(PERIODO_TIMER, 1);
     robot_init();
     laberinto_init();
@@ -66,12 +66,20 @@ void loop() {
 
     comando_prompt();
 
+    leds_activa();
+
+    robot_calibracion_frontal();
+
+    // test calibracion
+    while (true) {
+        Serial.println(leds_get_distancia(LED_FIZQ));
+    }
+
     robot_init();
     camino_init();
 
-    leds_activa();
-    leds_reset_go();
 
+    leds_reset_go();
     while (true) {
 #ifdef MOCK
         while (!comando_get_go()) {

@@ -19,7 +19,7 @@
 
 void log_leds();
 void log_accion();
-void log_motores();
+void log_motores();               //#5
 void log_pasos();
 void log_casilla_pasos_leds();    //#1
 void log_cambio_casilla();

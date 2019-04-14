@@ -8,7 +8,8 @@
 #define __ROBOT_H
 
 enum tipo_orientacion {NORTE, ESTE, SUR, OESTE};
-enum tipo_estado {PARADO, FLOOD, REORIENTA, ESPERANDO, DECIDE, AVANZANDO, EMPIEZA, ESPERANDO_SENAL};
+enum tipo_estado {PARADO, FLOOD, REORIENTA, ESPERANDO, DECIDE, AVANZANDO, EMPIEZA, ESPERANDO_SENAL, 
+    CALIBRANDO, CALIBRANDO_ATRAS, CALIBRANDO_ADELANTE};
 
 
 void robot_set_amax(float aceleracion_maxima);
@@ -39,6 +40,7 @@ int32_t robot_get_pasos_recorridos();
 float robot_get_angulo_desvio();
 bool robot_es_valido_led_izquierdo();
 bool robot_es_valido_led_derecho();
+void robot_calibracion_frontal();
 
 void mock_siguiente_accion();
 

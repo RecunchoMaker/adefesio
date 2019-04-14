@@ -266,8 +266,8 @@ void motores_actualiza_velocidad() {
         velocidad_lineal_objetivo += (aceleracion_lineal * PERIODO_CICLO);
 
         /// @todo Corregir la necesidad de comprobar si la velocidad objetivo es menor que 0
-        if (velocidad_lineal_objetivo < 0) // fix this
-            velocidad_lineal_objetivo = 0;
+        //if (velocidad_lineal_objetivo < 0) // fix this
+        //    velocidad_lineal_objetivo = 0;
 
         if (radio == GIRO_IZQUIERDA_TODO ) {
             // El radio es una constante especial para indicar giro sobre sí mismo

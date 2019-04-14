@@ -188,6 +188,13 @@ int32_t encoders_get_posicion_total(void) {
 }
 
 /**
+ * @brief Calcula la distancia recorrida desde el último reset de las posiciones totales
+ */
+int32_t encoders_get_posicion_aux(void) {
+    return (encoder_posicion_aux_right + encoder_posicion_left) / 2;
+}
+
+/**
  * @brief Establece la dirección de cada rueda, para saber si sumar o restar en la ISR
  */
 void encoders_set_direccion(bool left, bool right) {

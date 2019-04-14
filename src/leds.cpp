@@ -56,14 +56,20 @@ volatile uint8_t leds_sentido = 0;
 volatile uint8_t leds_frontal_go_estado = 0;
 
 
-// Constantes generadas por leds_obtener_matriz_segmentos.py
-#define LEDS_BITS_INDICE_MUESTRA 6
-#define LEDS_ESPACIO_MUESTRA 64
 /// Constantes para interpolar la distancia a partir de las lecturas analógicas
-const uint8_t leds_segmentos[17] = { 
-     199 , 97 , 69 , 54 , 44 , 37 , 32 , 27 ,
+volatile uint8_t leds_segmentos[4][17] = { 
+    {199 , 97 , 69 , 54 , 44 , 37 , 32 , 27 ,
      24 , 21 , 18 , 15 , 13 , 11 , 8 , 2 ,
-     0 };
+     0 },
+    {199 , 97 , 69 , 54 , 44 , 37 , 32 , 27 ,
+     24 , 21 , 18 , 15 , 13 , 11 , 8 , 2 ,
+     0 },
+    {199 , 97 , 69 , 54 , 44 , 37 , 32 , 27 ,
+     24 , 21 , 18 , 15 , 13 , 11 , 8 , 2 ,
+     0 },
+    {199 , 97 , 69 , 54 , 44 , 37 , 32 , 27 ,
+     24 , 21 , 18 , 15 , 13 , 11 , 8 , 2 ,
+     0 }};
 
 /// Constantes de correccion para cada led
 const float leds_correccion[4] = {   // FIZQ,DER,IZQ,FDER
@@ -130,8 +136,9 @@ bool leds_get_leds_activados() {
  * @brief Enciende el led indicado si el sistema está activado
  */
 void leds_enciende(int8_t led) {
-    if (leds_activados)
+    if (leds_activados) {
         digitalWrite(led, HIGH);
+    }
 }
 
 
@@ -216,7 +223,9 @@ void leds_actualiza_valor(int8_t led) {
     leds_valor_apagado[led - A0] = leds_lectura0;
 
     float distancia_anterior = leds_distancia[led - A0];
-    leds_distancia[led - A0] = leds_interpola_distancia(leds_valor[led-A0]) + leds_correccion[led-A0];
+    ///@todo
+    //leds_distancia[led - A0] = leds_interpola_distancia(leds_valor[led-A0]) + leds_correccion[led-A0];
+    leds_distancia[led - A0] = leds_interpola_distancia(led);
 
     leds_distancia_kalman[led- A0] = KALMAN_GAIN * leds_distancia[led - A0] + (1-KALMAN_GAIN) * distancia_anterior;
 
@@ -417,13 +426,20 @@ int16_t leds_get_diferencia_pasos_der_izq() {
 /**
  * @brief Devuelve un valor estimado en mm a partir de una lectura del ADC
  */
-float leds_interpola_distancia(int16_t lectura) {
+float leds_interpola_distancia(int8_t led) {
     
-    int8_t indice = lectura >> LEDS_BITS_INDICE_MUESTRA;
-    float pendiente = (float) (leds_segmentos[indice+1] - leds_segmentos[indice]) / LEDS_ESPACIO_MUESTRA;
+    int8_t indice = leds_get_valor(led) >> LEDS_BITS_INDICE_MUESTRA;
+    float pendiente = (float) (leds_segmentos[led - A0][indice+1] - leds_segmentos[led - A0][indice]) / LEDS_ESPACIO_MUESTRA;
     int16_t espacio = (1 << LEDS_BITS_INDICE_MUESTRA) * indice;
 
-    return 0.001 * (leds_segmentos[indice] + pendiente * (lectura - espacio));
+    /*
+    Serial.print(led);
+    Serial.print("=");
+    Serial.print(leds_get_valor(led));
+    Serial.print(",");
+    Serial.println(leds_segmentos[led-A0][indice] + pendiente * (leds_get_valor(led) - espacio));
+    */
+    return 0.001 * (leds_segmentos[led-A0][indice] + pendiente * (leds_get_valor(led) - espacio));
 
 }
 
@@ -445,4 +461,15 @@ void leds_reset_go() {
 
     leds_frontal_go_estado = 0;
 
+}
+
+void leds_set_segmento(uint8_t led, int16_t array[]) {
+    for (int i = 0; i< 15; i++) {
+        leds_segmentos[led - A0][i] = ((int) (1000.0 * -array[i] * LONGITUD_PASO_ENCODER));
+        Serial.print("segmento ");
+        Serial.println(leds_segmentos[led - A0][i]);
+        Serial.print(i);
+        Serial.print(" ");
+    }
+    leds_segmentos[led - A0][16] = 199;
 }

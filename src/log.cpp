@@ -68,6 +68,7 @@ void log_accion() {
  * @brief Muestra datos de encoders, velocidades y pwm
  */
 void log_motores() {
+    Serial.print(F("#5 "));
     LOGF(encoders_get_velocidad_left(),5);
     LOGF(encoders_get_velocidad_right(),5);
     LOG(motores_get_pwm_left());
