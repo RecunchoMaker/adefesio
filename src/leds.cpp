@@ -19,6 +19,7 @@
 #include <leds.h>
 #include <bateria.h>
 #include <robot.h>
+#include <avr/eeprom.h>
 
 #define KALMAN_GAIN 0.1
 
@@ -225,7 +226,7 @@ void leds_actualiza_valor(int8_t led) {
     float distancia_anterior = leds_distancia[led - A0];
     ///@todo
     //leds_distancia[led - A0] = leds_interpola_distancia(leds_valor[led-A0]) + leds_correccion[led-A0];
-    leds_distancia[led - A0] = leds_interpola_distancia(led);
+    leds_distancia[led - A0] = leds_interpola_distancia(leds_lectura0 - leds_lectura1, leds_segmentos[led - A0]);
 
     leds_distancia_kalman[led- A0] = KALMAN_GAIN * leds_distancia[led - A0] + (1-KALMAN_GAIN) * distancia_anterior;
 
@@ -424,23 +425,16 @@ int16_t leds_get_diferencia_pasos_der_izq() {
 }
 
 /**
- * @brief Devuelve un valor estimado en mm a partir de una lectura del ADC
+ * @brief Devuelve un valor estimado en mm a partir de una lectura y un array de segmentos
  */
-float leds_interpola_distancia(int8_t led) {
+float leds_interpola_distancia(int16_t lectura, uint8_t array[]) {
     
-    int8_t indice = leds_get_valor(led) >> LEDS_BITS_INDICE_MUESTRA;
-    float pendiente = (float) (leds_segmentos[led - A0][indice+1] - leds_segmentos[led - A0][indice]) / LEDS_ESPACIO_MUESTRA;
+
+    int8_t indice = lectura >> LEDS_BITS_INDICE_MUESTRA;
+    float pendiente = (float) (array[indice + 1] - array[indice]) / LEDS_ESPACIO_MUESTRA;
     int16_t espacio = (1 << LEDS_BITS_INDICE_MUESTRA) * indice;
 
-    /*
-    Serial.print(led);
-    Serial.print("=");
-    Serial.print(leds_get_valor(led));
-    Serial.print(",");
-    Serial.println(leds_segmentos[led-A0][indice] + pendiente * (leds_get_valor(led) - espacio));
-    */
-    return 0.001 * (leds_segmentos[led-A0][indice] + pendiente * (leds_get_valor(led) - espacio));
-
+    return 0.001 * (array[indice] + pendiente * (lectura - espacio));
 }
 
 /**
@@ -464,12 +458,50 @@ void leds_reset_go() {
 }
 
 void leds_set_segmento(uint8_t led, int16_t array[]) {
-    for (int i = 0; i< 15; i++) {
-        leds_segmentos[led - A0][i] = ((int) (1000.0 * -array[i] * LONGITUD_PASO_ENCODER));
-        Serial.print("segmento ");
-        Serial.println(leds_segmentos[led - A0][i]);
-        Serial.print(i);
-        Serial.print(" ");
+    leds_segmentos[led - A0][0] = 199; // maximo valor, 20 cm
+    cli();
+    for (int i = 1; i<= 16; i++) {
+        leds_segmentos[led - A0][i] = ((int) (1000.0 * -array[i-1] * LONGITUD_PASO_ENCODER));
     }
-    leds_segmentos[led - A0][16] = 199;
+    sei();
 }
+
+
+void leds_graba_segmentos_a_eeprom() {
+    int dir = 0;
+
+    for (int i = 0; i < 4; i++)  {
+        Serial.print("array ");
+        Serial.print(i);
+        Serial.print(" = ");
+        for (int j =0; j < 17; j++)  {
+            eeprom_write_word( (uint16_t*)dir++, leds_segmentos[i][j]);
+            Serial.print(leds_segmentos[i][j]);
+            Serial.print(", ");
+        }
+        Serial.println("");
+    }
+    Serial.println(F("Segmentos grabados en eeprom"));
+}
+
+
+void leds_lee_segmentos_de_eeprom() {
+    int dir = 0;
+
+    Serial.println(F("Segmentos leidos desde eeprom"));
+    for (int i = 0; i < 4; i++)  {
+        Serial.print("array ");
+        Serial.print(i);
+        Serial.print(" = ");
+        for (int j =0; j < 17; j++)  {
+            leds_segmentos[i][j] = eeprom_read_word( (uint16_t*)dir++ );
+            Serial.print(leds_segmentos[i][j]);
+            Serial.print(", ");
+        }
+        Serial.println("");
+    }
+}
+
+
+
+

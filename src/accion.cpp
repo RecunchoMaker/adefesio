@@ -234,7 +234,7 @@ void accion_ejecuta(tipo_accion accion) {
         accion_set(LABERINTO_LONGITUD_CASILLA-robot_get_casilla_offset(), amax, amax, ve, ve, RADIO_INFINITO);
     } else if (accion == ESPERA) {
         Serial.println(F("Pausa"));
-        accion_set(0, 0, 0, 0, 0, 0.05); // en segundos
+        accion_set(0, 0, 0, 0, 0, 1.95); // en segundos
     } else if (accion == GIRA_DER) {
         Serial.println(F("Gira derecha: "));
         Serial.println(robot_get_ultima_diferencia_encoders());
@@ -259,9 +259,15 @@ void accion_ejecuta(tipo_accion accion) {
         Serial.println(leds_get_distancia(LED_FIZQ) - leds_get_distancia(LED_FDER),6);
         Serial.println(F("* turnLeft\n"));
         Serial.println(F("* turnLeft\n"));
-        accion_set(PI*motores_get_distancia_entre_ruedas()/2.0
-                //- ((leds_pared_enfrente() ? (leds_get_distancia(LED_FIZQ) - leds_get_distancia(LED_FDER)) / 3.8 : 0))
-                , amax, amax, vg, ACCION_V0, GIRO_IZQUIERDA_TODO); // gira 180g
+        if (leds_get_distancia(LED_IZQ) > leds_get_distancia(LED_DER))
+            accion_set(PI*motores_get_distancia_entre_ruedas()/2.0
+                    //- ((leds_pared_enfrente() ? (leds_get_distancia(LED_FIZQ) - leds_get_distancia(LED_FDER)) / 3.8 : 0))
+                    , amax, amax, vg, ACCION_V0, GIRO_IZQUIERDA_TODO); // gira 180g
+        else {
+            accion_set(PI*motores_get_distancia_entre_ruedas()/2.0
+                    //- ((leds_pared_enfrente() ? (leds_get_distancia(LED_FIZQ) - leds_get_distancia(LED_FDER)) / 3.8 : 0))
+                    , amax, amax, vg, ACCION_V0, GIRO_DERECHA_TODO); // gira 180g
+        }
     } else if (accion == CALIBRA_ATRAS) {
         Serial.print(F("calibrando hacia atras..."));
         accion_set(-0.30, -0.5, -0.5, -0.05, -0.01, RADIO_INFINITO);

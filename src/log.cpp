@@ -27,7 +27,7 @@ void log_leds() {
     Serial.print("\t");
     Serial.print(leds_get_valor(LED_DER));
 
-    Serial.print("\tdist:");
+    Serial.print(F("\tdist:"));
     Serial.print(leds_get_distancia(LED_IZQ));
     Serial.print("\t");
     Serial.print(leds_get_distancia(LED_FIZQ));
@@ -36,7 +36,7 @@ void log_leds() {
     Serial.print("\t");
     Serial.print(leds_get_distancia(LED_DER));
 
-    Serial.print("\tapagado:");
+    Serial.print(F("\tapagado:"));
     Serial.print(leds_get_valor_apagado(LED_IZQ));
     Serial.print("\t");
     Serial.print(leds_get_valor_apagado(LED_FIZQ));
@@ -217,6 +217,8 @@ void log_correccion_pasillos() {
     Serial.print(-motores_get_kp_pasillo1() * (-leds_get_distancia_kalman(LED_DER) - (ANCHURA_ROBOT / 2.0) + (LABERINTO_LONGITUD_CASILLA/2.0)),5);
     Serial.print(F("\t"));
     Serial.print(motores_get_kp_pasillo2() * (leds_get_distancia_d(LED_DER) * motores_get_velocidad_lineal_objetivo()),5);
+    Serial.print(F("\t"));
+    Serial.print(robot_get_angulo_desvio(),5);
     Serial.println();
 }
 

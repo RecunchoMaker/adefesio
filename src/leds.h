@@ -48,7 +48,7 @@ int16_t leds_get_pasos_distancia_minima(int8_t led);
 int16_t leds_get_diferencia_pasos_der_izq();
 int16_t leds_get_pasos_minima_lectura_frontal();
 
-float leds_interpola_distancia(int8_t led);
+float leds_interpola_distancia(int16_t lectura, uint8_t array[]);
 bool leds_pared_enfrente();
 bool leds_pared_derecha();
 bool leds_pared_izquierda();
@@ -61,5 +61,7 @@ bool leds_go();
 void leds_reset_go();
 
 void leds_set_segmento(uint8_t led, int16_t array[]);
+void leds_graba_segmentos_a_eeprom();
+void leds_lee_segmentos_de_eeprom();
 
 #endif

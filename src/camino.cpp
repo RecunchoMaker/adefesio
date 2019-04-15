@@ -68,6 +68,7 @@ void camino_empieza() {
 bool camino_recalcula() {
 #if NOFLOOD
     camino_init(robot_get_casilla(), robot_get_orientacion());
+    Serial.println(F("camino_recalcula: camino fijo"));
     if (robot_get_casilla() == CASILLA_INICIAL) {
         camino_anadir_paso(PASO_RECTO);
         camino_anadir_paso(PASO_RECTO);

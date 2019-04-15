@@ -71,9 +71,16 @@ void loop() {
     robot_calibracion_frontal();
 
     // test calibracion
+    /*
     while (true) {
-        Serial.println(leds_get_distancia(LED_FIZQ));
+        float d = (leds_get_distancia(LED_FIZQ) - leds_get_distancia(LED_FDER));
+        Serial.print("dif: ");
+        Serial.print(d, 5);
+        Serial.print(" ");
+        Serial.println(atan(d/0.06) * 360.0 / (2*3.14159));
+
     }
+    */
 
     robot_init();
     camino_init();

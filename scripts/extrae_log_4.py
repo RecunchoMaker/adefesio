@@ -45,6 +45,7 @@ def es_linea_correcta(linea,empieza_con,tamano):
     if len(linea) != tamano:
         return False
 
+
     # Son todos los valores float?
     try:
         linea = map(float, linea)
@@ -63,13 +64,14 @@ def formatea(linea):
 def extraer_lineas_correctas(fichero, empieza_con,tamano):
     lineas = []
     with open(fichero, 'r') as f:
-        l = f.readline().rstrip('\n').rstrip('\r')
+        l = f.readline()
         #l = f.readline()
         while l:
+            l = l.rstrip('\n').rstrip('\r')
             if es_linea_correcta(l,empieza_con,tamano):
                 lineas.append(formatea(l))
             #l = f.readline()
-            l = f.readline().rstrip('\n').rstrip('\r')
+            l = f.readline()
 
     return lineas
 
@@ -85,7 +87,7 @@ def log(a):
 def main():
     args = parse_options()
 
-    lineas = extraer_lineas_correctas(args.FICHERO, '#4', 10)
+    lineas = extraer_lineas_correctas(args.FICHERO, '#4', 11)
     if not args.quiet:
         sys.stderr.write("%d lineas correctas en '%s'\n" %
                          (len(lineas), args.FICHERO))

@@ -349,7 +349,7 @@ float robot_get_angulo_desvio() {
     // solo si estamos al principio de la casilla
     // if (robot.estado != 99) {
     desvio = 0.0;
-    if (accion_get_accion_actual() == ARRANCA or accion_get_accion_actual() == AVANZA or accion_get_accion_actual() == PARA) {
+    if (accion_get_accion_actual() == ARRANCA or accion_get_accion_actual() == AVANZA) {
         //if (leds_get_distancia_kalman(LED_IZQ) < 0.08) {
         if (robot_es_valido_led_izquierdo()) {
             desvio += motores_get_kp_pasillo1() * (-leds_get_distancia_kalman(LED_IZQ) - (ANCHURA_ROBOT / 2.0) + (LABERINTO_LONGITUD_CASILLA/2.0));
@@ -361,6 +361,8 @@ float robot_get_angulo_desvio() {
             desvio += motores_get_kp_pasillo2() * (leds_get_distancia_d(LED_DER) * motores_get_velocidad_lineal_objetivo());
         }
 
+    } else if (accion_get_accion_actual() == PARA and leds_pared_enfrente()) {
+        desvio = leds_get_distancia(LED_FDER) - leds_get_distancia(LED_FIZQ);
     }
     return desvio;
 }
@@ -409,14 +411,6 @@ void robot_control() {
             - encoders_get_posicion_total_left()) / 2
             : encoders_get_posicion_total();
 
-        if (accion_get_accion_actual() == PARA and leds_pared_enfrente()) {
-            motores_set_velocidad_lineal_objetivo( 
-                    min(
-                    ACCION_V0 + ((leds_get_distancia(LED_FDER)+leds_get_distancia(LED_FIZQ)/2.0) - 0.028) * (ACCION_VE/(ACCION_VE-ACCION_V0)),
-                    ACCION_VE));
-            accion_set_pasos_objetivo(pasos_recorridos + (( (leds_get_distancia(LED_FIZQ) + leds_get_distancia(LED_FDER)) / 2.0)-0.028) / LONGITUD_PASO_ENCODER);
-        }
-
         if ( (pasos_recorridos >= accion_get_pasos_objetivo() and motores_get_velocidad_lineal_objetivo() > 0)
              or ((pasos_recorridos <= accion_get_pasos_objetivo() and motores_get_velocidad_lineal_objetivo() < 0))
              or motores_get_velocidad_lineal_objetivo() == 0) {
@@ -459,10 +453,10 @@ void robot_calibracion_frontal() {
         Serial.println(F("Comienzo calibracion"));
 
         while (!fin_calibracion) {
-            int16_t indice_i = 15;
-            int16_t array_i[15];
-            int16_t indice_d = 15;
-            int16_t array_d[15];
+            int8_t indice_i = 15;
+            int16_t array_i[16];
+            int8_t indice_d = 15;
+            int16_t array_d[16];
 
             encoders_reset_posicion_aux_total();
 
@@ -473,32 +467,42 @@ void robot_calibracion_frontal() {
 
             robot.estado = CALIBRANDO;
 
-            while (encoders_get_posicion_aux() > -200 and (indice_i >= 0 or indice_d >=0 )) {
+            while (encoders_get_posicion_aux() > -300 and (indice_i >= 0 or indice_d >=0 )) {
                 /*
-                Serial.print(leds_get_valor(LED_FIZQ));
+                Serial.print(leds_get_valor(LED_FDER));
                 Serial.print(";");
-                Serial.print(leds_get_valor(LED_FIZQ)>>6, BIN);
+                Serial.print(leds_get_valor(LED_FDER)>>6, BIN);
                 Serial.print(";");
                 Serial.println(encoders_get_posicion_aux());
+                Serial.print(encoders_get_posicion_aux());
+                Serial.print(",");
+                Serial.print(leds_get_valor(LED_FDER));
+                Serial.print(":0x");
+                Serial.print(leds_get_valor(LED_FDER),BIN);
+                Serial.print(" <<");
+                Serial.println(leds_get_valor(LED_FDER) >> 6);
                 */
-                if (leds_get_valor(LED_FIZQ) >> 6 < indice_i and indice_i>=0) {
+                    
+                if (leds_get_valor(LED_FIZQ) >> 6 <= indice_i and indice_i>=0) {
+                    /*
                     Serial.print("(mov) array _i");
                     Serial.print(indice_i);
                     Serial.print(" = ");
                     Serial.println(encoders_get_posicion_aux());
-                    array_i[indice_i--] = encoders_get_posicion_aux();
+                    */
+                    array_i[indice_i--] = max(encoders_get_posicion_aux(),-255);
                 }
-                if (leds_get_valor(LED_FDER) >> 6 < indice_d and indice_d>=0) {
+                if (leds_get_valor(LED_FDER) >> 6 <= indice_d and indice_d>=0) {
                     Serial.print("(mov) array _d ");
                     Serial.print(indice_d);
                     Serial.print(" = ");
                     Serial.println(encoders_get_posicion_aux());
-                    array_d[indice_d--] = encoders_get_posicion_aux();
+                    array_d[indice_d--] = max(encoders_get_posicion_aux(),-255);
                 }
             }
 
-            for (int i =0; i<=15; i++) {
-                //leds_segmentos[LED_FIZQ - A0][i] = int(array_i[i] / LONGITUD_PASO_ENCODER);
+            /*
+            for (int i=0; i<=15; i++) {
 
                 Serial.print("array ");
                 Serial.print(i);
@@ -508,30 +512,43 @@ void robot_calibracion_frontal() {
                 Serial.print(array_d[i]);
                 Serial.print(": ");
                 Serial.print((int) (1000.0 * -array_i[i] * LONGITUD_PASO_ENCODER));
-                /*
                 Serial.print(": ");
                 Serial.print(led_segmentos[LED_FIZQ-A0][i]);
                 Serial.print(", ");
                 Serial.print(led_segmentos[LED_FDER-A0][i]);
-                */
 
                 Serial.println();
 
             }
+            */
+            Serial.print("indice i ");
+            Serial.println(indice_i);
+            Serial.print("indice d ");
+            Serial.println(indice_d);
+
+            while (indice_i >= 0)
+                array_i[indice_i--] = -300;
+            while (indice_d >= 0)
+                array_d[indice_d--] = -300;
+
+
             leds_set_segmento(LED_FIZQ, array_i);
             leds_set_segmento(LED_FDER, array_d);
                 
             Serial.println(F("Fin calibra frontal "));
             accion_set_pasos_objetivo(pasos_recorridos);
-            while (leds_get_distancia(LED_FDER) > 0.02) {
-                Serial.println(leds_get_distancia(LED_FDER) - leds_get_distancia(LED_FIZQ),5);
-            }
+            while (leds_get_distancia(LED_FDER) > 0.02);
+           
             accion_set_pasos_objetivo(pasos_recorridos);
             Serial.println(F("Fin calibra frontal 2"));
 
+            leds_graba_segmentos_a_eeprom();
             fin_calibracion = true;
 
-            delay(5000);
+
+
         }
+    } else {
+        leds_lee_segmentos_de_eeprom();
     }
 }

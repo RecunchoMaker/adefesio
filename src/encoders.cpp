@@ -191,7 +191,7 @@ int32_t encoders_get_posicion_total(void) {
  * @brief Calcula la distancia recorrida desde el último reset de las posiciones totales
  */
 int32_t encoders_get_posicion_aux(void) {
-    return (encoder_posicion_aux_right + encoder_posicion_left) / 2;
+    return (encoder_posicion_aux_right + encoder_posicion_aux_left) / 2;
 }
 
 /**

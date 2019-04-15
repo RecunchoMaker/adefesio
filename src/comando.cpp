@@ -66,13 +66,13 @@ static char buffer[COMANDO_MAX_TAMANO];
 static uint8_t buffer_idx;
 
 /// Alamacena el último caracter introducido por el puerto serie
-char caracter;
+volatile char caracter;
 
 /// Auxiliar utilizado en varios bucles que recorren el biffer
-int8_t aux_i;
+volatile int8_t aux_i;
 
 /// Flag de control del comando go
-bool go = false;
+volatile bool go = false;
 
 //@{
 /**
