@@ -87,29 +87,31 @@ void loop() {
 
 
     leds_reset_go();
+    cli();
+    sei();
     while (true) {
 #ifdef MOCK
         while (!comando_get_go()) {
 #else
         while (!leds_go() and !comando_get_go()) {
 #endif
+
+            //log_leds_distancias();
+            Serial.println(leds_get_distancia(LED_FDER) + leds_get_distancia(LED_FIZQ));
             comando_lee_serial();
             //log_casilla_pasos_leds();
         }
         //Serial.println("inicia Flood");
         //flood_init(CASILLA_SOLUCION);
-        camino_init();
-        camino_anadir_paso_recto();
-        camino_anadir_paso_recto();
-        camino_anadir_paso_recto();
-        camino_anadir_paso_recto();
 
         bateria_watchdog();
         Serial.println("empiezo");
 
         robot_empieza();
-        while (robot_get_estado() != ESPERANDO_SENAL) {
-            log_correccion_pasillos();
+        //while (robot_get_estado() != ESPERANDO_SENAL) {
+        while (true) {
+            //log_correccion_pasillos();
+            log_leds_distancias();
 #ifdef MOCK
             comando_lee_serial();
 #endif

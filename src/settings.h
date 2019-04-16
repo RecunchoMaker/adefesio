@@ -19,7 +19,7 @@
 #define RADIO_RUEDAS 0.022992
 
 /// Distancia entre las ruedas, en metros
-#define DISTANCIA_ENTRE_RUEDAS (0.068753)
+#define DISTANCIA_ENTRE_RUEDAS (0.07)
 
 /// Anchura robot
 #define ANCHURA_ROBOT 0.085
@@ -69,8 +69,8 @@
 
 //#define KP_PASILLO1 45.0 ///< Constante por defecto P para corrección entre pasillos
 //#define KP_PASILLO2 4000.0 ///< Constante por defecto D para corrección entre pasillos
-#define KP_PASILLO1 15.0 ///< Constante por defecto P para corrección entre pasillos
-#define KP_PASILLO2 1000.0 ///< Constante por defecto D para corrección entre pasillos
+#define KP_PASILLO1 19.0 ///< Constante por defecto P para corrección entre pasillos
+#define KP_PASILLO2 200.0 ///< Constante por defecto D para corrección entre pasillos
 
 /// Define la distancia en la que estimamos incorporarnos al centro en trayectorias rectas
 #define DISTANCIA_CONVERGENCIA 0.09

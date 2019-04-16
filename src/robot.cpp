@@ -362,7 +362,7 @@ float robot_get_angulo_desvio() {
         }
 
     } else if (accion_get_accion_actual() == PARA and leds_pared_enfrente()) {
-        desvio = leds_get_distancia(LED_FDER) - leds_get_distancia(LED_FIZQ);
+        desvio = 300.0 * (leds_get_distancia(LED_FDER) - leds_get_distancia(LED_FIZQ));
     }
     return desvio;
 }
@@ -400,7 +400,8 @@ void robot_control() {
 
 
     ///@todo
-    if (accion_get_velocidad_maxima() <= -9990.0) {
+    //if (accion_get_velocidad_maxima() <= -9990.0) {
+    if (accion_get_accion_actual() == ESPERA) {
         motores_parar();
         if (timer1_get_cuenta() * PERIODO_TIMER > accion_get_radio()) {
             robot_siguiente_accion();
@@ -423,6 +424,8 @@ void robot_control() {
                 )
                 {
             motores_set_aceleracion_lineal(-accion_get_deceleracion());
+        } else if (accion_get_accion_actual() == PARA and leds_pared_enfrente()) {
+            accion_set_pasos_objetivo((leds_get_distancia(LED_FDER) - 0.02) / LONGITUD_PASO_ENCODER);
         }
         else if ((motores_get_velocidad_lineal_objetivo() > 0 and motores_get_velocidad_lineal_objetivo() >= accion_get_velocidad_maxima())
                 or
@@ -534,6 +537,9 @@ void robot_calibracion_frontal() {
 
             leds_set_segmento(LED_FIZQ, array_i);
             leds_set_segmento(LED_FDER, array_d);
+
+            leds_set_segmento(LED_DER, array_i);
+            leds_set_segmento(LED_IZQ, array_d);
                 
             Serial.println(F("Fin calibra frontal "));
             accion_set_pasos_objetivo(pasos_recorridos);

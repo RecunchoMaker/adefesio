@@ -67,16 +67,16 @@ void camino_empieza() {
  */
 bool camino_recalcula() {
 #if NOFLOOD
-    camino_init(robot_get_casilla(), robot_get_orientacion());
     Serial.println(F("camino_recalcula: camino fijo"));
     if (robot_get_casilla() == CASILLA_INICIAL) {
+        camino_init(CASILLA_INICIAL, ORIENTACION_INICIAL);
         camino_anadir_paso(PASO_RECTO);
         camino_anadir_paso(PASO_RECTO);
         camino_anadir_paso(PASO_RECTO);
         camino_anadir_paso(PASO_RECTO);
+        camino_orientacion_actual = (camino_orientacion_origen + 2) % 4;
     } else {
-        camino_orientacion_origen = (camino_orientacion_actual + 2) % 4;
-        camino_orientacion_actual = camino_orientacion_origen;
+        camino_init(244, (ORIENTACION_INICIAL + 2) % 4);
         camino_anadir_paso(PASO_RECTO);
         camino_anadir_paso(PASO_RECTO);
         camino_anadir_paso(PASO_RECTO);
