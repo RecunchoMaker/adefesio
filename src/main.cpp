@@ -71,24 +71,16 @@ void loop() {
     robot_calibracion_frontal();
 
     // test calibracion
-    /*
     while (true) {
-        float d = (leds_get_distancia(LED_FIZQ) - leds_get_distancia(LED_FDER));
-        Serial.print("dif: ");
-        Serial.print(d, 5);
-        Serial.print(" ");
-        Serial.println(atan(d/0.06) * 360.0 / (2*3.14159));
-
+        log_leds_distancias();
     }
-    */
 
     robot_init();
     camino_init();
 
 
     leds_reset_go();
-    cli();
-    sei();
+
     while (true) {
 #ifdef MOCK
         while (!comando_get_go()) {
@@ -97,7 +89,7 @@ void loop() {
 #endif
 
             //log_leds_distancias();
-            Serial.println(leds_get_distancia(LED_FDER) + leds_get_distancia(LED_FIZQ));
+            //Serial.println(leds_get_distancia(LED_FDER) + leds_get_distancia(LED_FIZQ));
             comando_lee_serial();
             //log_casilla_pasos_leds();
         }
@@ -110,8 +102,8 @@ void loop() {
         robot_empieza();
         //while (robot_get_estado() != ESPERANDO_SENAL) {
         while (true) {
-            //log_correccion_pasillos();
-            log_leds_distancias();
+            log_correccion_pasillos();
+            //log_leds_distancias();
 #ifdef MOCK
             comando_lee_serial();
 #endif

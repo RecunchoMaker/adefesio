@@ -70,7 +70,7 @@
 //#define KP_PASILLO1 45.0 ///< Constante por defecto P para corrección entre pasillos
 //#define KP_PASILLO2 4000.0 ///< Constante por defecto D para corrección entre pasillos
 #define KP_PASILLO1 19.0 ///< Constante por defecto P para corrección entre pasillos
-#define KP_PASILLO2 200.0 ///< Constante por defecto D para corrección entre pasillos
+#define KP_PASILLO2 500.0 ///< Constante por defecto D para corrección entre pasillos
 
 /// Define la distancia en la que estimamos incorporarnos al centro en trayectorias rectas
 #define DISTANCIA_CONVERGENCIA 0.09

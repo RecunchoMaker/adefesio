@@ -17,6 +17,7 @@
 #include <log.h>
 #include <leds.h>
 #include <flood.h>
+#include <control.h>
 
 /// Acumula los pasos recorridos de encoder desde el último reset
 volatile int32_t pasos_recorridos = 0;
@@ -33,6 +34,8 @@ typedef struct {
     volatile int16_t ultima_diferencia_encoders = 0;
     volatile int16_t diferencia_pasos;
 } tipo_robot;
+
+volatile void (*control_funcion)(void)=NULL;
 
 volatile tipo_robot robot;
 
@@ -154,9 +157,11 @@ void robot_siguiente_accion() {
         Serial.print(F("E-EMPIEZA\n"));
         flood_init(robot.casilla == CASILLA_INICIAL ? CASILLA_SOLUCION: CASILLA_INICIAL);
         robot.estado = FLOOD;
-
         accion_ejecuta(ESPERA);
+        control_funcion = control_espera;
+
     } else if (robot.estado == FLOOD) {
+        control_funcion = NULL;
         Serial.print(F("E-FLOOD\n"));
         if (!flood_recalcula()) {
             camino_recalcula();
@@ -164,6 +169,7 @@ void robot_siguiente_accion() {
             log_camino();
             robot.estado = REORIENTA;
         } 
+        control_funcion = control_continua;
 #ifdef MOCK
         else
             Serial.println("nextAction");
@@ -172,18 +178,22 @@ void robot_siguiente_accion() {
         Serial.print(F("E-REORIENTA..."));
         if (robot.orientacion == camino_get_orientacion_origen()) {
             Serial.print(F("OK\n"));
+            control_funcion = control_espera;
             robot.estado = ESPERANDO;
         } else {
             Serial.println();
             accion_ejecuta(GIRA_180);
             robot.orientacion--;
             robot.orientacion--;
+            control_funcion = NULL;
             // continuo en el mismo estado
         }
     } else if (robot.estado == ESPERANDO) {
         accion_ejecuta(ESPERA);
+        control_funcion = control_espera;
         robot.estado = DECIDE;
     } else if (robot.estado == DECIDE) {
+        control_funcion = NULL;
         if (robot.casilla == CASILLA_INICIAL 
                 and camino_get_ultima_casilla() == CASILLA_SOLUCION 
                 and camino_get_todas_visitadas()) {
@@ -241,6 +251,7 @@ void robot_siguiente_accion() {
             accion_ejecuta(PARA);
             Serial.print(F("PARA\n"));
             robot.casilla_offset = LABERINTO_LONGITUD_CASILLA / 2.0;
+            control_funcion = control_parada;
 
             log_leds();
 
@@ -362,7 +373,7 @@ float robot_get_angulo_desvio() {
         }
 
     } else if (accion_get_accion_actual() == PARA and leds_pared_enfrente()) {
-        desvio = 300.0 * (leds_get_distancia(LED_FDER) - leds_get_distancia(LED_FIZQ));
+        desvio = 1300.0 * (leds_get_distancia(LED_FDER) - leds_get_distancia(LED_FIZQ));
     }
     return desvio;
 }
@@ -401,11 +412,9 @@ void robot_control() {
 
     ///@todo
     //if (accion_get_velocidad_maxima() <= -9990.0) {
-    if (accion_get_accion_actual() == ESPERA) {
-        motores_parar();
-        if (timer1_get_cuenta() * PERIODO_TIMER > accion_get_radio()) {
-            robot_siguiente_accion();
-        }
+    
+    if (control_funcion != NULL) {
+        control_funcion();
     } else {
 
         pasos_recorridos = accion_get_radio() == GIRO_IZQUIERDA_TODO or accion_get_radio() == GIRO_DERECHA_TODO ? abs (encoders_get_posicion_total_right() 
