@@ -64,4 +64,5 @@ void leds_set_segmento(uint8_t led, int16_t array[]);
 void leds_graba_segmentos_a_eeprom();
 void leds_lee_segmentos_de_eeprom();
 
+void leds_calibracion_lateral();
 #endif

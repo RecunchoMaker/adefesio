@@ -459,6 +459,9 @@ void robot_calibracion_frontal() {
 
     //if (leds_pared_enfrente() and leds_pared_derecha() and leds_pared_izquierda()) {
     delay(1000);
+    leds_calibracion_lateral();
+    delay(1000);
+
     if (leds_get_distancia(LED_FIZQ) < 0.02) {
 
         bool fin_calibracion = false;

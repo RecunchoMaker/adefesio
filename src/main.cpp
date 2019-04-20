@@ -68,12 +68,15 @@ void loop() {
 
     leds_activa();
 
-    robot_calibracion_frontal();
+    //robot_calibracion_frontal();
+    leds_calibracion_lateral();
 
     // test calibracion
+    /*j
     while (true) {
         log_leds_distancias();
     }
+    */
 
     robot_init();
     camino_init();
@@ -91,6 +94,8 @@ void loop() {
             //log_leds_distancias();
             //Serial.println(leds_get_distancia(LED_FDER) + leds_get_distancia(LED_FIZQ));
             comando_lee_serial();
+            //log_leds_distancias();
+            delay(100);
             //log_casilla_pasos_leds();
         }
         //Serial.println("inicia Flood");
