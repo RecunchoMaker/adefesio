@@ -31,8 +31,8 @@ replot '/tmp/datos-1.dat' using ($6 * 100) linecolor "red" title "vale der" with
 replot '/tmp/datos-1.dat' using ($7* 1000) linecolor "slategrey" title "izq1" with points
 replot '/tmp/datos-1.dat' using ($8* 1000)  linecolor "slategrey" title "izq2" with points
 
-replot '/tmp/datos-1.dat' using ($9* 1000) linecolor "bisque" title "der" with points
-replot '/tmp/datos-1.dat' using ($10* 1000)  linecolor "bisque" title "der" with points
+replot '/tmp/datos-1.dat' using ($9* 1000) linecolor "bisque" title "der1" with points
+replot '/tmp/datos-1.dat' using ($10* 1000)  linecolor "bisque" title "der2" with points
 
 replot '/tmp/datos-1.dat' using ($11* 1000) title "desvio" with points pointtype 2 ps 2 lc "magenta"
 

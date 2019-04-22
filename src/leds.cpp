@@ -505,8 +505,6 @@ void leds_lee_segmentos_de_eeprom() {
 
 void leds_calibracion_lateral() {
 /// distancia maxima del led a la otra pared en un pasillo
-#define DISTANCIA_LATERAL 0.08
-
     while (true) {
         float suma = leds_get_distancia(LED_DER) + leds_get_distancia(LED_IZQ);
         Serial.print(suma,9);
@@ -528,13 +526,13 @@ void leds_calibracion_lateral() {
         Serial.println();
                     
 
-        if (abs(suma - DISTANCIA_LATERAL) < 0.001 and abs(leds_get_distancia(LED_DER)-leds_get_distancia(LED_IZQ)) < 0.001)
+        if (abs(suma - (DISTANCIA_ROBOT_MURO*2)) < 0.001 and abs(leds_get_distancia(LED_DER)-leds_get_distancia(LED_IZQ)) < 0.001)
             break;
 
         // ajusta suma
-        if (abs(suma - DISTANCIA_LATERAL) > 0.001) {
+        if (abs(suma - DISTANCIA_ROBOT_MURO*2) > 0.001) {
             suma = leds_get_distancia(LED_DER) + leds_get_distancia(LED_IZQ);
-            if (suma < DISTANCIA_LATERAL) {
+            if (suma < DISTANCIA_ROBOT_MURO*2) {
                 for (int i=1; i<=15; i++) {
                     leds_segmentos[LED_DER-A0][i]++;
                     leds_segmentos[LED_IZQ-A0][i]++;

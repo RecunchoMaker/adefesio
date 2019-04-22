@@ -76,7 +76,7 @@ bool camino_recalcula() {
         camino_anadir_paso(PASO_RECTO);
         camino_orientacion_actual = (camino_orientacion_origen + 2) % 4;
     } else {
-        camino_init(244, (ORIENTACION_INICIAL + 2) % 4);
+        camino_init(robot_get_casilla(), (ORIENTACION_INICIAL + 2) % 4);
         camino_anadir_paso(PASO_RECTO);
         camino_anadir_paso(PASO_RECTO);
         camino_anadir_paso(PASO_RECTO);

@@ -9,6 +9,7 @@
 #include <settings.h>
 #include <accion.h>
 #include <robot.h>
+#include <laberinto.h>
 #include <leds.h>
 
 #define DISTANCIA_MURO 0.025
@@ -29,7 +30,7 @@ void control_espera() {
 
 void control_parada() {
 
-    if (leds_pared_enfrente()) {
+    if (laberinto_hay_pared_frontal(robot_get_casilla())) {
         motores_set_velocidad_lineal_objetivo(min(0.30, 6.0* leds_get_distancia(LED_FDER) - DISTANCIA_MURO));
         if (leds_get_distancia(LED_FDER)<=DISTANCIA_MURO) {
             robot_siguiente_accion();
@@ -38,7 +39,11 @@ void control_parada() {
             Serial.print(leds_get_distancia("-"));
             Serial.print(leds_get_distancia(LED_FDER));
         }
-
+    } else {
+        if (encoders_get_posicion_total() >= accion_get_pasos_objetivo())
+            robot_siguiente_accion();
+        else if (motores_get_velocidad_lineal_objetivo() > 0 and encoders_get_posicion_total() >= accion_get_pasos_hasta_decelerar())
+            motores_set_aceleracion_lineal(-accion_get_deceleracion());
     }
 }
 

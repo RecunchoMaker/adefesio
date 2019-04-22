@@ -142,7 +142,6 @@ void robot_siguiente_accion() {
         _incrementa_casilla();
     }
     */
-
     leds_reset_distancias_minimas();
     robot.giro_corregido = false;
 
@@ -207,7 +206,6 @@ void robot_siguiente_accion() {
                                  robot.estado = AVANZANDO;
                                  robot.casilla_offset = LABERINTO_LONGITUD_CASILLA / 2.0;
                                  accion_ejecuta(ARRANCA);
-                                 robot.casilla_offset = 0; // solo en el arranque
                                  break;
                 case PASO_DER:   
                                  Serial.print(F("GIRA_DER\n"));
@@ -244,6 +242,7 @@ void robot_siguiente_accion() {
         Serial.print(F("E-AVANZANDO\n"));
 
         if (paso == PASO_RECTO and !leds_pared_enfrente()) {
+            robot.casilla_offset = 0;
             accion_ejecuta(AVANZA);
             Serial.print(F("AVANZA\n"));
             robot.estado = AVANZANDO;
@@ -315,7 +314,7 @@ bool robot_es_valido_led_izquierdo() { // solo valido en rectas
         if (siguiente_pared) {
             return true; // siempre hay paredes
         } else {
-            return leds_get_distancia(LED_IZQ)<0.03 or pasos_recorridos + robot.casilla_offset / LONGITUD_PASO_ENCODER < 200;
+            return pasos_recorridos + robot.casilla_offset / LONGITUD_PASO_ENCODER < 250;
         }
     } else {
         if (siguiente_pared) {
@@ -334,7 +333,7 @@ bool robot_es_valido_led_derecho() { // solo valido en rectas
         if (siguiente_pared) {
             return true; // siempre hay paredes
         } else {
-            return leds_get_distancia(LED_DER)<0.03 or pasos_recorridos + robot.casilla_offset / LONGITUD_PASO_ENCODER < 200;
+            return pasos_recorridos + robot.casilla_offset / LONGITUD_PASO_ENCODER < 250;
         }
     } else {
         if (siguiente_pared) {

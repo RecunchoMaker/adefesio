@@ -23,6 +23,7 @@
 
 /// Anchura robot
 #define ANCHURA_ROBOT 0.085
+#define DISTANCIA_ROBOT_MURO ((LABERINTO_LONGITUD_CASILLA - LABERINTO_ANCHURA_MURO - ANCHURA_ROBOT) / 2.0)
 //@}
 
 //@{
@@ -94,11 +95,12 @@
 #define CASILLA_SOLUCION (LABERINTO_COLUMNAS-1)  
 #define ORIENTACION_INICIAL NORTE ///< Orientación del robot al inicio de la exploración
 #else
-#define CASILLA_INICIAL 240
-#define CASILLA_SOLUCION 245
-#define ORIENTACION_INICIAL ESTE ///< Orientación del robot al inicio de la exploración
+#define CASILLA_INICIAL 255
+#define CASILLA_SOLUCION 250
+#define ORIENTACION_INICIAL OESTE ///< Orientación del robot al inicio de la exploración
 #endif
 #define LABERINTO_LONGITUD_CASILLA 0.18 //< Longitud en metros de cada casilla
+#define LABERINTO_ANCHURA_MURO 0.012    //< Ancho del muro en metros
 //@}
 
 #define NOFLOOD 1
