@@ -124,7 +124,7 @@ bool laberinto_hay_pared_frontal(uint8_t casilla) {
     switch (robot_get_orientacion()) {
         case NORTE: return celda[casilla].paredN;
                     break;
-        case ESTE:  return celda[(uint8_t) (casilla + incremento[OESTE])].paredO;
+        case ESTE:  return celda[(uint8_t) (casilla + incremento[ESTE])].paredO;
                     break;
         case SUR:   return celda[(uint8_t) (casilla + incremento[SUR])].paredN;
                     break;

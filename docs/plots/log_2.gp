@@ -50,22 +50,17 @@ set style line 9 linetype 5 lc rgb "green" linewidth 3
 anchura_robot_2 = 0.085 / 2
 dist_con = 0.09
 
-#plot '/tmp/datos-1.dat' using ($1*1000) linestyle 1 title "izq kalman (mm)"
-plot '/tmp/datos-1.dat' using ($2*1000) linestyle 2 title "der kalman (mm)"
+#plot '/tmp/datos-1.dat' using ($1*100) linecolor "pink" title "casilla" with lines
+plot '/tmp/datos-1.dat' using 2 title "pasos" with points pointtype 2 ps 2 lc "red"
 
-#replot '/tmp/datos-1.dat' using (atan((-$1 - anchura_robot_2 + 0.09 )/dist_con)) linestyle 3 title "desvio pos izq (grados)"
-replot '/tmp/datos-1.dat' using (atan(($2 + anchura_robot_2 + 0.09 )/dist_con)) linestyle 4 title "desvio pos der (grados)"
+replot '/tmp/datos-1.dat' using ($3*1000) linestyle 1 title "izq kalman (mm)"
+replot '/tmp/datos-1.dat' using ($4*1000) linestyle 2 title "der kalman (mm)"
 
-#replot '/tmp/datos-1.dat' using ($3*1000) linestyle 5 title "diff i (mm)"
-replot '/tmp/datos-1.dat' using ($4*1000) linestyle 6 title "diff d (mm)"
+#replot '/tmp/datos-1.dat' using ($5*10000) linestyle 5 title "diff i (mm)"
+replot '/tmp/datos-1.dat' using ($6*10000) linestyle 6 title "diff d (mm)"
 
-#replot '/tmp/datos-1.dat' using (atan(-$3/(0.004 * 0.30))) linestyle 7 title "angulo diff i (grados)"
-replot '/tmp/datos-1.dat' using (atan($4/(0.004 * 0.30))) linestyle 8 title "angulo diff d (grados)"
-
-
-replot '/tmp/datos-1.dat' using (atan($5)) linecolor "dark-pink" title "angulo desvio (grados)" with points
-#replot '/tmp/datos-1.dat' using ($6*100) linestyle 7 title "v left (cm/s)"
-#replot '/tmp/datos-1.dat' using ($7*100) linestyle 8 title "v-right (cm/s)"
+replot '/tmp/datos-1.dat' using ($8*100) linestyle 7 title "v left (cm/s)"
+replot '/tmp/datos-1.dat' using ($9*100) linestyle 8 title "v-right (cm/s)"
 
 # Espera a que se pulse una tecla
 pause mouse keypress

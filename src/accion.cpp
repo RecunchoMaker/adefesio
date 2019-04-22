@@ -52,6 +52,16 @@ volatile float vg = ACCION_VG;          ///< Velocidad máxima giro en redondo
 
 volatile tipo_accion accion_actual;
 
+
+/**
+ * @brief Calcula la distancia necesaria para decelerar a una velocidad final, dadas la inicial la aceleración
+ */
+
+float _distancia_para_decelerar(float vi, float vf, float aceleracion) {
+    return ((0.5 * (vi - vf) * (vi - vf)) + (vf * (vi - vf))) / aceleracion;
+}
+
+
 //@{
 /**
  * @name Setters y getters
@@ -117,6 +127,7 @@ float accion_get_ve() {
     return ve;
 }
 void accion_set_pasos_objetivo(int32_t pasos) {
+    pasos_hasta_decelerar += pasos - pasos_objetivo;
     pasos_objetivo = pasos;
 }
 void accion_set_velocidad_final(int32_t pasos) {
@@ -126,15 +137,6 @@ int32_t accion_get_pasos_hasta_decelerar() {
     return pasos_hasta_decelerar;
 }
 //@}
-
-
-/**
- * @brief Calcula la distancia necesaria para decelerar a una velocidad final, dadas la inicial la aceleración
- */
-
-float _distancia_para_decelerar(float vi, float vf, float aceleracion) {
-    return ((0.5 * (vi - vf) * (vi - vf)) + (vf * (vi - vf))) / aceleracion;
-}
 
 
 /**

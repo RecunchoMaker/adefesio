@@ -142,12 +142,10 @@ void log_camino() {
  */
 void log_variables_trayectoria() {
     Serial.print(F("#2 "));
-    /*
     Serial.print(robot_get_casilla());
     Serial.print(F("\t"));
     Serial.print(robot_get_pasos_recorridos());
     Serial.print(F("\t"));
-    */
     Serial.print(leds_get_distancia_kalman(LED_IZQ), 5);
     Serial.print("\t");
     Serial.print(leds_get_distancia_kalman(LED_DER), 5);

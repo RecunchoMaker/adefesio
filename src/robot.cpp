@@ -177,8 +177,9 @@ void robot_siguiente_accion() {
         Serial.print(F("E-REORIENTA..."));
         if (robot.orientacion == camino_get_orientacion_origen()) {
             Serial.print(F("OK\n"));
+            accion_ejecuta(ESPERA);
             control_funcion = control_espera;
-            robot.estado = ESPERANDO;
+            robot.estado = DECIDE;
         } else {
             Serial.println();
             accion_ejecuta(GIRA_180);
@@ -187,7 +188,7 @@ void robot_siguiente_accion() {
             control_funcion = NULL;
             // continuo en el mismo estado
         }
-    } else if (robot.estado == ESPERANDO) {
+    } else if (robot.estado == ESPERANDO) { //@todo quitar este estado
         accion_ejecuta(ESPERA);
         control_funcion = control_espera;
         robot.estado = DECIDE;
@@ -258,7 +259,7 @@ void robot_siguiente_accion() {
             if (robot.casilla == CASILLA_SOLUCION or robot.casilla == CASILLA_INICIAL) {
                 robot.estado = EMPIEZA;
             } else {
-                robot.estado = FLOOD;
+                robot.estado = EMPIEZA; //@todo
             }
         }
     } else if (robot.estado == CALIBRANDO) {
@@ -280,6 +281,9 @@ void robot_siguiente_accion() {
 
 
 int32_t robot_get_pasos_recorridos() {
+    pasos_recorridos = accion_get_radio() == GIRO_IZQUIERDA_TODO or accion_get_radio() == GIRO_DERECHA_TODO ? abs (encoders_get_posicion_total_right() 
+        - encoders_get_posicion_total_left()) / 2
+        : encoders_get_posicion_total();
     return pasos_recorridos;
 }
 

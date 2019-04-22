@@ -12,7 +12,7 @@
 #include <laberinto.h>
 #include <leds.h>
 
-#define DISTANCIA_MURO 0.025
+#define DISTANCIA_MURO 0.03
 
 
 void control_continua() {
@@ -30,10 +30,38 @@ void control_espera() {
 
 
 void control_avance() {
-    if (encoders_get_posicion_total() >= accion_get_pasos_objetivo())
+    static bool sinc_pared = false;
+
+    if ((leds_get_distancia_d(LED_IZQ) > 0.001 or leds_get_distancia_d(LED_DER) < -0.001 or 
+        leds_get_distancia_d(LED_IZQ) > 0.001 or leds_get_distancia_d(LED_DER) < -0.001)
+        and !sinc_pared and encoders_get_posicion_total() > 300)
+    {
+        Serial.print("sinc de ");
+        Serial.print(accion_get_pasos_objetivo());
+        Serial.print(" decelera de ");
+        Serial.print(accion_get_pasos_hasta_decelerar());
+        accion_set_pasos_objetivo(encoders_get_posicion_total() + 0.068 / LONGITUD_PASO_ENCODER);
+        Serial.print(" a ");
+        Serial.println(accion_get_pasos_objetivo());
+        Serial.print("decelera de ");
+        Serial.print(accion_get_pasos_hasta_decelerar());
+
+        sinc_pared = true;
+    }
+
+    if (encoders_get_posicion_total() >= accion_get_pasos_objetivo()) {
+        sinc_pared = false;
         robot_siguiente_accion();
-    else if (motores_get_velocidad_lineal_objetivo() > 0 and encoders_get_posicion_total() >= accion_get_pasos_hasta_decelerar())
+    }
+
+    if (motores_get_velocidad_lineal_objetivo() >= accion_get_velocidad_maxima()) {
+        motores_set_velocidad_lineal_objetivo(accion_get_velocidad_maxima());
+        motores_set_aceleracion_lineal(0);
+    }
+
+    if (motores_get_velocidad_lineal_objetivo() > 0 and encoders_get_posicion_total() >= accion_get_pasos_hasta_decelerar())
         motores_set_aceleracion_lineal(-accion_get_deceleracion());
+
 }
 
 
