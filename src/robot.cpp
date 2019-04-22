@@ -377,7 +377,7 @@ float robot_get_angulo_desvio() {
         }
 
     } else if (accion_get_accion_actual() == PARA and leds_pared_enfrente()) {
-        desvio = 1300.0 * (leds_get_distancia(LED_FDER) - leds_get_distancia(LED_FIZQ));
+        desvio = 10300.0 * (leds_get_distancia(LED_FDER) - leds_get_distancia(LED_FIZQ));
     }
     return desvio;
 }
