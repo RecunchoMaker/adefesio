@@ -47,7 +47,6 @@ volatile float velocidad_angular_objetivo = 0;
 
 /// Rado de giro
 volatile float radio = 99999; // evita division por 0 en el init
-volatile float radio_aux = 99999; // var temporal para correccion de angulo en pasillos
 
 
 //@{
@@ -84,9 +83,6 @@ float motores_get_velocidad_lineal_objetivo() {
 }
 float motores_get_radio() {
     return radio;
-}
-float motores_get_radio_aux() {
-    return radio_aux;
 }
 void motores_set_velocidad_lineal_objetivo(float velocidad) {
     velocidad_lineal_objetivo = velocidad;

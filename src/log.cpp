@@ -161,8 +161,6 @@ void log_variables_trayectoria() {
     Serial.print(motores_get_velocidad_lineal_objetivo_left(), 9);
     Serial.print("\t");
     Serial.print(motores_get_velocidad_lineal_objetivo_right(), 9);
-    Serial.print("\t");
-    Serial.print(motores_get_radio_aux(), 9);
     Serial.println();
 }
 

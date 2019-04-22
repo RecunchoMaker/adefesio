@@ -28,6 +28,15 @@ void control_espera() {
 
 }
 
+
+void control_avance() {
+    if (encoders_get_posicion_total() >= accion_get_pasos_objetivo())
+        robot_siguiente_accion();
+    else if (motores_get_velocidad_lineal_objetivo() > 0 and encoders_get_posicion_total() >= accion_get_pasos_hasta_decelerar())
+        motores_set_aceleracion_lineal(-accion_get_deceleracion());
+}
+
+
 void control_parada() {
 
     if (laberinto_hay_pared_frontal(robot_get_casilla())) {
@@ -40,10 +49,7 @@ void control_parada() {
             Serial.print(leds_get_distancia(LED_FDER));
         }
     } else {
-        if (encoders_get_posicion_total() >= accion_get_pasos_objetivo())
-            robot_siguiente_accion();
-        else if (motores_get_velocidad_lineal_objetivo() > 0 and encoders_get_posicion_total() >= accion_get_pasos_hasta_decelerar())
-            motores_set_aceleracion_lineal(-accion_get_deceleracion());
+        control_avance(); // si no hay referencia de pared frontal, se realiza un control normal
     }
 }
 

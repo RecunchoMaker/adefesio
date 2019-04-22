@@ -49,7 +49,6 @@ float motores_get_velocidad_lineal_objetivo();
 float motores_get_velocidad_lineal_objetivo_left();
 float motores_get_velocidad_lineal_objetivo_right();
 float motores_get_radio();
-float motores_get_radio_aux();
 void motores_set_velocidad_lineal_objetivo(float velocidad);
 
 int16_t motores_get_pwm_left();

@@ -67,8 +67,6 @@ replot '/tmp/datos-1.dat' using (atan($5)) linecolor "dark-pink" title "angulo d
 #replot '/tmp/datos-1.dat' using ($6*100) linestyle 7 title "v left (cm/s)"
 #replot '/tmp/datos-1.dat' using ($7*100) linestyle 8 title "v-right (cm/s)"
 
-replot '/tmp/datos-1.dat' using ($8>1?1:$8*1000<--1?-1:$8*1000) linestyle 9 title "radio (mm)"
-
 # Espera a que se pulse una tecla
 pause mouse keypress
 

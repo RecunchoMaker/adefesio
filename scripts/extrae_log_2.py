@@ -42,7 +42,7 @@ def es_linea_correcta(linea):
 
     # Tiene el numero de valores correcto?
     linea = linea[1].split('\t')
-    if len(linea) <> 8:
+    if len(linea) <> 7:
         return False
 
     # Son todos los valores float?
@@ -53,8 +53,7 @@ def es_linea_correcta(linea):
                  float(linea[3]),
                  float(linea[4]),
                  float(linea[5]),
-                 float(linea[6]),
-                 float(linea[7])]
+                 float(linea[6])]
     except:
         return False
 
@@ -70,7 +69,6 @@ def formatea(linea):
             float(l[3]),
             float(l[4]),
             float(l[5]),
-            float(l[6]),
             float(l[6])]
 
 
@@ -90,7 +88,7 @@ def extraer_lineas_correctas(fichero):
 
 """ Devuelve una accion en lista formateada como el log original """
 def log(a):
-    print "%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f" % (a[0],a[1],a[2],a[3],a[4],a[5],a[6],a[7])
+    print "%f\t%f\t%f\t%f\t%f\t%f\t%f" % (a[0],a[1],a[2],a[3],a[4],a[5],a[6])
 
 
 def main():

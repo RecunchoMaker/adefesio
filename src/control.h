@@ -9,6 +9,7 @@
 
 void control_continua();
 void control_espera();
+void control_avance();
 void control_parada();
 
 #endif /* ifndef _CONTROL_H

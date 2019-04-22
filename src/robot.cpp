@@ -246,6 +246,7 @@ void robot_siguiente_accion() {
             accion_ejecuta(AVANZA);
             Serial.print(F("AVANZA\n"));
             robot.estado = AVANZANDO;
+            control_funcion = control_avance;
         } else {
             accion_ejecuta(PARA);
             Serial.print(F("PARA\n"));
@@ -314,11 +315,11 @@ bool robot_es_valido_led_izquierdo() { // solo valido en rectas
         if (siguiente_pared) {
             return true; // siempre hay paredes
         } else {
-            return pasos_recorridos + robot.casilla_offset / LONGITUD_PASO_ENCODER < 250;
+            return encoders_get_posicion_total() + robot.casilla_offset / LONGITUD_PASO_ENCODER < 250;
         }
     } else {
         if (siguiente_pared) {
-            return pasos_recorridos > 400;
+            return encoders_get_posicion_total() > 400;
         }
     }
     return false;
@@ -333,11 +334,11 @@ bool robot_es_valido_led_derecho() { // solo valido en rectas
         if (siguiente_pared) {
             return true; // siempre hay paredes
         } else {
-            return pasos_recorridos + robot.casilla_offset / LONGITUD_PASO_ENCODER < 250;
+            return encoders_get_posicion_total() + robot.casilla_offset / LONGITUD_PASO_ENCODER < 250;
         }
     } else {
         if (siguiente_pared) {
-            return pasos_recorridos > 400;
+            return encoders_get_posicion_total() > 400;
         }
     }
     return false;
