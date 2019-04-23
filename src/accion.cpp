@@ -236,7 +236,7 @@ void accion_ejecuta(tipo_accion accion) {
         accion_set(LABERINTO_LONGITUD_CASILLA-robot_get_casilla_offset(), amax, amax, ve, ve, RADIO_INFINITO);
     } else if (accion == ESPERA) {
         Serial.println(F("Pausa"));
-        accion_set(0, 0, -99999, 0, 0, 1.5); // en segundos
+        accion_set(0, 0, -99999, 0, 0, 0.4); // en segundos
     } else if (accion == GIRA_DER) {
         Serial.println(F("Gira derecha: "));
         Serial.println(robot_get_ultima_diferencia_encoders());

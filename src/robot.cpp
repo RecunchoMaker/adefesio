@@ -362,23 +362,24 @@ float robot_get_angulo_desvio() {
 
     // Al principio de un movimiento en recta, se utilizan las paredes disponibles
     // solo si estamos al principio de la casilla
-    // if (robot.estado != 99) {
+
     desvio = 0.0;
     if (accion_get_accion_actual() == ARRANCA or accion_get_accion_actual() == AVANZA) {
         //if (leds_get_distancia_kalman(LED_IZQ) < 0.08) {
         if (robot_es_valido_led_izquierdo()) {
-            desvio += motores_get_kp_pasillo1() * (-leds_get_distancia_kalman(LED_IZQ) - (ANCHURA_ROBOT / 2.0) + (LABERINTO_LONGITUD_CASILLA/2.0));
+            desvio += motores_get_kp_pasillo1() * (-leds_get_distancia_kalman(LED_IZQ) + DISTANCIA_ROBOT_MURO);
             desvio -= motores_get_kp_pasillo2() * (leds_get_distancia_d(LED_IZQ) * motores_get_velocidad_lineal_objetivo());
         }
         if (robot_es_valido_led_derecho()) {
         //if (leds_get_distancia_kalman(LED_DER) < 0.08) {
-            desvio -= motores_get_kp_pasillo1() * (-leds_get_distancia_kalman(LED_DER) - (ANCHURA_ROBOT / 2.0) + (LABERINTO_LONGITUD_CASILLA/2.0));
+            desvio -= motores_get_kp_pasillo1() * (-leds_get_distancia_kalman(LED_DER) + DISTANCIA_ROBOT_MURO);
             desvio += motores_get_kp_pasillo2() * (leds_get_distancia_d(LED_DER) * motores_get_velocidad_lineal_objetivo());
         }
 
     } else if (accion_get_accion_actual() == PARA and leds_pared_enfrente()) {
-        desvio = 10300.0 * (leds_get_distancia(LED_FDER) - leds_get_distancia(LED_FIZQ));
+        desvio = 50.0 * (leds_get_distancia(LED_FIZQ) - leds_get_distancia(LED_FDER)) / motores_get_velocidad_lineal_objetivo();
     }
+
     return desvio;
 }
 
@@ -393,7 +394,7 @@ void robot_control() {
     }
     return;
 #endif
-    if (accion_get_accion_actual() == AVANZA) {
+    if (accion_get_accion_actual() == AVANZA or accion_get_accion_actual() == PARA) {
         if (robot_get_angulo_desvio() != 0)
             motores_set_radio(1.0 / robot_get_angulo_desvio());
         else
@@ -462,8 +463,6 @@ void mock_siguiente_accion() {
 void robot_calibracion_frontal() {
 
     //if (leds_pared_enfrente() and leds_pared_derecha() and leds_pared_izquierda()) {
-    delay(1000);
-    leds_calibracion_lateral();
     delay(1000);
 
     if (leds_get_distancia(LED_FIZQ) < 0.02) {

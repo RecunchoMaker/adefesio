@@ -59,6 +59,8 @@ replot '/tmp/datos-1.dat' using ($4*1000) linestyle 2 title "der kalman (mm)"
 #replot '/tmp/datos-1.dat' using ($5*10000) linestyle 5 title "diff i (mm)"
 replot '/tmp/datos-1.dat' using ($6*10000) linestyle 6 title "diff d (mm)"
 
+replot '/tmp/datos-1.dat' using ($7*100 + 20) linestyle 9 title "angulo"
+
 replot '/tmp/datos-1.dat' using ($8*100) linestyle 7 title "v left (cm/s)"
 replot '/tmp/datos-1.dat' using ($9*100) linestyle 8 title "v-right (cm/s)"
 

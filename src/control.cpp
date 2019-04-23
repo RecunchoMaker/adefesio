@@ -30,27 +30,18 @@ void control_espera() {
 
 
 void control_avance() {
-    static bool sinc_pared = false;
+    static bool sinc_pared = true;
 
     if ((leds_get_distancia_d(LED_IZQ) > 0.001 or leds_get_distancia_d(LED_DER) < -0.001 or 
         leds_get_distancia_d(LED_IZQ) > 0.001 or leds_get_distancia_d(LED_DER) < -0.001)
         and !sinc_pared and encoders_get_posicion_total() > 300)
     {
-        Serial.print("sinc de ");
-        Serial.print(accion_get_pasos_objetivo());
-        Serial.print(" decelera de ");
-        Serial.print(accion_get_pasos_hasta_decelerar());
         accion_set_pasos_objetivo(encoders_get_posicion_total() + 0.068 / LONGITUD_PASO_ENCODER);
-        Serial.print(" a ");
-        Serial.println(accion_get_pasos_objetivo());
-        Serial.print("decelera de ");
-        Serial.print(accion_get_pasos_hasta_decelerar());
-
         sinc_pared = true;
     }
 
     if (encoders_get_posicion_total() >= accion_get_pasos_objetivo()) {
-        sinc_pared = false;
+        sinc_pared = true;
         robot_siguiente_accion();
     }
 

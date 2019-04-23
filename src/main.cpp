@@ -33,8 +33,8 @@ ISR (TIMER1_COMPA_vect) {
                 leds_actualiza_valor(LED_FIZQ);
                 encoders_calcula_velocidad();
                 encoders_reset_posicion();
-                motores_actualiza_velocidad();
                 robot_control();
+                motores_actualiza_velocidad();
                 break;
     }
 #endif
@@ -68,7 +68,7 @@ void loop() {
 
     leds_activa();
 
-    //robot_calibracion_frontal();
+    robot_calibracion_frontal();
     leds_calibracion_lateral();
 
     // test calibracion
