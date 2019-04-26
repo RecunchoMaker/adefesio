@@ -36,6 +36,7 @@ typedef struct {
 } tipo_robot;
 
 volatile void (*control_funcion)(void)=NULL;
+//static void (*volatile control_funcion)(void)=NULL;
 
 volatile tipo_robot robot;
 
@@ -84,7 +85,7 @@ void robot_explora() {
             leds_pared_izquierda(), leds_pared_derecha());
 
     cli(); // evita el tratamiento solapado en robot_control
-    robot.estado = FLOOD;
+    robot.estado = EMPIEZA;
     robot_siguiente_accion();
     sei();
 }
@@ -98,7 +99,7 @@ void robot_resuelve() {
     camino_recalcula();
     Serial.print(F("SOLUCION: "));
     log_camino();
-    robot.estado = FLOOD;
+    robot.estado = EMPIEZA;
     cli(); // evita el tratamiento solapado en robot_control
     robot_siguiente_accion();
     sei();
@@ -167,12 +168,14 @@ void robot_siguiente_accion() {
             laberinto_print();
             log_camino();
             robot.estado = REORIENTA;
-        } 
-        control_funcion = control_continua;
+            accion_ejecuta(ESPERA);
+            control_funcion = control_espera;
+        }  else {
+            control_funcion = control_continua;
 #ifdef MOCK
-        else
             Serial.println("nextAction");
 #endif
+        }
     } else if (robot.estado == REORIENTA) {
         Serial.print(F("E-REORIENTA..."));
         if (robot.orientacion == camino_get_orientacion_origen()) {
@@ -198,6 +201,8 @@ void robot_siguiente_accion() {
                 and camino_get_ultima_casilla() == CASILLA_SOLUCION 
                 and camino_get_todas_visitadas()) {
             robot.estado = ESPERANDO_SENAL;
+            leds_reset_go();
+            control_funcion = control_espera_senal;
         } else {
             Serial.print(F("E-DECIDE\n"));
             robot.casilla_offset = LABERINTO_LONGITUD_CASILLA / 2.0;
@@ -207,6 +212,7 @@ void robot_siguiente_accion() {
                                  robot.estado = AVANZANDO;
                                  robot.casilla_offset = LABERINTO_LONGITUD_CASILLA / 2.0;
                                  accion_ejecuta(ARRANCA);
+                                 control_funcion = control_avance;
                                  break;
                 case PASO_DER:   
                                  Serial.print(F("GIRA_DER\n"));
@@ -215,6 +221,7 @@ void robot_siguiente_accion() {
                                      robot.estado = ESPERANDO;
                                      laberinto_set_paso(robot.casilla, PASO_RECTO);
                                      robot.orientacion++;
+                                     control_funcion = control_giro;
                                  } else {
                                      robot.estado = FLOOD;
                                  }
@@ -226,6 +233,7 @@ void robot_siguiente_accion() {
                                      robot.estado = ESPERANDO;
                                      laberinto_set_paso(robot.casilla, PASO_RECTO);
                                      robot.orientacion--;
+                                     control_funcion = control_giro;
                                  } else {
                                      robot.estado = FLOOD;
                                  }
@@ -259,7 +267,7 @@ void robot_siguiente_accion() {
             if (robot.casilla == CASILLA_SOLUCION or robot.casilla == CASILLA_INICIAL) {
                 robot.estado = EMPIEZA;
             } else {
-                robot.estado = EMPIEZA; //@todo
+                robot.estado = FLOOD;
             }
         }
     } else if (robot.estado == CALIBRANDO) {
@@ -364,7 +372,7 @@ float robot_get_angulo_desvio() {
     // solo si estamos al principio de la casilla
 
     desvio = 0.0;
-    if (accion_get_accion_actual() == ARRANCA or accion_get_accion_actual() == AVANZA) {
+    if (accion_get_accion_actual() == ARRANCA or accion_get_accion_actual() == AVANZA or (accion_get_accion_actual() == PARA and !leds_pared_enfrente())) {
         //if (leds_get_distancia_kalman(LED_IZQ) < 0.08) {
         if (robot_es_valido_led_izquierdo()) {
             desvio += motores_get_kp_pasillo1() * (-leds_get_distancia_kalman(LED_IZQ) + DISTANCIA_ROBOT_MURO);
@@ -419,6 +427,7 @@ void robot_control() {
     //if (accion_get_velocidad_maxima() <= -9990.0) {
     
     if (control_funcion != NULL) {
+        //Serial.println((int) control_funcion, HEX);
         control_funcion();
     } else {
 
@@ -539,11 +548,6 @@ void robot_calibracion_frontal() {
 
             }
             */
-            Serial.print("indice i ");
-            Serial.println(indice_i);
-            Serial.print("indice d ");
-            Serial.println(indice_d);
-
             while (indice_i >= 0)
                 array_i[indice_i--] = -300;
             while (indice_d >= 0)

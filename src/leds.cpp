@@ -19,6 +19,7 @@
 #include <leds.h>
 #include <bateria.h>
 #include <robot.h>
+#include <log.h>
 #include <avr/eeprom.h>
 
 #define KALMAN_GAIN 0.1
@@ -507,27 +508,18 @@ void leds_calibracion_lateral() {
 /// distancia maxima del led a la otra pared en un pasillo
     while (true) {
         float suma = leds_get_distancia(LED_DER) + leds_get_distancia(LED_IZQ);
+
         Serial.print(suma,9);
         Serial.print("   izq: ");
         Serial.print(leds_get_distancia(LED_IZQ),9);
         Serial.print("  der: ");
         Serial.println(leds_get_distancia(LED_DER),9);
-        for (int i=0; i<=16; i++) {
-            Serial.print(leds_segmentos[LED_IZQ-A0][i]);
-            Serial.print(" ");
-        }
-        /*
-        Serial.println();
-        for (int i=0; i<=16; i++) {
-            Serial.print(leds_segmentos[LED_DER-A0][i]);
-            Serial.print(" ");
-        }
-        */
-        Serial.println();
-                    
 
-        if (abs(suma - (DISTANCIA_ROBOT_MURO*2)) < 0.001 and abs(leds_get_distancia(LED_DER)-leds_get_distancia(LED_IZQ)) < 0.001)
+        if (abs(suma - (DISTANCIA_ROBOT_MURO*2)) < 0.001 and abs(leds_get_distancia(LED_DER)-leds_get_distancia(LED_IZQ)) < 0.001) {
+            Serial.print(F("leds laterales calibrados:"));
+            log_leds();
             break;
+        }
 
         // ajusta suma
         if (abs(suma - DISTANCIA_ROBOT_MURO*2) > 0.001) {
@@ -548,19 +540,12 @@ void leds_calibracion_lateral() {
                 }
             }
         }
-        Serial.print("suma ahora vale: ");
-        Serial.println(suma,6);
-
         if (leds_get_distancia(LED_IZQ) > leds_get_distancia(LED_DER)) {
-            Serial.print("i");
             for (int i=1; i<=15; i++)
-                //if (leds_segmentos[LED_IZQ - A0][i] > leds_get_distancia(LED_IZQ)*1000.0-10.0)
                 if (leds_segmentos[LED_IZQ-A0][i] > leds_segmentos[LED_IZQ-A0][i+1] + 1)
                     leds_segmentos[LED_IZQ-A0][i]--;
         } else {
-            Serial.print("d");
             for (int i=1; i<=15; i++)
-                //if (leds_segmentos[LED_DER - A0][i] > leds_get_distancia(LED_DER)*1000.0-10.0)
                 if (leds_segmentos[LED_DER-A0][i] > leds_segmentos[LED_DER-A0][i+1] + 1) 
                     leds_segmentos[LED_DER - A0][i]--;
         }        

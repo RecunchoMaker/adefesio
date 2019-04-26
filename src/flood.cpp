@@ -33,6 +33,9 @@ void flood_init(int16_t solucion) {
 
     int16_t idx = 0;
 
+    Serial.print("flood init ");
+    Serial.println(solucion);
+
     for (idx = 0; idx < laberinto_get_columnas() * laberinto_get_filas(); idx++) {
         flood_distancia[idx] = abs ( idx / laberinto_get_columnas() -
                                      solucion / laberinto_get_columnas())
@@ -115,15 +118,8 @@ uint8_t flood_mejor_vecino_desde(uint8_t casilla) {
 uint8_t flood_minimo_vecino(uint8_t casilla) {
     uint8_t minimo = 255;
 
-    /*
-    Serial.print("vecinos de ");
-    Serial.println(casilla);
-    */
-
     flood_encuentra_vecinos(casilla);
     for (uint8_t idx = 0; idx < flood_vecinos.tamano; idx++) {
-        // Serial.println(flood_vecinos.casilla[idx]);
-        
         minimo = min(flood_distancia[flood_vecinos.casilla[idx]], minimo);
     }
 

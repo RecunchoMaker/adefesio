@@ -96,14 +96,14 @@
 #define ORIENTACION_INICIAL NORTE ///< Orientación del robot al inicio de la exploración
 #else
 #define CASILLA_INICIAL 255
-#define CASILLA_SOLUCION 250
+#define CASILLA_SOLUCION 237
 #define ORIENTACION_INICIAL OESTE ///< Orientación del robot al inicio de la exploración
 #endif
 #define LABERINTO_LONGITUD_CASILLA 0.18 //< Longitud en metros de cada casilla
 #define LABERINTO_ANCHURA_MURO 0.012    //< Ancho del muro en metros
 //@}
 
-#define NOFLOOD 1
+//#define NOFLOOD 1
 #endif /* ifndef SETTINGS_H
 
 */

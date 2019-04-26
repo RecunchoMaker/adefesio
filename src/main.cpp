@@ -107,7 +107,7 @@ void loop() {
         robot_empieza();
         //while (robot_get_estado() != ESPERANDO_SENAL) {
         while (true) {
-            //log_correccion_pasillos();
+            log_correccion_pasillos();
             //log_leds_distancias();
             log_variables_trayectoria();
 #ifdef MOCK

@@ -93,12 +93,14 @@ char const *comando_vr = "vr";       ///< velocidad maxima en recta
 char const *comando_ve = "ve";       ///< velocidad maxima en exploracion
 char const *comando_dr = "dr";       ///< distancia entre ruedas
 
+/*
 char const *comando_l1 = "l1";       ///< activar leds
 char const *comando_l0 = "l0";       ///< desactivar leds
 
 char const *comando_pr = "pr";       ///< anadir PASO_RECTO a camino
 char const *comando_pd = "pd";       ///< anadir PASO_DER a camino
 char const *comando_pi = "pi";       ///< anadir PASO_IZQ a camino
+*/
 
 /// comandos para MOCK
 char const *comando_ld = "ld";       ///< setear distancia del led derecho
@@ -178,12 +180,16 @@ void _procesa_comando_simple(char const *comando, char *token, void (*funcion)(v
  */
 void _procesa_comando(char *token) {
 
+    /*
     _procesa_comando_simple(comando_l0, token, leds_desactiva);
     _procesa_comando_simple(comando_l1, token, leds_activa);
+    */
     _procesa_comando_simple(comando_go, token, comando_set_go);
+    /*
     _procesa_comando_simple(comando_pr, token, camino_anadir_paso_recto);
     _procesa_comando_simple(comando_pd, token, camino_anadir_paso_der);
     _procesa_comando_simple(comando_pi, token, camino_anadir_paso_izq);
+    */
     _procesa_comando_simple(comando_sa, token, mock_siguiente_accion);
 }
 

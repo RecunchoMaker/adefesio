@@ -72,3 +72,21 @@ void control_parada() {
     }
 }
 
+void control_giro() {
+    int pasos_recorridos = abs (encoders_get_posicion_total_right() - encoders_get_posicion_total_left()) / 2;
+    if (pasos_recorridos >= abs(accion_get_pasos_objetivo())) {
+        robot_siguiente_accion();
+    }
+    if (pasos_recorridos >= abs(accion_get_pasos_hasta_decelerar()))
+        motores_set_aceleracion_lineal(-accion_get_deceleracion());
+    if (motores_get_velocidad_lineal_objetivo() >= accion_get_velocidad_maxima()) {
+        motores_set_velocidad_lineal_objetivo(accion_get_velocidad_maxima());
+        motores_set_aceleracion_lineal(0);
+    }
+}
+
+
+void control_espera_senal() {
+    if (leds_go())
+        robot_siguiente_accion();
+}

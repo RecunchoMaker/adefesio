@@ -28,13 +28,13 @@ void log_leds() {
     Serial.print(leds_get_valor(LED_DER));
 
     Serial.print(F("\tdist:"));
-    Serial.print(leds_get_distancia(LED_IZQ));
+    Serial.print(leds_get_distancia(LED_IZQ),4);
     Serial.print("\t");
-    Serial.print(leds_get_distancia(LED_FIZQ));
+    Serial.print(leds_get_distancia(LED_FIZQ),4);
     Serial.print("\t");
-    Serial.print(leds_get_distancia(LED_FDER));
+    Serial.print(leds_get_distancia(LED_FDER),4);
     Serial.print("\t");
-    Serial.print(leds_get_distancia(LED_DER));
+    Serial.print(leds_get_distancia(LED_DER),4);
 
     Serial.print(F("\tapagado:"));
     Serial.print(leds_get_valor_apagado(LED_IZQ));
